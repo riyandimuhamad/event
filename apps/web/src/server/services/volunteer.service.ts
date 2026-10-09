@@ -198,6 +198,7 @@ export class VolunteerService {
       shirtSize?: string;
       divisionId?: string;
       registrationStatus?: VolunteerRegistrationStatus;
+      shiftId?: string;
     }
   ) {
     if (!RbacGuard.can(actor, 'write', 'volunteer', { organizationId: actor.organizationId, eventId })) {
@@ -224,8 +225,18 @@ export class VolunteerService {
       },
       include: {
         division: true,
+        shifts: { include: { shift: true } },
       },
     });
+
+    if (data.shiftId) {
+      await prisma.volunteerShift.create({
+        data: {
+          volunteerId: created.id,
+          shiftId: data.shiftId,
+        },
+      });
+    }
 
     await AuditLogger.log({
       organizationId: actor.organizationId,
@@ -240,6 +251,17 @@ export class VolunteerService {
     return created;
   }
 
+  public static async getShifts(actor: Actor, eventId: string) {
+    if (!RbacGuard.can(actor, 'read', 'volunteer', { organizationId: actor.organizationId, eventId })) {
+      throw new Error('FORBIDDEN');
+    }
+    return prisma.shift.findMany({
+      where: { eventId },
+      include: { division: true },
+      orderBy: { startsAt: 'asc' },
+    });
+  }
+
   public static async updateVolunteer(
     actor: Actor,
     volunteerId: string,
@@ -250,6 +272,7 @@ export class VolunteerService {
       shirtSize?: string;
       divisionId?: string | null;
       registrationStatus?: VolunteerRegistrationStatus;
+      shiftId?: string | null;
     }
   ) {
     if (!RbacGuard.can(actor, 'write', 'volunteer', { organizationId: actor.organizationId })) {
@@ -274,6 +297,41 @@ export class VolunteerService {
       },
       include: {
         division: true,
+        shifts: { include: { shift: true } },
+      },
+    });
+
+    if (data.shiftId !== undefined) {
+      if (!data.shiftId) {
+        await prisma.volunteerShift.deleteMany({
+          where: { volunteerId: vol.id, checkedInAt: null },
+        });
+      } else {
+        const existingVS = await prisma.volunteerShift.findFirst({
+          where: { volunteerId: vol.id },
+        });
+        if (existingVS) {
+          await prisma.volunteerShift.update({
+            where: { id: existingVS.id },
+            data: { shiftId: data.shiftId },
+          });
+        } else {
+          await prisma.volunteerShift.create({
+            data: {
+              volunteerId: vol.id,
+              shiftId: data.shiftId,
+            },
+          });
+        }
+      }
+    }
+
+    // Refetch updated volunteer with latest shifts
+    const finalVol = await prisma.volunteer.findUnique({
+      where: { id: vol.id },
+      include: {
+        division: true,
+        shifts: { include: { shift: true } },
       },
     });
 
@@ -288,7 +346,7 @@ export class VolunteerService {
       after: { fullName: updated.fullName, shirtSize: updated.shirtSize, divisionId: updated.divisionId, status: updated.registrationStatus },
     });
 
-    return updated;
+    return finalVol || updated;
   }
 
   public static async deleteVolunteer(actor: Actor, volunteerId: string) {

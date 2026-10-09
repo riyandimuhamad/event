@@ -51,6 +51,7 @@ interface VolunteerData {
 interface VolunteersClientProps {
   initialVolunteers: VolunteerData[];
   divisions: Array<{ id: string; name: string; code: string }>;
+  availableShifts?: Array<{ id: string; name: string; divisionId: string; divisionName?: string; startsAt: string; endsAt: string }>;
   actor: Actor;
   orgSlug: string;
   eventId: string;
@@ -125,6 +126,7 @@ function autoDetectMapping(headers: string[]) {
 export function VolunteersClient({
   initialVolunteers,
   divisions,
+  availableShifts = [],
   actor,
   orgSlug,
   eventId,
@@ -145,6 +147,7 @@ export function VolunteersClient({
   const [newShirtSize, setNewShirtSize] = useState('L');
   const [newEmail, setNewEmail] = useState('');
   const [newPhone, setNewPhone] = useState('');
+  const [newShiftId, setNewShiftId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -156,6 +159,7 @@ export function VolunteersClient({
   const [editEmail, setEditEmail] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [editRegistrationStatus, setEditRegistrationStatus] = useState('APPROVED');
+  const [editShiftId, setEditShiftId] = useState('');
   const [isEditingSubmitting, setIsEditingSubmitting] = useState(false);
   const [editErrorMessage, setEditErrorMessage] = useState<string | null>(null);
 
@@ -184,6 +188,7 @@ export function VolunteersClient({
     setEditEmail(vol.email || '');
     setEditPhone(vol.phone || '');
     setEditRegistrationStatus(vol.registrationStatus);
+    setEditShiftId(vol.shifts[0]?.shift ? (vol.shifts[0].shift as any).id || '' : '');
     setEditErrorMessage(null);
   };
 
@@ -203,6 +208,7 @@ export function VolunteersClient({
           email: newEmail || undefined,
           phone: newPhone || undefined,
           registrationStatus: 'APPROVED',
+          shiftId: newShiftId || undefined,
         }),
       });
 
@@ -245,6 +251,7 @@ export function VolunteersClient({
           email: editEmail || null,
           phone: editPhone || null,
           registrationStatus: editRegistrationStatus,
+          shiftId: editShiftId || null,
         }),
       });
 
@@ -254,6 +261,7 @@ export function VolunteersClient({
       setEditingVolunteer(null);
       router.refresh();
 
+      const selectedShiftObj = availableShifts.find((s) => s.id === editShiftId);
       const updatedVol: VolunteerData = {
         ...editingVolunteer,
         fullName: editFullName,
@@ -263,6 +271,20 @@ export function VolunteersClient({
         email: editEmail || null,
         phone: editPhone || null,
         registrationStatus: editRegistrationStatus,
+        shifts: selectedShiftObj
+          ? [
+              {
+                id: editingVolunteer.shifts[0]?.id || 'vs-temp',
+                status: editingVolunteer.shifts[0]?.status || 'ASSIGNED',
+                checkedInAt: editingVolunteer.shifts[0]?.checkedInAt || null,
+                shift: {
+                  name: selectedShiftObj.name,
+                  startsAt: selectedShiftObj.startsAt,
+                  endsAt: selectedShiftObj.endsAt,
+                },
+              },
+            ]
+          : [],
       };
       setVolunteers((prev) => prev.map((v) => (v.id === editingVolunteer.id ? updatedVol : v)));
     } catch (err: unknown) {
@@ -591,6 +613,7 @@ export function VolunteersClient({
             <thead className="bg-surface-muted border-b border-border text-xs font-semibold text-text-muted uppercase tracking-wider sticky top-0 z-10">
               <tr>
                 <th className="px-6 py-3.5">Volunteer & Kode ID</th>
+                <th className="px-6 py-3.5">Kontak (Email / WA)</th>
                 <th className="px-6 py-3.5">Divisi Penempatan</th>
                 <th className="px-6 py-3.5">Ukuran Kaos</th>
                 <th className="px-6 py-3.5">Shift & Presensi</th>
@@ -624,6 +647,23 @@ export function VolunteersClient({
                             {vol.code}
                           </div>
                         </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="space-y-0.5 text-xs">
+                        {vol.phone ? (
+                          <div className="font-mono text-text font-semibold flex items-center gap-1">
+                            <span className="text-emerald-600 dark:text-emerald-400">WA:</span> {vol.phone}
+                          </div>
+                        ) : null}
+                        {vol.email ? (
+                          <div className="text-text-muted truncate max-w-[170px]" title={vol.email}>
+                            {vol.email}
+                          </div>
+                        ) : null}
+                        {!vol.phone && !vol.email && (
+                          <span className="text-text-muted text-[11px] italic">-</span>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -742,6 +782,10 @@ export function VolunteersClient({
               </div>
 
               <div className="text-xs space-y-1 pt-2 border-t border-border text-text-muted">
+                <div>
+                  <span className="font-semibold text-text">Kontak:</span>{' '}
+                  {vol.phone || vol.email ? `${vol.phone || ''} ${vol.email ? `(${vol.email})` : ''}` : '-'}
+                </div>
                 <div>
                   <span className="font-semibold text-text">Divisi:</span>{' '}
                   {vol.division?.name || 'Belum Ditentukan'}
@@ -931,6 +975,22 @@ export function VolunteersClient({
                 </select>
               </div>
 
+              <div>
+                <label className="block font-semibold text-text mb-1">Shift Penugasan (Opsional)</label>
+                <select
+                  value={editShiftId}
+                  onChange={(e) => setEditShiftId(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-surface-muted border border-border text-text focus:outline-none focus:border-accent"
+                >
+                  <option value="">-- Tanpa Shift (Opsional) --</option>
+                  {availableShifts.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} ({s.divisionName ? `${s.divisionName}` : ''})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-text mb-1">Ukuran Kaos</label>
@@ -1050,6 +1110,22 @@ export function VolunteersClient({
                   {divisions.map((d) => (
                     <option key={d.id} value={d.id}>
                       {d.name} ({d.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-text mb-1">Shift Penugasan (Opsional)</label>
+                <select
+                  value={newShiftId}
+                  onChange={(e) => setNewShiftId(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-surface-muted border border-border text-text focus:outline-none focus:border-accent"
+                >
+                  <option value="">-- Tanpa Shift (Opsional) --</option>
+                  {availableShifts.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} ({s.divisionName ? `${s.divisionName}` : ''})
                     </option>
                   ))}
                 </select>
