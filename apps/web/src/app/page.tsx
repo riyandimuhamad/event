@@ -1,21 +1,24 @@
-import { redirect } from 'next/navigation';
+import React from 'react';
 import { prisma } from '@eventops/db';
+import { LandingPageClient } from '@/components/features/LandingPageClient';
 
 export default async function HomePage() {
   const defaultEvent = await prisma.event.findFirst({
     include: { organization: true },
   });
 
-  if (defaultEvent && defaultEvent.organization) {
-    redirect(`/${defaultEvent.organization.slug}/events/${defaultEvent.id}/overview`);
-  }
+  const orgSlug = defaultEvent?.organization?.slug || 'nusantara-creative';
+  const orgName = defaultEvent?.organization?.name || 'Nusantara Creative Event Organizer';
+  const eventId = defaultEvent?.id || '697840e1-5ace-48fa-b866-f4825cc05c22';
+  const eventName = defaultEvent?.name || 'Festival Musik Nusantara 2026';
+
+  const dashboardUrl = `/${orgSlug}/events/${eventId}/overview`;
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-border">
-        <h1 className="text-xl font-bold mb-2">EventOps</h1>
-        <p className="text-text-muted text-sm">Menyiapkan workspace awal...</p>
-      </div>
-    </div>
+    <LandingPageClient
+      dashboardUrl={dashboardUrl}
+      eventName={eventName}
+      orgName={orgName}
+    />
   );
 }
