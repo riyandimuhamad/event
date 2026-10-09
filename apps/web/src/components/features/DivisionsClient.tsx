@@ -198,7 +198,7 @@ export function DivisionsClient({
               <div className="flex items-center justify-between text-xs">
                 <span className="text-text-muted flex items-center gap-1.5">
                   <Users2 className="w-3.5 h-3.5 text-text-muted" />
-                  Panitia Resmi:
+                  Panitia Inti:
                 </span>
                 <span className="font-bold text-text tabular-nums">
                   {d._count.committeeMembers} orang
@@ -208,7 +208,7 @@ export function DivisionsClient({
               <div className="flex items-center justify-between text-xs">
                 <span className="text-text-muted flex items-center gap-1.5">
                   <HeartHandshake className="w-3.5 h-3.5 text-text-muted" />
-                  Relawan (Volunteer):
+                  Volunteer:
                 </span>
                 <span className="font-bold text-text tabular-nums">
                   {d._count.volunteers} orang

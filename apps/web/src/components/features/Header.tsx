@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Wifi, WifiOff, Menu, X, Home, Search } from 'lucide-react';
+import { Wifi, WifiOff, Menu, X, Home } from 'lucide-react';
 import { RoleSwitcher } from './RoleSwitcher';
 
 interface HeaderProps {
@@ -22,6 +22,7 @@ export function Header({
   const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
+    setIsOnline(navigator.onLine);
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
@@ -35,75 +36,67 @@ export function Header({
   }, []);
 
   return (
-    <header className="w-full rounded-2xl glass-panel border border-border shadow-sm px-4 sm:px-5 py-3 flex items-center justify-between gap-4 transition-all">
-      {/* Left: Breadcrumbs & Page Heading (Soft UI Style) */}
-      <div className="flex items-center gap-3 min-w-0">
-        {/* Mobile menu trigger */}
-        <button
-          onClick={onMobileMenuToggle}
-          type="button"
-          aria-label="Buka menu navigasi"
-          className="lg:hidden p-1.5 rounded-xl text-text-muted hover:text-text hover:bg-surface-muted border border-border"
-        >
-          {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-        </button>
+    <>
+      {/* Main Header Bar */}
+      <header className="w-full rounded-2xl bg-[#2A1411] border border-[#3E1F1A] shadow-md px-4 sm:px-5 py-3 flex items-center justify-between gap-4 transition-all">
+        {/* Left: Mobile menu trigger + Breadcrumbs */}
+        <div className="flex items-center gap-3 min-w-0">
+          {/* Mobile menu trigger */}
+          <button
+            onClick={onMobileMenuToggle}
+            type="button"
+            aria-label="Buka menu navigasi"
+            className="lg:hidden p-1.5 rounded-xl text-[#A89A8E] hover:text-white hover:bg-[#351915] border border-[#3E1F1A]"
+          >
+            {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
 
-        {/* Organization / Event Breadcrumb & Page Title */}
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-1.5 text-[11px] text-text-muted font-medium truncate">
-            <Home className="w-3.5 h-3.5 text-text-subtle flex-shrink-0" />
-            <span className="text-text-subtle">/</span>
-            <span className="truncate max-w-[120px] sm:max-w-[180px]">{orgName}</span>
-            <span className="text-text-subtle">/</span>
-            <span className="text-text font-semibold truncate max-w-[140px] sm:max-w-xs">{eventName}</span>
-          </div>
-          <div className="text-xs sm:text-sm font-extrabold text-text tracking-tight truncate mt-0.5">
-            Pusat Komando Operasional
+          {/* Organization / Event Breadcrumb & Page Title */}
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-1.5 text-[11px] text-[#A89A8E] font-medium truncate">
+              <Home className="w-3.5 h-3.5 text-[#8C7A70] flex-shrink-0" />
+              <span className="text-[#5A4540]">/</span>
+              <span className="truncate max-w-[120px] sm:max-w-[180px] text-[#C9BEB2]">{orgName}</span>
+              <span className="text-[#5A4540]">/</span>
+              <span className="text-[#FFFFFF] font-semibold truncate max-w-[140px] sm:max-w-xs">{eventName}</span>
+            </div>
+            <div className="text-xs sm:text-sm font-extrabold text-[#FFFFFF] tracking-tight truncate mt-0.5">
+              Pusat Komando Operasional
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Right: Search, Network Status, Account Role Switcher */}
-      <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-        {/* Soft UI Search Input */}
-        <div className="relative hidden md:block w-48 lg:w-56">
-          <Search className="w-3.5 h-3.5 text-text-muted absolute left-3 top-2.5" />
-          <input
-            type="text"
-            placeholder="Cari data operasional..."
-            className="w-full text-xs rounded-xl border border-border pl-8 pr-3 py-1.5 bg-surface focus:outline-none focus:ring-2 focus:ring-accent text-text placeholder:text-text-subtle shadow-xs"
-          />
+        {/* Right: User/Role Switcher */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <RoleSwitcher currentEmail={currentEmail} />
         </div>
+      </header>
 
-        {/* Online Status */}
-        <div
-          className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-medium border ${
-            isOnline
-              ? 'text-emerald-800 bg-emerald-50 border-emerald-200'
-              : 'text-rose-800 bg-rose-50 border-rose-200'
+      {/* Online Status Indicator — Fixed bottom-left */}
+      <div
+        className={`fixed bottom-5 left-5 z-40 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold border shadow-lg backdrop-blur-md transition-all duration-300 ${
+          isOnline
+            ? 'text-emerald-300 bg-[#0D1F13]/80 border-emerald-600/40'
+            : 'text-rose-300 bg-[#1F0D0D]/80 border-rose-600/40'
+        }`}
+      >
+        <span
+          className={`w-2 h-2 rounded-full flex-shrink-0 ${
+            isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'
           }`}
-        >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'
-            }`}
-          />
-          {isOnline ? (
-            <>
-              <Wifi className="w-3 h-3 text-emerald-700" />
-              <span>Online</span>
-            </>
-          ) : (
-            <>
-              <WifiOff className="w-3 h-3 text-rose-700" />
-              <span>Offline</span>
-            </>
-          )}
-        </div>
-
-        {/* Role Switcher */}
-        <RoleSwitcher currentEmail={currentEmail} />
+        />
+        {isOnline ? (
+          <>
+            <Wifi className="w-3 h-3" />
+            <span>Online</span>
+          </>
+        ) : (
+          <>
+            <WifiOff className="w-3 h-3" />
+            <span>Offline</span>
+          </>
+        )}
       </div>
-    </header>
+    </>
   );
 }

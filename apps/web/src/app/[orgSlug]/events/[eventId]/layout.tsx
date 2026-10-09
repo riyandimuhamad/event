@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { prisma, withOrgScope } from '@eventops/db';
 import { getCurrentActor, DEFAULT_USER_EMAIL } from '@/lib/auth/session';
 import { AppShell } from '@/components/features/AppShell';
+import { ToastProvider } from '@/components/ui/Toast';
 
 interface EventLayoutProps {
   children: React.ReactNode;
@@ -40,15 +41,17 @@ export default async function EventLayout({ children, params }: EventLayoutProps
   const currentEmail = cookies().get('eventops_user_email')?.value || DEFAULT_USER_EMAIL;
 
   return (
-    <AppShell
-      orgSlug={params.orgSlug}
-      orgName={org.name}
-      eventId={event.id}
-      eventName={event.name}
-      actor={actor}
-      currentEmail={currentEmail}
-    >
-      {children}
-    </AppShell>
+    <ToastProvider>
+      <AppShell
+        orgSlug={params.orgSlug}
+        orgName={org.name}
+        eventId={event.id}
+        eventName={event.name}
+        actor={actor}
+        currentEmail={currentEmail}
+      >
+        {children}
+      </AppShell>
+    </ToastProvider>
   );
 }

@@ -123,7 +123,7 @@ export function CommitteeClient({
         <div>
           <h1 className="text-2xl font-bold text-text">{t('nav.committee')}</h1>
           <p className="text-text-muted text-sm mt-0.5">
-            Struktur panitia resmi penanggung jawab event ({committee.length} personil terkonfirmasi)
+            Struktur panitia inti penanggung jawab event ({committee.length} personil terkonfirmasi)
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export function CommitteeClient({
             className="px-4 py-2.5 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-xl flex items-center gap-2 shadow-sm transition-all"
           >
             <Plus className="w-4 h-4" />
-            <span>Tambah Panitia Resmi</span>
+            <span>Tambah Panitia Inti</span>
           </button>
         )}
       </div>
@@ -215,7 +215,7 @@ export function CommitteeClient({
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-xl border border-border space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-base font-bold text-text">Tambah Panitia Resmi</h3>
+              <h3 className="text-base font-bold text-text">Tambah Panitia Inti</h3>
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="text-text-muted hover:text-text p-1 rounded-lg"

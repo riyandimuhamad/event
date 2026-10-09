@@ -78,7 +78,11 @@ export function AppShell({
       />
 
       {/* Main Layout Area - padded to clear floating sidebar on large screens */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-72 transition-all duration-300">
+      <div
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
+          isSidebarCollapsed ? 'lg:pl-[104px]' : 'lg:pl-[304px]'
+        }`}
+      >
         <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-10 flex flex-col gap-6">
           <Header
             orgName={orgName}

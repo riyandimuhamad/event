@@ -240,6 +240,57 @@ export class VolunteerService {
     return created;
   }
 
+  public static async updateVolunteer(
+    actor: Actor,
+    volunteerId: string,
+    data: {
+      fullName?: string;
+      email?: string;
+      phone?: string;
+      shirtSize?: string;
+      divisionId?: string | null;
+      registrationStatus?: VolunteerRegistrationStatus;
+    }
+  ) {
+    if (!RbacGuard.can(actor, 'write', 'volunteer', { organizationId: actor.organizationId })) {
+      throw new Error('FORBIDDEN');
+    }
+
+    const vol = await prisma.volunteer.findFirst({
+      where: withOrgScope(actor.organizationId, { id: volunteerId, deletedAt: null }),
+    });
+
+    if (!vol) throw new Error('NOT_FOUND');
+
+    const updated = await prisma.volunteer.update({
+      where: { id: vol.id },
+      data: {
+        fullName: data.fullName ?? vol.fullName,
+        email: data.email !== undefined ? data.email : vol.email,
+        phone: data.phone !== undefined ? data.phone : vol.phone,
+        shirtSize: data.shirtSize ?? vol.shirtSize,
+        divisionId: data.divisionId !== undefined ? data.divisionId : vol.divisionId,
+        registrationStatus: data.registrationStatus ?? vol.registrationStatus,
+      },
+      include: {
+        division: true,
+      },
+    });
+
+    await AuditLogger.log({
+      organizationId: actor.organizationId,
+      eventId: vol.eventId,
+      actorId: actor.userId,
+      action: 'volunteer.updated',
+      entityType: 'Volunteer',
+      entityId: vol.id,
+      before: { fullName: vol.fullName, shirtSize: vol.shirtSize, divisionId: vol.divisionId, status: vol.registrationStatus },
+      after: { fullName: updated.fullName, shirtSize: updated.shirtSize, divisionId: updated.divisionId, status: updated.registrationStatus },
+    });
+
+    return updated;
+  }
+
   public static async deleteVolunteer(actor: Actor, volunteerId: string) {
     if (!RbacGuard.can(actor, 'write', 'volunteer', { organizationId: actor.organizationId })) {
       throw new Error('FORBIDDEN');

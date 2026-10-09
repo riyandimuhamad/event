@@ -25,6 +25,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { useToast } from '@/components/ui/Toast';
 import { Actor } from '@eventops/shared';
 import { t } from '@/lib/i18n';
 
@@ -84,6 +85,7 @@ export function RequisitionsClient({
   eventId,
 }: RequisitionsClientProps) {
   const router = useRouter();
+  const toast = useToast();
   const [requisitions, setRequisitions] = useState<RequisitionData[]>(initialRequisitions);
   const [tab, setTab] = useState<'all' | 'incoming' | 'outgoing'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -140,6 +142,10 @@ export function RequisitionsClient({
   const handleTransition = async (id: string, targetStatus: string, reason?: string) => {
     setIsSubmitting(true);
     setErrorMessage(null);
+    const targetItem = requisitions.find((r) => r.id === id);
+    const itemCode = targetItem?.code || 'Kebutuhan';
+    const itemTitle = targetItem?.title || '';
+
     try {
       const res = await fetch(
         `/api/v1/requisitions/${id}/transitions?orgSlug=${orgSlug}&eventId=${eventId}`,
@@ -183,11 +189,34 @@ export function RequisitionsClient({
         })
       );
 
+      // Trigger user-facing Toast alert
+      if (targetStatus === 'APPROVED') {
+        toast.success(
+          'Kebutuhan Berhasil Disetujui!',
+          `${itemCode} (${itemTitle}) telah disetujui untuk diproses.`
+        );
+      } else if (targetStatus === 'REJECTED') {
+        toast.info(
+          'Kebutuhan Ditolak',
+          `${itemCode} ditolak. Catatan: "${reason}" telah direkam.`
+        );
+      } else if (targetStatus === 'IN_PROGRESS') {
+        toast.info('Mulai Dikerjakan', `${itemCode} sekarang berstatus Dalam Pengerjaan.`);
+      } else if (targetStatus === 'FULFILLED') {
+        toast.success('Kebutuhan Terpenuhi', `${itemCode} telah selesai dikerjakan.`);
+      } else if (targetStatus === 'CLOSED') {
+        toast.info('Kebutuhan Ditutup', `${itemCode} telah resmi ditutup.`);
+      } else if (targetStatus === 'SUBMITTED') {
+        toast.success('Kebutuhan Diajukan', `${itemCode} berhasil diajukan ke divisi tujuan.`);
+      }
+
       setRejectingReqId(null);
       setRejectReason('');
       router.refresh();
     } catch (err: unknown) {
-      setErrorMessage((err as Error).message);
+      const errMsg = (err as Error).message;
+      setErrorMessage(errMsg);
+      toast.error('Gagal Mengubah Status', errMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -223,6 +252,11 @@ export function RequisitionsClient({
         throw new Error(json.error?.message || 'Gagal membuat kebutuhan');
       }
 
+      toast.success(
+        'Kebutuhan Berhasil Dibuat!',
+        `Pengajuan "${newTitle}" berhasil diajukan ke divisi tujuan.`
+      );
+
       setShowCreateModal(false);
       setNewTitle('');
       setNewDesc('');
@@ -231,7 +265,9 @@ export function RequisitionsClient({
       // Reload page data
       window.location.reload();
     } catch (err: unknown) {
-      setErrorMessage((err as Error).message);
+      const errMsg = (err as Error).message;
+      setErrorMessage(errMsg);
+      toast.error('Gagal Membuat Kebutuhan', errMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -430,18 +466,20 @@ export function RequisitionsClient({
                 </div>
 
                 {/* Division Routing */}
-                <div className="flex items-center gap-2 text-xs font-semibold text-text bg-surface-muted p-2.5 rounded-lg border border-border">
-                  <span className="text-text-muted flex items-center gap-1">
-                    <Building className="w-3.5 h-3.5" /> Dari:
-                  </span>
-                  <span className="bg-surface px-2 py-0.5 rounded border border-border text-text">
-                    {req.fromDivision.name} ({req.fromDivision.code})
-                  </span>
-                  <ArrowRight className="w-4 h-4 text-text-muted mx-1 flex-shrink-0" />
-                  <span className="text-text-muted">Tujuan:</span>
-                  <span className="bg-accent-subtle text-accent dark:text-[#FFC46B] border border-accent/25 px-2 py-0.5 rounded">
-                    {req.toDivision.name} ({req.toDivision.code})
-                  </span>
+                <div className="overflow-x-auto">
+                  <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-text bg-surface-muted p-2.5 rounded-lg border border-border min-w-0">
+                    <span className="text-text-muted flex items-center gap-1 flex-shrink-0">
+                      <Building className="w-3.5 h-3.5" /> Dari:
+                    </span>
+                    <span className="bg-surface px-2 py-0.5 rounded border border-border text-text truncate max-w-[160px] sm:max-w-xs">
+                      {req.fromDivision.name} ({req.fromDivision.code})
+                    </span>
+                    <ArrowRight className="w-4 h-4 text-text-muted flex-shrink-0" />
+                    <span className="text-text-muted flex-shrink-0">Tujuan:</span>
+                    <span className="bg-accent-subtle text-accent dark:text-[#FFC46B] border border-accent/25 px-2 py-0.5 rounded truncate max-w-[160px] sm:max-w-xs">
+                      {req.toDivision.name} ({req.toDivision.code})
+                    </span>
+                  </div>
                 </div>
 
                 {/* Items preview */}

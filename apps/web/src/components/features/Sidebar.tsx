@@ -118,28 +118,47 @@ export function Sidebar({
   ];
 
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-surface select-none rounded-2xl overflow-hidden">
-      {/* Brand Header */}
-      <div className="border-b border-border/80 p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7A2E33] to-[#4A171B] text-[#FFC46B] flex items-center justify-center font-black text-xs tracking-wider shadow-md shadow-accent/20 border border-[#7A2E33]/50 flex-shrink-0">
+    <div className="flex flex-col h-full bg-[#5D1F23] select-none rounded-2xl overflow-hidden border border-[#7A2E33]/60 shadow-xl">
+      {/* Brand Header with Restore Hide/Collapse Button */}
+      <div
+        className={`border-b border-white/10 p-3.5 bg-black/20 flex items-center ${
+          isCollapsed ? 'justify-center' : 'justify-between'
+        }`}
+      >
+        {/* Logo */}
+        <div className={`flex items-center gap-2.5 min-w-0 ${ isCollapsed ? '' : 'flex-1' }`}>
+          <div className="w-8 h-8 rounded-xl bg-[#481418] text-[#FFC46B] flex items-center justify-center font-black text-xs tracking-wider shadow-sm border border-[#FFC46B]/40 flex-shrink-0">
             EO
           </div>
-          <div className="min-w-0">
-            <div className="font-extrabold text-sm text-text tracking-tight leading-none">
-              EventOps
+          {!isCollapsed && (
+            <div className="min-w-0">
+              <div className="font-extrabold text-sm text-white tracking-tight leading-none">
+                EventOps
+              </div>
+              <div className="text-[11px] text-[#E8D7D8] truncate mt-1">
+                {orgName}
+              </div>
             </div>
-            <div className="text-[11px] text-text-muted truncate mt-1">
-              {orgName}
-            </div>
-          </div>
+          )}
         </div>
+
+        {/* Toggle button — only visible when NOT collapsed */}
+        {!isCollapsed && onToggleCollapse && (
+          <button
+            onClick={onToggleCollapse}
+            title="Sembunyikan / Perkecil Menu"
+            aria-label="Sembunyikan / Perkecil Menu"
+            className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/15 transition-all flex-shrink-0"
+          >
+            <PanelLeftClose className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Nav List */}
       <nav className={`flex-1 overflow-y-auto space-y-1 ${isCollapsed ? 'p-2' : 'p-3'}`}>
         {!isCollapsed && (
-          <div className="text-[10px] font-extrabold text-text-subtle uppercase tracking-wider px-2 pt-2 pb-1.5">
+          <div className="text-[10px] font-extrabold text-[#D4B2B5] uppercase tracking-wider px-2 pt-2 pb-1.5">
             Modul Operasional
           </div>
         )}
@@ -156,33 +175,35 @@ export function Sidebar({
                 onClick={onCloseMobile}
                 title={isCollapsed ? item.title : undefined}
                 className={`group flex items-center rounded-xl text-xs transition-all duration-200 ${
-                  isCollapsed ? 'justify-center p-2' : 'justify-between px-3 py-2.5'
+                  isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
                 } ${
                   isActive
-                    ? 'bg-surface text-text font-bold shadow-md border border-border/80'
-                    : 'text-text-muted hover:text-text hover:bg-surface-muted/60 font-medium'
+                    ? 'bg-[#7A2E33] text-white font-bold shadow-md border border-[#9A383F]'
+                    : 'text-[#F2E8E9] hover:text-white hover:bg-white/12 font-medium'
                 }`}
               >
-                <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+                <div className={`flex items-center min-w-0 flex-1 ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
                   <div
-                    className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
                       isActive
-                        ? 'bg-gradient-to-tr from-[#8B2E35] to-[#5A1C22] text-[#FFC46B] shadow-md shadow-accent/20 border border-[#A83842]/40'
-                        : 'bg-surface text-text-muted border border-border/80 shadow-xs group-hover:text-text group-hover:scale-105'
+                        ? 'bg-[#451216] text-[#FFC46B] shadow-sm border border-[#FFC46B]/40'
+                        : 'bg-black/25 text-[#E0CDCF] border border-white/10 group-hover:text-[#FFC46B]'
                     }`}
                   >
-                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <Icon className="w-3.5 h-3.5 flex-shrink-0" />
                   </div>
-                  {!isCollapsed && <span className="truncate">{item.title}</span>}
+                  {!isCollapsed && (
+                    <span className="truncate text-[12px] tracking-tight">{item.title}</span>
+                  )}
                 </div>
               </Link>
             );
           })}
 
         {isCollapsed ? (
-          <div className="my-2 border-t border-border" />
+          <div className="my-2 border-t border-white/10" />
         ) : (
-          <div className="pt-4 text-[10px] font-extrabold text-text-subtle uppercase tracking-wider px-2 pb-1.5">
+          <div className="pt-4 text-[10px] font-extrabold text-[#D4B2B5] uppercase tracking-wider px-2 pb-1.5">
             Fase Siklus Acara
           </div>
         )}
@@ -199,24 +220,26 @@ export function Sidebar({
                 onClick={onCloseMobile}
                 title={isCollapsed ? item.title : undefined}
                 className={`group flex items-center rounded-xl text-xs transition-all duration-200 ${
-                  isCollapsed ? 'justify-center p-2' : 'justify-between px-3 py-2.5'
+                  isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
                 } ${
                   isActive
-                    ? 'bg-surface text-text font-bold shadow-md border border-border/80'
-                    : 'text-text-muted hover:text-text hover:bg-surface-muted/60 font-medium'
+                    ? 'bg-[#7A2E33] text-white font-bold shadow-md border border-[#9A383F]'
+                    : 'text-[#F2E8E9] hover:text-white hover:bg-white/12 font-medium'
                 }`}
               >
-                <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+                <div className={`flex items-center min-w-0 flex-1 ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
                   <div
-                    className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
                       isActive
-                        ? 'bg-gradient-to-tr from-[#8B2E35] to-[#5A1C22] text-[#FFC46B] shadow-md shadow-accent/20 border border-[#A83842]/40'
-                        : 'bg-surface text-text-muted border border-border/80 shadow-xs group-hover:text-text group-hover:scale-105'
+                        ? 'bg-[#451216] text-[#FFC46B] shadow-sm border border-[#FFC46B]/40'
+                        : 'bg-black/25 text-[#E0CDCF] border border-white/10 group-hover:text-[#FFC46B]'
                     }`}
                   >
-                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <Icon className="w-3.5 h-3.5 flex-shrink-0" />
                   </div>
-                  {!isCollapsed && <span className="truncate">{item.title}</span>}
+                  {!isCollapsed && (
+                    <span className="truncate text-[12px] tracking-tight">{item.title}</span>
+                  )}
                 </div>
               </Link>
             );
@@ -226,34 +249,45 @@ export function Sidebar({
       {/* Bottom Soft UI Help Card Widget */}
       {!isCollapsed ? (
         <div className="p-3">
-          <div className="p-4 rounded-2xl bg-surface-muted border border-border shadow-sm space-y-2.5">
-            <div className="w-8 h-8 rounded-xl bg-accent-subtle text-accent dark:text-[#FFC46B] flex items-center justify-center border border-accent/25 shadow-xs">
-              <Award className="w-4 h-4" />
+          <div className="p-3.5 rounded-xl bg-black/25 border border-white/10 shadow-inner space-y-2">
+            <div className="w-7 h-7 rounded-lg bg-[#481418] text-[#FFC46B] flex items-center justify-center border border-[#FFC46B]/25 shadow-xs">
+              <Award className="w-3.5 h-3.5" />
             </div>
             <div>
-              <div className="font-bold text-xs text-text">Butuh Bantuan & SOP?</div>
-              <div className="text-[11px] text-text-muted mt-0.5 leading-snug">
+              <div className="font-bold text-xs text-white">Butuh Bantuan & SOP?</div>
+              <div className="text-[11px] text-[#E8D7D8] mt-0.5 leading-snug">
                 Panduan alur operasional & audit trail
               </div>
             </div>
             <div className="pt-0.5">
-              <span className="w-full inline-block text-center py-1.5 px-3 rounded-xl bg-accent text-white font-bold text-[10px] tracking-wider shadow-xs uppercase hover:bg-accent-hover transition-colors">
+              <span className="w-full inline-block text-center py-1.5 px-3 rounded-lg bg-[#7A2E33] hover:bg-[#8D353C] text-white font-bold text-[10px] tracking-wider shadow-sm uppercase border border-[#FFC46B]/30 transition-colors">
                 PANDUAN OPERASIONAL
               </span>
             </div>
           </div>
-          <div className="mt-2.5 px-1 flex items-center justify-between text-[11px] text-text-subtle font-medium">
+          <div className="mt-2 px-1 flex items-center justify-between text-[11px] text-[#E8D7D8] font-medium">
             <span>Otorisasi:</span>
-            <span className="font-mono text-[10px] font-bold text-text bg-surface-muted px-2 py-0.5 rounded-lg border border-border">
+            <span className="font-mono text-[10px] font-bold text-[#FFC46B] bg-black/30 px-2 py-0.5 rounded border border-white/10">
               {actor.eventRole || actor.orgRole}
             </span>
           </div>
         </div>
       ) : (
-        <div className="p-3 flex flex-col items-center gap-2 border-t border-border">
+        <div className="p-3 flex flex-col items-center gap-2 border-t border-white/10">
+          {/* Expand button saat collapsed */}
+          {onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              title="Tampilkan Menu Lengkap"
+              aria-label="Tampilkan Menu Lengkap"
+              className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/15 transition-all"
+            >
+              <PanelLeftOpen className="w-4 h-4" />
+            </button>
+          )}
           <div
             title={`Otorisasi: ${actor.eventRole || actor.orgRole}`}
-            className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm"
+            className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm"
           />
         </div>
       )}
@@ -264,8 +298,8 @@ export function Sidebar({
     <>
       {/* Desktop floating inset sidebar (Soft UI style) */}
       <aside
-        className={`hidden lg:flex flex-col fixed inset-y-0 left-0 my-4 ml-4 z-30 transition-all duration-300 rounded-2xl border border-border shadow-md bg-surface ${
-          isCollapsed ? 'w-20' : 'w-64'
+        className={`hidden lg:flex flex-col fixed inset-y-0 left-0 my-4 ml-4 z-30 transition-all duration-300 rounded-2xl shadow-sm ${
+          isCollapsed ? 'w-20' : 'w-[270px]'
         }`}
       >
         {sidebarContent}
@@ -278,8 +312,8 @@ export function Sidebar({
             className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
             onClick={onCloseMobile}
           />
-          <div className="relative w-64 max-w-[85vw] h-full shadow-2xl z-10 p-3 animate-fade-in">
-            <div className="h-full rounded-2xl border border-border shadow-2xl overflow-hidden bg-surface">
+          <div className="relative w-[270px] max-w-[85vw] h-full shadow-2xl z-10 p-3 animate-fade-in">
+            <div className="h-full rounded-2xl shadow-2xl overflow-hidden">
               {sidebarContent}
             </div>
           </div>

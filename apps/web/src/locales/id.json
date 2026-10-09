@@ -32,8 +32,8 @@
   "nav": {
     "overview": "Overview",
     "divisions": "Divisi",
-    "committee": "Panitia Resmi",
-    "volunteers": "Relawan (Volunteer)",
+    "committee": "Panitia Inti",
+    "volunteers": "Volunteer",
     "requisitions": "Kebutuhan Antar-Divisi",
     "vendors": "Vendor & Kru",
     "talents": "Talent & Pengisi Acara",
@@ -82,9 +82,9 @@
     }
   },
   "volunteers": {
-    "title": "Manajemen Relawan (Official Volunteer)",
-    "subtitle": "Daftar relawan, penugasan shift, dan status pendaftaran",
-    "code": "Kode Relawan",
+    "title": "Manajemen Volunteer",
+    "subtitle": "Daftar volunteer, penugasan shift, dan status pendaftaran",
+    "code": "Kode Volunteer",
     "name": "Nama Lengkap",
     "division": "Divisi",
     "shirtSize": "Ukuran Kaos",
