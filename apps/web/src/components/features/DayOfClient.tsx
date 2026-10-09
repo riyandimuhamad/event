@@ -7,11 +7,14 @@ import {
   MapPin,
   CheckCircle2,
   AlertCircle,
-  Wifi,
-  WifiOff,
   RefreshCw,
   QrCode,
   Check,
+  Search,
+  Users,
+  Flame,
+  Clock,
+  Sparkles,
 } from 'lucide-react';
 import { Actor } from '@eventops/shared';
 import { t } from '@/lib/i18n';
@@ -45,7 +48,7 @@ interface DayOfClientProps {
 }
 
 export function DayOfClient({
-  slots,
+  slots: initialSlots,
   initialRecipients,
   actor,
   orgSlug,
@@ -53,7 +56,9 @@ export function DayOfClient({
 }: DayOfClientProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'consumption' | 'checkin'>('consumption');
-  const [selectedSlotId, setSelectedSlotId] = useState(slots[0]?.id || '');
+  const [slotsState, setSlotsState] = useState<ConsumptionSlotData[]>(initialSlots);
+  const [selectedSlotId, setSelectedSlotId] = useState(initialSlots[0]?.id || '');
+  const [recipientSearch, setRecipientSearch] = useState('');
 
   // Check-in state
   const [volunteerCodeInput, setVolunteerCodeInput] = useState('');
@@ -64,8 +69,8 @@ export function DayOfClient({
     volunteerName?: string;
   } | null>(null);
 
-  // Meal distribution state
-  const [recipients, setRecipients] = useState(initialRecipients);
+  // Meal distribution state - synchronized across checkin
+  const [recipients, setRecipients] = useState<RecipientData[]>(initialRecipients);
   const [distributionMessage, setDistributionMessage] = useState<{
     text: string;
     isError: boolean;
@@ -79,28 +84,40 @@ export function DayOfClient({
   }>>([]);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  const activeSlot = slots.find((s) => s.id === selectedSlotId);
+  const activeSlot = slotsState.find((s) => s.id === selectedSlotId) || slotsState[0];
 
-  // Handle Check-In
+  // Filter recipients based on search
+  const filteredRecipients = recipients.filter((r) => {
+    if (!recipientSearch.trim()) return true;
+    const q = recipientSearch.toLowerCase();
+    return r.fullName.toLowerCase().includes(q) || r.code.toLowerCase().includes(q);
+  });
+
+  // Handle Check-In with reactive state synchronization
   const handleCheckIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!volunteerCodeInput.trim()) return;
+    const code = volunteerCodeInput.trim().toUpperCase();
+    if (!code) return;
 
     setCheckInResult(null);
     const clientOpId = crypto.randomUUID();
 
     try {
       if (!navigator.onLine) {
-        // Save to offline queue per rules.md Section E
+        // Save to offline queue
         const op = {
           clientOpId,
           type: 'CHECK_IN',
-          payload: { volunteerCode: volunteerCodeInput.trim() },
+          payload: { volunteerCode: code },
         };
         setOfflineQueue((prev) => [...prev, op]);
+        // Update recipient locally
+        setRecipients((prev) =>
+          prev.map((r) => (r.code === code ? { ...r, hasCheckedIn: true } : r))
+        );
         setCheckInResult({
           success: true,
-          message: 'Offline: Disimpan di antrean perangkat lokal.',
+          message: 'Offline: Presensi dicatat di antrean lokal perangkat.',
         });
         setVolunteerCodeInput('');
         return;
@@ -110,7 +127,7 @@ export function DayOfClient({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          volunteerCode: volunteerCodeInput.trim(),
+          volunteerCode: code,
           clientOpId,
         }),
       });
@@ -119,6 +136,11 @@ export function DayOfClient({
       if (!res.ok || json.error) {
         throw new Error(json.error?.message || 'Check-in gagal');
       }
+
+      // CRITICAL SYNC: Immediately update local recipients so meal button activates!
+      setRecipients((prev) =>
+        prev.map((r) => (r.code === code ? { ...r, hasCheckedIn: true } : r))
+      );
 
       setCheckInResult({
         success: true,
@@ -136,7 +158,7 @@ export function DayOfClient({
     }
   };
 
-  // Handle Meal Distribution
+  // Handle Meal Distribution with reactive slot counter increment
   const handleDistributeMeal = async (recipient: RecipientData) => {
     if (!activeSlot) return;
     setDistributionMessage(null);
@@ -159,6 +181,10 @@ export function DayOfClient({
         setOfflineQueue((prev) => [...prev, op]);
         setRecipients((prev) =>
           prev.map((r) => (r.id === recipient.id ? { ...r, isServed: true } : r))
+        );
+        // Increment slot counter in local state
+        setSlotsState((prev) =>
+          prev.map((s) => (s.id === activeSlot.id ? { ...s, servedCount: s.servedCount + 1 } : s))
         );
         setDistributionMessage({
           text: `Offline: Konsumsi untuk ${recipient.fullName} dicatat secara lokal.`,
@@ -187,12 +213,20 @@ export function DayOfClient({
         throw new Error(json.error?.message || 'Gagal memberikan konsumsi');
       }
 
-      // Mark served locally
+      // Mark served in local recipient state
       setRecipients((prev) =>
         prev.map((r) => (r.id === recipient.id ? { ...r, isServed: true } : r))
       );
+
+      // Increment slot counter in local state
+      setSlotsState((prev) =>
+        prev.map((s) =>
+          s.id === activeSlot.id ? { ...s, servedCount: json.data.servedCount || s.servedCount + 1 } : s
+        )
+      );
+
       setDistributionMessage({
-        text: `Sukses: Makanan berhasil diberikan kepada ${recipient.fullName}`,
+        text: `Sukses: Makanan berhasil diberikan kepada ${recipient.fullName} (${recipient.code})`,
         isError: false,
       });
       router.refresh();
@@ -227,7 +261,7 @@ export function DayOfClient({
       }
 
       setOfflineQueue([]);
-      alert(`Sinkronisasi selesai! ${json.data.totalProcessed} operasi berhasil dikirim.`);
+      alert(`Sinkronisasi selesai! ${json.data.totalProcessed} operasi berhasil disinkronkan ke server.`);
       router.refresh();
     } catch (err: unknown) {
       alert((err as Error).message);
@@ -236,21 +270,26 @@ export function DayOfClient({
     }
   };
 
+  const servedPercentage = activeSlot
+    ? Math.min(100, Math.round((activeSlot.servedCount / activeSlot.targetRecipients) * 100))
+    : 0;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Title & Sync indicator */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{t('dayOf.title')}</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">{t('dayOf.subtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-text tracking-tight">
+            {t('dayOf.title')}
+          </h1>
+          <p className="text-text-muted text-xs sm:text-sm mt-0.5">{t('dayOf.subtitle')}</p>
         </div>
 
-        {/* Sync queue button if any */}
         {offlineQueue.length > 0 && (
           <button
             onClick={handleSyncOffline}
             disabled={isSyncing}
-            className="inline-flex items-center gap-2 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors animate-pulse"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-600/20 transition-all animate-bounce"
           >
             <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
             <span>Sinkronkan {offlineQueue.length} Antrean Offline</span>
@@ -262,10 +301,10 @@ export function DayOfClient({
       <div className="flex border-b border-border space-x-6">
         <button
           onClick={() => setActiveTab('consumption')}
-          className={`pb-3 text-sm font-semibold border-b-2 flex items-center gap-2 transition-colors ${
+          className={`pb-3 text-sm font-bold border-b-2 flex items-center gap-2 transition-all ${
             activeTab === 'consumption'
-              ? 'border-indigo-600 text-indigo-600'
-              : 'border-transparent text-zinc-500 hover:text-zinc-700'
+              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+              : 'border-transparent text-text-muted hover:text-text'
           }`}
         >
           <Utensils className="w-4 h-4" />
@@ -273,10 +312,10 @@ export function DayOfClient({
         </button>
         <button
           onClick={() => setActiveTab('checkin')}
-          className={`pb-3 text-sm font-semibold border-b-2 flex items-center gap-2 transition-colors ${
+          className={`pb-3 text-sm font-bold border-b-2 flex items-center gap-2 transition-all ${
             activeTab === 'checkin'
-              ? 'border-indigo-600 text-indigo-600'
-              : 'border-transparent text-zinc-500 hover:text-zinc-700'
+              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+              : 'border-transparent text-text-muted hover:text-text'
           }`}
         >
           <MapPin className="w-4 h-4" />
@@ -287,73 +326,90 @@ export function DayOfClient({
       {/* Tab 1: Meal Distribution */}
       {activeTab === 'consumption' && (
         <div className="space-y-6">
-          {/* Slot selector buttons */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            {slots.map((s) => {
+          {/* Slot selector cards - clean responsive grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {slotsState.map((s) => {
               const isSelected = s.id === selectedSlotId;
+              const slotPercent = Math.min(
+                100,
+                Math.round((s.servedCount / s.targetRecipients) * 100)
+              );
               return (
                 <button
                   key={s.id}
                   onClick={() => setSelectedSlotId(s.id)}
-                  className={`p-3 rounded-xl border text-left transition-all ${
+                  type="button"
+                  className={`p-4 rounded-2xl border text-left transition-all ${
                     isSelected
-                      ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-500 text-indigo-950 dark:text-indigo-200 ring-2 ring-indigo-500/20'
-                      : 'bg-white dark:bg-zinc-800 border-border text-zinc-700 dark:text-zinc-300 hover:border-zinc-300'
+                      ? 'bg-accent-subtle border-indigo-500 ring-2 ring-indigo-500/30 shadow-md'
+                      : 'premium-card hover:border-zinc-300 dark:hover:border-zinc-700'
                   }`}
                 >
-                  <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                    {s.kind}
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-surface-muted text-text-muted">
+                      {s.kind}
+                    </span>
+                    <span className="text-xs font-bold text-text tabular-nums">
+                      {s.servedCount} / {s.targetRecipients}
+                    </span>
                   </div>
-                  <div className="font-bold text-sm truncate">{s.label}</div>
-                  <div className="text-xs text-zinc-500 mt-1 tabular-nums">
-                    {s.servedCount} / {s.targetRecipients} porsi
+                  <div className="font-bold text-sm text-text truncate">{s.label}</div>
+                  <div className="w-full bg-surface-muted rounded-full h-1.5 mt-2.5 overflow-hidden">
+                    <div
+                      className="bg-indigo-600 h-1.5 rounded-full transition-all duration-300"
+                      style={{ width: `${slotPercent}%` }}
+                    ></div>
                   </div>
                 </button>
               );
             })}
           </div>
 
-          {/* Active slot summary banner */}
+          {/* Active Slot Summary Card */}
           {activeSlot && (
-            <div className="bg-white dark:bg-zinc-800 border border-border rounded-xl p-5 shadow-sm">
+            <div className="premium-card p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                    {activeSlot.label}
-                  </h2>
-                  <p className="text-xs text-zinc-500 mt-0.5">
-                    Hanya penerima yang telah check-in hari ini yang berhak menerima konsumsi.
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-extrabold text-text">{activeSlot.label}</h2>
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200">
+                      Slot Aktif
+                    </span>
+                  </div>
+                  <p className="text-xs text-text-muted mt-1">
+                    Aturan B6: Makanan hanya boleh diberikan pada relawan yang telah check-in hari ini.
                   </p>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold tabular-nums text-zinc-900 dark:text-zinc-50">
-                    {activeSlot.servedCount} / {activeSlot.targetRecipients}
+                <div className="text-right flex-shrink-0">
+                  <div className="text-3xl font-black text-text tabular-nums">
+                    {activeSlot.servedCount}{' '}
+                    <span className="text-sm font-semibold text-text-muted">
+                      / {activeSlot.targetRecipients} Porsi
+                    </span>
                   </div>
-                  <div className="text-xs text-zinc-500 font-medium">Terlayani dari Target</div>
+                  <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5">
+                    {servedPercentage}% Terlayani
+                  </div>
                 </div>
               </div>
 
-              {/* Progress bar */}
-              <div className="w-full bg-zinc-100 dark:bg-zinc-700 rounded-full h-2.5 mt-4 overflow-hidden">
+              {/* Progress Bar */}
+              <div className="w-full bg-surface-muted rounded-full h-3 mt-4 overflow-hidden p-0.5">
                 <div
-                  className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300"
-                  style={{
-                    width: `${Math.min(
-                      100,
-                      Math.round((activeSlot.servedCount / activeSlot.targetRecipients) * 100)
-                    )}%`,
-                  }}
+                  className="bg-gradient-to-r from-indigo-500 via-indigo-600 to-teal-500 h-full rounded-full transition-all duration-300"
+                  style={{ width: `${servedPercentage}%` }}
                 ></div>
               </div>
             </div>
           )}
 
+          {/* Realtime Alert Banner */}
           {distributionMessage && (
             <div
-              className={`p-3 rounded-lg text-xs font-semibold flex items-center gap-2 ${
+              className={`p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2.5 animate-fade-in ${
                 distributionMessage.isError
-                  ? 'bg-rose-50 border border-rose-200 text-rose-800'
-                  : 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                  ? 'bg-rose-50 border border-rose-200 text-rose-800 dark:bg-rose-950/50 dark:border-rose-800 dark:text-rose-200'
+                  : 'bg-emerald-50 border border-emerald-200 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-200'
               }`}
             >
               {distributionMessage.isError ? (
@@ -365,30 +421,45 @@ export function DayOfClient({
             </div>
           )}
 
-          {/* Checked-in recipients list */}
-          <div className="bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-border font-bold text-sm text-zinc-900 dark:text-zinc-100">
-              Daftar Relawan & Status Konsumsi
+          {/* Search & Recipients Table */}
+          <div className="premium-card overflow-hidden">
+            <div className="p-4 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="font-bold text-sm text-text">
+                Daftar Relawan & Hak Konsumsi ({filteredRecipients.length} Orang)
+              </div>
+              <div className="relative w-full sm:w-64">
+                <Search className="w-3.5 h-3.5 text-text-muted absolute left-3 top-3" />
+                <input
+                  type="text"
+                  placeholder="Cari nama atau kode..."
+                  value={recipientSearch}
+                  onChange={(e) => setRecipientSearch(e.target.value)}
+                  className="w-full text-xs rounded-xl border border-border pl-8 pr-3 py-2 bg-surface focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
             </div>
+
             <div className="divide-y divide-border max-h-[500px] overflow-y-auto">
-              {recipients.map((rec) => (
+              {filteredRecipients.map((rec) => (
                 <div
                   key={rec.id}
-                  className="p-4 flex items-center justify-between gap-4 hover:bg-zinc-50/50 dark:hover:bg-zinc-700/20"
+                  className="p-4 flex items-center justify-between gap-4 hover:bg-surface-muted/50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold bg-zinc-100 dark:bg-zinc-700 px-2 py-1 rounded tabular-nums">
+                    <span className="font-mono text-xs font-bold bg-surface-muted px-2.5 py-1 rounded-lg border border-border tabular-nums text-text">
                       {rec.code}
                     </span>
                     <div>
-                      <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
-                        {rec.fullName}
-                      </div>
-                      <div className="text-xs text-zinc-400">
+                      <div className="font-bold text-sm text-text">{rec.fullName}</div>
+                      <div className="text-xs text-text-muted flex items-center gap-1.5 mt-0.5">
                         {rec.hasCheckedIn ? (
-                          <span className="text-emerald-600 font-medium">✓ Sudah Check-in</span>
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                            <CheckCircle2 className="w-3 h-3" /> Sudah Check-in (Berhak)
+                          </span>
                         ) : (
-                          <span className="text-amber-600 font-medium">Belum Check-in</span>
+                          <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">
+                            Belum Check-in (Terkunci)
+                          </span>
                         )}
                       </div>
                     </div>
@@ -396,14 +467,15 @@ export function DayOfClient({
 
                   <div>
                     {rec.isServed ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                         <CheckCircle2 className="w-4 h-4" /> Sudah Diberikan
                       </span>
                     ) : (
                       <button
                         onClick={() => handleDistributeMeal(rec)}
                         disabled={!rec.hasCheckedIn}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-lg shadow-sm transition-colors"
+                        type="button"
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl shadow-sm transition-all hover:scale-105 active:scale-95"
                       >
                         {t('dayOf.giveMeal')}
                       </button>
@@ -419,16 +491,15 @@ export function DayOfClient({
       {/* Tab 2: Check-In Station */}
       {activeTab === 'checkin' && (
         <div className="max-w-xl mx-auto space-y-6">
-          <div className="bg-white dark:bg-zinc-800 border border-border rounded-xl p-6 shadow-sm">
+          <div className="premium-card p-8">
             <div className="text-center mb-6">
-              <div className="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 mx-auto flex items-center justify-center mb-3">
-                <QrCode className="w-6 h-6" />
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white mx-auto flex items-center justify-center mb-3 shadow-lg shadow-indigo-500/20">
+                <QrCode className="w-7 h-7" />
               </div>
-              <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                Stasiun Presensi Check-in
-              </h2>
-              <p className="text-xs text-zinc-500 mt-1">
-                Masukkan kode QR volunteer (misal: <code>VOL-0001</code>) untuk check-in.
+              <h2 className="text-xl font-extrabold text-text">Stasiun Presensi Check-in</h2>
+              <p className="text-xs text-text-muted mt-1 max-w-sm mx-auto">
+                Scan barcode/QR atau ketik kode relawan resmi (misal: <code>VOL-0001</code>) untuk
+                memvalidasi kehadiran dan membuka jatah konsumsi.
               </p>
             </div>
 
@@ -437,29 +508,29 @@ export function DayOfClient({
                 <input
                   type="text"
                   required
-                  placeholder="Ketik kode misal: VOL-0001"
+                  placeholder="Ketik kode: VOL-0001"
                   value={volunteerCodeInput}
                   onChange={(e) => setVolunteerCodeInput(e.target.value.toUpperCase())}
-                  className="w-full text-center text-lg font-mono font-bold tracking-wider rounded-xl border border-border p-3.5 bg-zinc-50 dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full text-center text-xl font-mono font-black tracking-widest rounded-2xl border border-border p-4 bg-surface focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-sm transition-colors"
+                className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-sm rounded-xl shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
-                Konfirmasi Check-in
+                Konfirmasi Check-in Lapangan
               </button>
             </form>
 
             {checkInResult && (
               <div
-                className={`mt-4 p-4 rounded-xl text-sm ${
+                className={`mt-5 p-4 rounded-2xl text-sm border animate-fade-in ${
                   checkInResult.success
                     ? checkInResult.alreadyCheckedIn
-                      ? 'bg-amber-50 border border-amber-200 text-amber-900'
-                      : 'bg-emerald-50 border border-emerald-200 text-emerald-900'
-                    : 'bg-rose-50 border border-rose-200 text-rose-900'
+                      ? 'bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-950/50 dark:border-amber-800 dark:text-amber-200'
+                      : 'bg-emerald-50 border-emerald-200 text-emerald-900 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-200'
+                    : 'bg-rose-50 border-rose-200 text-rose-900 dark:bg-rose-950/50 dark:border-rose-800 dark:text-rose-200'
                 }`}
               >
                 <div className="font-bold flex items-center gap-2">
@@ -471,8 +542,8 @@ export function DayOfClient({
                   <span>{checkInResult.message}</span>
                 </div>
                 {checkInResult.volunteerName && (
-                  <div className="text-xs mt-1 font-medium">
-                    Relawan: {checkInResult.volunteerName}
+                  <div className="text-xs mt-1.5 font-semibold text-emerald-800 dark:text-emerald-300">
+                    Relawan Terverifikasi: {checkInResult.volunteerName}
                   </div>
                 )}
               </div>

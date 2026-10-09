@@ -2,39 +2,95 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg: #FAFAF9;
-  --surface: #FFFFFF;
-  --surface-muted: #F4F4F5;
-  --border: #E4E4E7;
-  --text: #18181B;
-  --text-muted: #71717A;
-  --accent: #4F46E5;
-  --success: #15803D;
-  --warning: #B45309;
-  --danger: #B91C1C;
-  --info: #0369A1;
-}
+@layer base {
+  :root {
+    --bg: #F8FAFC;
+    --surface: #FFFFFF;
+    --surface-muted: #F1F5F9;
+    --surface-elevated: #FFFFFF;
+    --border: #E2E8F0;
+    --border-subtle: #F1F5F9;
+    --text: #0F172A;
+    --text-muted: #64748B;
+    --text-subtle: #94A3B8;
+    --accent: #4F46E5;
+    --accent-hover: #4338CA;
+    --accent-subtle: #EEF2FF;
+    --success: #10B981;
+    --success-subtle: #ECFDF5;
+    --warning: #F59E0B;
+    --warning-subtle: #FFFBEB;
+    --danger: #EF4444;
+    --danger-subtle: #FEF2F2;
+    --info: #0284C7;
+    --info-subtle: #F0F9FF;
+    
+    --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+    --card-shadow-hover: 0 10px 25px -5px rgb(0 0 0 / 0.07), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+  }
 
-.dark {
-  --bg: #0F0F10;
-  --surface: #18181B;
-  --surface-muted: #27272A;
-  --border: #3F3F46;
-  --text: #FAFAFA;
-  --text-muted: #A1A1AA;
-  --accent: #818CF8;
-  --success: #4ADE80;
-  --warning: #FBBF24;
-  --danger: #F87171;
-  --info: #38BDF8;
+  .dark {
+    --bg: #090A0F;
+    --surface: #11131B;
+    --surface-muted: #1A1D27;
+    --surface-elevated: #161822;
+    --border: #232736;
+    --border-subtle: #181B26;
+    --text: #F8FAFC;
+    --text-muted: #94A3B8;
+    --text-subtle: #64748B;
+    --accent: #6366F1;
+    --accent-hover: #818CF8;
+    --accent-subtle: rgba(99, 102, 241, 0.12);
+    --success: #34D399;
+    --success-subtle: rgba(52, 211, 153, 0.12);
+    --warning: #FBBF24;
+    --warning-subtle: rgba(251, 191, 36, 0.12);
+    --danger: #F87171;
+    --danger-subtle: rgba(248, 113, 113, 0.12);
+    --info: #38BDF8;
+    --info-subtle: rgba(56, 189, 248, 0.12);
+
+    --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+    --card-shadow-hover: 0 10px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+  }
 }
 
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+}
+
+/* Glassmorphism primitives */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.dark .glass-panel {
+  background: rgba(17, 19, 27, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+/* Modern card styling */
+.premium-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  border-radius: 0.875rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.premium-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  border-color: rgba(99, 102, 241, 0.3);
 }
 
 .tabular-nums {
@@ -55,6 +111,16 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Print stylesheets per design.md Section 12 */

@@ -80,7 +80,15 @@ export class ConsumptionService {
         where: { clientOpId: input.clientOpId },
       });
       if (existingOp) {
-        return { success: true, distribution: existingOp, idempotent: true };
+        const currentSlot = await prisma.consumptionSlot.findUnique({
+          where: { id: input.slotId },
+        });
+        return {
+          success: true,
+          distribution: existingOp,
+          idempotent: true,
+          servedCount: currentSlot?.servedCount ?? 0,
+        };
       }
     }
 
@@ -178,6 +186,7 @@ export class ConsumptionService {
         success: true,
         distribution,
         servedCount: updatedSlot.servedCount,
+        idempotent: false,
       };
     });
   }

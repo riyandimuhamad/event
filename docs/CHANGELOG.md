@@ -67,3 +67,31 @@ Dokumentasi perubahan, penambahan dependensi, dan pencatatan keputusan per miles
   - Integrasi Requisition, Volunteer, Consumption, Benefit, dan Tenant Scope.
 - Typecheck TypeScript strict tanpa error di seluruh workspace.
 - Kompilasi production Next.js berhasil.
+
+## [0.2.0] - 2026-10-09 - Audit UI/UX & Cross-Module Synchronization
+
+### Audit & Benchmarking (Komparasi Industri: Cvent, Linear Ops, Rosterfy)
+- **Eliminasi UI Bentrok & Collision**: Merombak seluruh kartu kebutuhan (*requisition cards*), tabel relawan, dan aksi pencairan benefit menjadi layout adaptif modular tanpa tabrakan tombol.
+- **Sinkronisasi Reaktif Lintas-Modul**:
+  - Check-in relawan pada stasiun presensi hari H kini secara instan mengaktifkan hak kelayakan jatah makan pada slot konsumsi tanpa reload halaman.
+  - Distribusi makanan langsung menginkrementasi kuota slot konsumsi dan memperbarui kartu metrik secara reaktif.
+  - Transisi status kebutuhan langsung memperbarui status badge dan linimasa audit secara optimistik.
+
+### Redesain Command Center & Visual Polishing
+- **Executive Command Center (Overview)**:
+  - Phase Stepper 3 Tahap (Pre-Event ➔ Hari H ➔ Pasca-Event) dengan indikator aktif & persentase kesiapan operasional (*Readiness Dial*).
+  - Quick Action Command Hub untuk navigasi instan antar-modul lapangan.
+- **Requisition Management (Pengadaan)**:
+  - KPI Stat Bar (Total Kebutuhan, Menunggu Approval, Sedang Dikerjakan, Terpenuhi/Ditutup).
+  - Filter chips multi-kategori (Arah Pengajuan, Status workflow, Prioritas, Pencarian teks).
+  - Drawer / Modal Linimasa Jejak Audit (*Audit History Timeline*) yang menampilkan seluruh aktor dan riwayat perubahan status.
+- **Staff & Volunteer Operations**:
+  - Filter presensi multi-kondisi (Semua, Sudah Check-in, Belum Check-in).
+  - Modal **Official Volunteer Pass / Lanyard ID Card** dengan kode QR terintegrasi dan opsi cetak.
+  - Layout kartu adaptif untuk perangkat mobile (<640px).
+- **Post-Event & Finance Hub**:
+  - Dialog verifikasi pencairan honorarium dengan unggah bukti transfer dan kanal perbankan.
+  - Modal **Piagam Penghargaan / Digital Certificate of Appreciation** berstandar resmi dengan ornamen emas dan nomor registrasi kriptografis.
+- **Executive Account Popover**:
+  - Penggantian elemen `<select>` akun kasar dengan Role Switcher dropdown berdesain executive card lengkap dengan avatar, role badge, dan deskripsi peran.
+
