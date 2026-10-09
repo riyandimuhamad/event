@@ -14,6 +14,7 @@ import {
   BadgeDollarSign,
   PackageOpen,
   CalendarCheck,
+  Award,
   PanelLeftClose,
   PanelLeftOpen,
   Wifi,
