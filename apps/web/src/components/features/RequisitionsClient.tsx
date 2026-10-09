@@ -252,7 +252,7 @@ export function RequisitionsClient({
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm shadow-sm transition-all hover:shadow"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-hover text-white rounded-xl font-semibold text-sm shadow-sm transition-all hover:shadow-md hover:shadow-accent/20"
         >
           <Plus className="w-4 h-4" />
           <span>{t('requisition.createNew')}</span>
@@ -261,9 +261,9 @@ export function RequisitionsClient({
 
       {/* KPI Stats Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-        <div className="p-4 rounded-xl border border-border bg-white dark:bg-zinc-800/80 shadow-sm">
-          <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Total Kebutuhan</div>
-          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mt-1">{totalCount}</div>
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-sm">
+          <div className="text-xs font-medium text-text-muted">Total Kebutuhan</div>
+          <div className="text-2xl font-bold text-text mt-1">{totalCount}</div>
         </div>
         <div className="p-4 rounded-xl border border-amber-200/60 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 shadow-sm">
           <div className="text-xs font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
@@ -271,11 +271,11 @@ export function RequisitionsClient({
           </div>
           <div className="text-2xl font-bold text-amber-900 dark:text-amber-300 mt-1">{pendingCount}</div>
         </div>
-        <div className="p-4 rounded-xl border border-blue-200/60 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-950/20 shadow-sm">
-          <div className="text-xs font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-1.5">
+        <div className="p-4 rounded-xl border border-accent/20 bg-accent-subtle shadow-sm">
+          <div className="text-xs font-semibold text-accent dark:text-[#FFC46B] flex items-center gap-1.5">
             <Play className="w-3.5 h-3.5" /> Sedang Dikerjakan
           </div>
-          <div className="text-2xl font-bold text-blue-900 dark:text-blue-300 mt-1">{inProgressCount}</div>
+          <div className="text-2xl font-bold text-accent dark:text-[#FFC46B] mt-1">{inProgressCount}</div>
         </div>
         <div className="p-4 rounded-xl border border-emerald-200/60 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-950/20 shadow-sm">
           <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
@@ -296,36 +296,36 @@ export function RequisitionsClient({
       )}
 
       {/* Filter and Search Bar */}
-      <div className="p-4 rounded-xl border border-border bg-white dark:bg-zinc-800 shadow-sm space-y-3.5">
+      <div className="p-4 rounded-xl border border-border bg-surface shadow-sm space-y-3.5">
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           {/* Direction Tabs */}
-          <div className="flex bg-zinc-100 dark:bg-zinc-900 p-1 rounded-lg">
+          <div className="flex bg-surface-muted p-1 rounded-xl border border-border">
             <button
               onClick={() => setTab('all')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 tab === 'all'
-                  ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+                  ? 'bg-accent text-white shadow-sm'
+                  : 'text-text-muted hover:text-text'
               }`}
             >
               Semua ({totalCount})
             </button>
             <button
               onClick={() => setTab('incoming')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 tab === 'incoming'
-                  ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+                  ? 'bg-accent text-white shadow-sm'
+                  : 'text-text-muted hover:text-text'
               }`}
             >
               {t('requisition.tabIncoming')}
             </button>
             <button
               onClick={() => setTab('outgoing')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 tab === 'outgoing'
-                  ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+                  ? 'bg-accent text-white shadow-sm'
+                  : 'text-text-muted hover:text-text'
               }`}
             >
               {t('requisition.tabOutgoing')}
@@ -334,13 +334,13 @@ export function RequisitionsClient({
 
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-text-muted absolute left-3 top-2.5" />
             <input
               type="text"
               placeholder="Cari kode REQ-, judul, barang, pemohon..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs rounded-lg border border-border pl-9 pr-3 py-2 bg-zinc-50 dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full text-xs rounded-xl border border-border pl-9 pr-3 py-2 bg-surface focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
         </div>
@@ -437,9 +437,9 @@ export function RequisitionsClient({
                   <span className="bg-white dark:bg-zinc-800 px-2 py-0.5 rounded border border-border text-zinc-800 dark:text-zinc-200">
                     {req.fromDivision.name} ({req.fromDivision.code})
                   </span>
-                  <ArrowRight className="w-4 h-4 text-zinc-400 mx-1 flex-shrink-0" />
-                  <span className="text-zinc-500">Tujuan:</span>
-                  <span className="bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-2 py-0.5 rounded">
+                  <ArrowRight className="w-4 h-4 text-text-muted mx-1 flex-shrink-0" />
+                  <span className="text-text-muted">Tujuan:</span>
+                  <span className="bg-accent-subtle text-accent dark:text-[#FFC46B] border border-accent/25 px-2 py-0.5 rounded">
                     {req.toDivision.name} ({req.toDivision.code})
                   </span>
                 </div>
@@ -597,14 +597,14 @@ export function RequisitionsClient({
                   </thead>
                   <tbody className="divide-y divide-border">
                     {selectedReqForDetail.items.map((item) => (
-                      <tr key={item.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-700/20">
-                        <td className="px-4 py-2.5 font-medium text-zinc-800 dark:text-zinc-200">
+                      <tr key={item.id} className="hover:bg-surface-muted">
+                        <td className="px-4 py-2.5 font-medium text-text">
                           {item.name}
                         </td>
-                        <td className="px-4 py-2.5 text-center font-bold text-indigo-600 dark:text-indigo-400">
+                        <td className="px-4 py-2.5 text-center font-bold text-accent dark:text-[#FFC46B]">
                           {item.quantity}
                         </td>
-                        <td className="px-4 py-2.5 text-zinc-500">{item.unit}</td>
+                        <td className="px-4 py-2.5 text-text-muted">{item.unit}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -614,27 +614,27 @@ export function RequisitionsClient({
 
             {/* Audit Trail & State Transitions Timeline */}
             <div>
-              <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">
                 Linimasa Transisi Status & Jejak Audit
               </h4>
               {selectedReqForDetail.events.length === 0 ? (
-                <div className="text-xs text-zinc-400 p-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
+                <div className="text-xs text-text-subtle p-3 bg-surface-muted rounded-xl border border-border">
                   Belum ada catatan riwayat perubahan.
                 </div>
               ) : (
-                <div className="space-y-3 relative before:absolute before:left-3.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-zinc-200 dark:before:bg-zinc-700">
+                <div className="space-y-3 relative before:absolute before:left-3.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-border">
                   {selectedReqForDetail.events.map((ev, idx) => (
                     <div key={ev.id || idx} className="flex items-start gap-3 relative pl-8">
-                      <div className="w-7 h-7 rounded-full bg-white dark:bg-zinc-800 border-2 border-indigo-500 flex items-center justify-center absolute left-0 top-0 text-indigo-600 dark:text-indigo-400 shadow-sm">
+                      <div className="w-7 h-7 rounded-full bg-surface border-2 border-accent flex items-center justify-center absolute left-0 top-0 text-accent dark:text-[#FFC46B] shadow-sm">
                         <ShieldCheck className="w-3.5 h-3.5" />
                       </div>
-                      <div className="bg-zinc-50 dark:bg-zinc-900/60 border border-border rounded-xl p-3 flex-1 text-xs">
+                      <div className="bg-surface-muted border border-border rounded-xl p-3 flex-1 text-xs">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="font-bold text-zinc-800 dark:text-zinc-200">
+                          <span className="font-bold text-text">
                             {ev.fromStatus ? `${ev.fromStatus} ➔ ` : ''}
-                            <span className="text-indigo-600 dark:text-indigo-400">{ev.toStatus}</span>
+                            <span className="text-accent dark:text-[#FFC46B]">{ev.toStatus}</span>
                           </span>
-                          <span className="text-[11px] text-zinc-400">
+                          <span className="text-[11px] text-text-muted">
                             {new Date(ev.createdAt).toLocaleString('id-ID')}
                           </span>
                         </div>
@@ -813,7 +813,7 @@ export function RequisitionsClient({
                     onClick={() =>
                       setNewItems([...newItems, { name: '', quantity: 1, unit: 'unit' }])
                     }
-                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+                    className="text-xs font-semibold text-accent hover:text-accent-hover dark:text-[#FFC46B]"
                   >
                     + Tambah Item
                   </button>
@@ -831,7 +831,7 @@ export function RequisitionsClient({
                           copy[idx].name = e.target.value;
                           setNewItems(copy);
                         }}
-                        className="flex-1 text-xs rounded-xl border border-border p-2 bg-zinc-50 dark:bg-zinc-900"
+                        className="flex-1 text-xs rounded-xl border border-border p-2 bg-surface text-text"
                       />
                       <input
                         type="number"
@@ -843,7 +843,7 @@ export function RequisitionsClient({
                           copy[idx].quantity = Number(e.target.value);
                           setNewItems(copy);
                         }}
-                        className="w-20 text-xs rounded-xl border border-border p-2 bg-zinc-50 dark:bg-zinc-900"
+                        className="w-20 text-xs rounded-xl border border-border p-2 bg-surface text-text"
                       />
                       <input
                         type="text"
@@ -854,7 +854,7 @@ export function RequisitionsClient({
                           copy[idx].unit = e.target.value;
                           setNewItems(copy);
                         }}
-                        className="w-24 text-xs rounded-xl border border-border p-2 bg-zinc-50 dark:bg-zinc-900"
+                        className="w-24 text-xs rounded-xl border border-border p-2 bg-surface text-text"
                       />
                       {newItems.length > 1 && (
                         <button
@@ -862,7 +862,7 @@ export function RequisitionsClient({
                           onClick={() => {
                             setNewItems(newItems.filter((_, i) => i !== idx));
                           }}
-                          className="p-1.5 text-zinc-400 hover:text-rose-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                          className="p-1.5 text-text-subtle hover:text-rose-600 rounded-lg hover:bg-surface-muted"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -876,14 +876,14 @@ export function RequisitionsClient({
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-xl"
+                  className="px-4 py-2 text-xs font-medium text-text-muted hover:bg-surface-muted rounded-xl"
                 >
                   {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm"
+                  className="px-4 py-2 text-xs font-semibold bg-accent hover:bg-accent-hover text-white rounded-xl shadow-sm transition-all hover:shadow-md hover:shadow-accent/20"
                 >
                   {t('common.save')} & Ajukan
                 </button>

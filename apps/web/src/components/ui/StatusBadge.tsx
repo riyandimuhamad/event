@@ -49,7 +49,7 @@ export function StatusBadge({ status, context = 'requisition' }: StatusBadgeProp
         break;
       case 'IN_PROGRESS':
         label = t('requisition.status.IN_PROGRESS');
-        colorClass = 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800';
+        colorClass = 'bg-accent-subtle text-accent dark:text-[#FFC46B] border-accent/25 dark:border-accent/40';
         Icon = Clock;
         break;
       case 'FULFILLED':
@@ -134,7 +134,7 @@ export function StatusBadge({ status, context = 'requisition' }: StatusBadgeProp
         break;
       case 'PRINTED':
         label = t('postEvent.certStatus.PRINTED');
-        colorClass = 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800';
+        colorClass = 'bg-accent-subtle text-accent dark:text-[#FFC46B] border-accent/25 dark:border-accent/40';
         Icon = FileCheck;
         break;
       case 'DELIVERED':

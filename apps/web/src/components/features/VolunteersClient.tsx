@@ -164,26 +164,26 @@ export function VolunteersClient({
           </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-indigo-200/60 dark:border-indigo-900/50 bg-indigo-50/50 dark:bg-indigo-950/20 shadow-sm">
-          <div className="text-xs font-semibold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5">
+        <div className="p-4 rounded-xl border border-accent/25 bg-accent-subtle shadow-sm">
+          <div className="text-xs font-semibold text-accent dark:text-[#FFC46B] flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5" /> Hadir / Check-in Hari H
           </div>
-          <div className="text-2xl font-bold text-indigo-900 dark:text-indigo-300 mt-1">
+          <div className="text-2xl font-bold text-accent dark:text-[#FFC46B] mt-1">
             {checkedInCount}
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white dark:bg-zinc-800 border border-border rounded-xl p-4 shadow-sm flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+      <div className="bg-surface border border-border rounded-xl p-4 shadow-sm flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-text-muted absolute left-3 top-2.5" />
           <input
             type="text"
             placeholder="Cari nama relawan atau kode VOL-XXXX..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full text-xs rounded-xl border border-border pl-9 pr-3 py-2 bg-zinc-50 dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full text-xs rounded-xl border border-border pl-9 pr-3 py-2 bg-surface focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
 
@@ -191,7 +191,7 @@ export function VolunteersClient({
           <select
             value={selectedDivision}
             onChange={(e) => setSelectedDivision(e.target.value)}
-            className="text-xs rounded-xl border border-border px-3 py-2 bg-zinc-50 dark:bg-zinc-900 font-medium text-zinc-700 dark:text-zinc-300"
+            className="text-xs rounded-xl border border-border px-3 py-2 bg-surface font-medium text-text"
           >
             <option value="all">Semua Divisi</option>
             {divisions.map((d) => (
@@ -252,34 +252,34 @@ export function VolunteersClient({
                         <button
                           onClick={() => setSelectedVolunteerForIdCard(vol)}
                           title="Klik untuk lihat ID Card"
-                          className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-mono font-bold text-xs border border-indigo-200 dark:border-indigo-800 hover:scale-105 transition-transform"
+                          className="w-9 h-9 rounded-xl bg-accent-subtle text-accent dark:text-[#FFC46B] flex items-center justify-center font-mono font-bold text-xs border border-accent/25 hover:scale-105 transition-transform"
                         >
                           <QrCode className="w-4 h-4" />
                         </button>
                         <div>
-                          <div className="font-semibold text-zinc-900 dark:text-zinc-100">
+                          <div className="font-semibold text-text">
                             {vol.fullName}
                           </div>
-                          <div className="font-mono text-xs text-zinc-400 tabular-nums">
+                          <div className="font-mono text-xs text-text-muted tabular-nums">
                             {vol.code}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                      <span className="inline-flex px-2.5 py-1 rounded-lg bg-surface-muted text-xs font-medium text-text">
                         {vol.division?.name || 'Belum Ditentukan'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-mono text-xs font-bold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-700">
+                      <span className="font-mono text-xs font-bold text-text bg-surface-muted px-2 py-0.5 rounded border border-border">
                         {vol.shirtSize || '-'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       {vol.shifts.length > 0 ? (
                         <div className="space-y-1">
-                          <div className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                          <div className="text-xs font-medium text-text">
                             {vol.shifts[0].shift.name}
                           </div>
                           {checkedIn ? (
@@ -287,11 +287,11 @@ export function VolunteersClient({
                               <CheckCircle2 className="w-3 h-3" /> Sudah Check-in
                             </span>
                           ) : (
-                            <span className="text-[11px] text-zinc-400">Belum Check-in</span>
+                            <span className="text-[11px] text-text-muted">Belum Check-in</span>
                           )}
                         </div>
                       ) : (
-                        <span className="text-xs text-zinc-400">Belum ada shift</span>
+                        <span className="text-xs text-text-muted">Belum ada shift</span>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -301,7 +301,7 @@ export function VolunteersClient({
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => setSelectedVolunteerForIdCard(vol)}
-                          className="px-2.5 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg border border-indigo-200 dark:border-indigo-800 transition-colors"
+                          className="px-2.5 py-1 text-xs font-semibold text-accent dark:text-[#FFC46B] hover:bg-accent-subtle rounded-lg border border-accent/25 transition-colors"
                         >
                           Lihat ID Pas
                         </button>
@@ -385,7 +385,7 @@ export function VolunteersClient({
               <div className="pt-2 border-t border-border flex items-center justify-between gap-2">
                 <button
                   onClick={() => setSelectedVolunteerForIdCard(vol)}
-                  className="px-3 py-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 rounded-lg border border-indigo-200 dark:border-indigo-800 flex items-center gap-1.5"
+                  className="px-3 py-1.5 text-xs font-semibold text-accent dark:text-[#FFC46B] bg-accent-subtle rounded-lg border border-accent/25 flex items-center gap-1.5"
                 >
                   <QrCode className="w-3.5 h-3.5" /> ID Card Pas
                 </button>
@@ -416,57 +416,57 @@ export function VolunteersClient({
 
       {/* Volunteer Official ID Card / Lanyard Modal */}
       {selectedVolunteerForIdCard && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-border space-y-5 text-center relative overflow-hidden">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-surface rounded-3xl max-w-sm w-full p-6 shadow-2xl border-2 border-accent/30 space-y-5 text-center relative overflow-hidden">
             {/* Top Lanyard Punch hole */}
-            <div className="w-12 h-3.5 bg-zinc-200 dark:bg-zinc-700 rounded-full mx-auto border border-border mb-2" />
+            <div className="w-12 h-3.5 bg-surface-muted rounded-full mx-auto border border-border mb-2" />
 
             <div className="space-y-1">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-indigo-600 dark:text-indigo-400">
+              <div className="text-[10px] uppercase font-bold tracking-widest text-[#FFC46B] bg-[#2A1411] px-3 py-1 rounded-full inline-block border border-accent/30">
                 Official Staff & Volunteer Pass
               </div>
-              <h3 className="text-lg font-extrabold text-zinc-900 dark:text-zinc-50">
+              <h3 className="text-lg font-extrabold text-text">
                 EventOps Management
               </h3>
             </div>
 
             {/* Profile badge */}
             <div className="py-2">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white font-extrabold text-2xl flex items-center justify-center mx-auto shadow-md">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#7A2E33] to-[#4A171B] text-[#FFC46B] font-extrabold text-2xl flex items-center justify-center mx-auto shadow-md border border-[#7A2E33]/50">
                 {selectedVolunteerForIdCard.fullName.slice(0, 2).toUpperCase()}
               </div>
-              <h4 className="text-base font-bold text-zinc-900 dark:text-zinc-100 mt-3">
+              <h4 className="text-base font-bold text-text mt-3">
                 {selectedVolunteerForIdCard.fullName}
               </h4>
-              <div className="font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-0.5">
+              <div className="font-mono text-xs font-semibold text-text-muted mt-0.5">
                 {selectedVolunteerForIdCard.code}
               </div>
             </div>
 
             {/* Division Badge & Specs */}
-            <div className="bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl p-3 border border-border text-xs space-y-2">
+            <div className="bg-surface-muted rounded-2xl p-3 border border-border text-xs space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-zinc-500">Divisi:</span>
-                <span className="font-bold text-indigo-700 dark:text-indigo-400">
+                <span className="text-text-muted">Divisi:</span>
+                <span className="font-bold text-accent dark:text-[#FFC46B]">
                   {selectedVolunteerForIdCard.division?.name || 'Umum'}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-zinc-500">Ukuran Kaos:</span>
-                <span className="font-mono font-bold text-zinc-800 dark:text-zinc-200">
+                <span className="text-text-muted">Ukuran Kaos:</span>
+                <span className="font-mono font-bold text-text">
                   {selectedVolunteerForIdCard.shirtSize || 'L'}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-zinc-500">Status Validasi:</span>
-                <span className="font-semibold text-emerald-600">Terverifikasi Resmi</span>
+                <span className="text-text-muted">Status Validasi:</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400">Terverifikasi Resmi</span>
               </div>
             </div>
 
             {/* High fidelity QR Code representation */}
-            <div className="bg-white p-3 rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 inline-block shadow-inner">
-              <div className="w-32 h-32 flex flex-col items-center justify-center bg-zinc-900 rounded-xl text-white p-2">
-                <QrCode className="w-20 h-20 text-white" />
+            <div className="bg-white p-3 rounded-2xl border-2 border-dashed border-border inline-block shadow-inner">
+              <div className="w-32 h-32 flex flex-col items-center justify-center bg-[#1B0E0D] rounded-xl text-white p-2">
+                <QrCode className="w-20 h-20 text-[#FFC46B]" />
                 <span className="font-mono text-[9px] mt-1 text-zinc-300">
                   {selectedVolunteerForIdCard.code}
                 </span>
@@ -476,14 +476,14 @@ export function VolunteersClient({
             <div className="flex items-center justify-center gap-2 pt-2 border-t border-border">
               <button
                 onClick={() => window.print()}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl inline-flex items-center gap-1.5 shadow-sm"
+                className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-xl inline-flex items-center gap-1.5 shadow-md shadow-accent/20"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>Cetak ID Card</span>
               </button>
               <button
                 onClick={() => setSelectedVolunteerForIdCard(null)}
-                className="px-4 py-2 bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 text-zinc-700 dark:text-zinc-300 text-xs font-semibold rounded-xl"
+                className="px-4 py-2 bg-surface-muted hover:bg-border text-text text-xs font-semibold rounded-xl border border-border"
               >
                 Tutup
               </button>

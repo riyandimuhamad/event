@@ -162,11 +162,11 @@ export function PostEventClient({
           </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-indigo-200/60 dark:border-indigo-900/50 bg-indigo-50/50 dark:bg-indigo-950/20 shadow-sm">
-          <div className="text-xs font-semibold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5">
+        <div className="p-4 rounded-xl border border-accent/25 bg-accent-subtle shadow-sm">
+          <div className="text-xs font-semibold text-accent dark:text-[#FFC46B] flex items-center gap-1.5">
             <Award className="w-3.5 h-3.5" /> Sertifikat Diterbitkan
           </div>
-          <div className="text-xl font-bold text-indigo-900 dark:text-indigo-300 mt-1 tabular-nums">
+          <div className="text-xl font-bold text-accent dark:text-[#FFC46B] mt-1 tabular-nums">
             {issuedCertCount} Dokumen
           </div>
         </div>
@@ -178,8 +178,8 @@ export function PostEventClient({
           onClick={() => setActiveTab('fee')}
           className={`pb-3 text-sm font-semibold border-b-2 flex items-center gap-2 transition-colors ${
             activeTab === 'fee'
-              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-              : 'border-transparent text-zinc-500 hover:text-zinc-700'
+              ? 'border-accent text-accent dark:text-[#FFC46B]'
+              : 'border-transparent text-text-muted hover:text-text'
           }`}
         >
           <Wallet className="w-4 h-4" />
@@ -191,8 +191,8 @@ export function PostEventClient({
           onClick={() => setActiveTab('certificate')}
           className={`pb-3 text-sm font-semibold border-b-2 flex items-center gap-2 transition-colors ${
             activeTab === 'certificate'
-              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-              : 'border-transparent text-zinc-500 hover:text-zinc-700'
+              ? 'border-accent text-accent dark:text-[#FFC46B]'
+              : 'border-transparent text-text-muted hover:text-text'
           }`}
         >
           <Award className="w-4 h-4" />
@@ -441,54 +441,55 @@ export function PostEventClient({
 
       {/* Official Certificate of Appreciation Modal */}
       {selectedCertForPreview && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl max-w-2xl w-full p-8 shadow-2xl border-4 border-amber-400/40 space-y-6 text-center relative overflow-hidden">
-            {/* Certificate Header Banner */}
-            <div className="space-y-1">
-              <div className="text-xs uppercase font-extrabold tracking-widest text-amber-600 dark:text-amber-400">
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#FAF7F2] dark:bg-[#1E0F0E] rounded-3xl max-w-2xl w-full p-8 sm:p-10 shadow-2xl border-4 border-[#7A2E33]/60 dark:border-[#FFC46B]/50 space-y-6 text-center relative overflow-hidden">
+            {/* Top decorative emblem */}
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-subtle border border-accent/25 text-[10px] uppercase font-bold tracking-widest text-accent dark:text-[#FFC46B]">
+                <Award className="w-3.5 h-3.5 text-[#FFC46B]" />
                 EventOps Management Certificate of Excellence
               </div>
-              <h2 className="text-2xl font-serif font-bold text-zinc-900 dark:text-zinc-50 uppercase tracking-wider">
+              <h2 className="text-2xl font-serif font-bold text-text uppercase tracking-widest mt-1">
                 Piagam Penghargaan
               </h2>
-              <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-2" />
+              <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-[#FFC46B] to-transparent mx-auto mt-2" />
             </div>
 
-            <p className="text-xs text-zinc-500 italic">
+            <p className="text-xs text-text-muted italic">
               Dengan bangga diberikan kepada saudara/i:
             </p>
 
             <div className="py-2">
-              <h3 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-100 font-serif underline decoration-amber-400 decoration-2 underline-offset-8">
+              <h3 className="text-2xl font-extrabold text-text font-serif underline decoration-[#FFC46B] decoration-2 underline-offset-8">
                 {selectedCertForPreview.recipientName}
               </h3>
-              <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mt-3">
+              <p className="text-sm font-semibold text-accent dark:text-[#FFC46B] mt-3">
                 Atas dedikasi dan kontribusi luar biasa pada Divisi {selectedCertForPreview.recipientDivision}
               </p>
             </div>
 
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed">
+            <p className="text-xs text-text-muted max-w-lg mx-auto leading-relaxed">
               Telah menunjukkan integritas, loyalitas, serta performa operasional berstandar tinggi
               dalam menyukseskan seluruh rangkaian acara EventOps Nusantara.
             </p>
 
             {/* Bottom credential footer */}
-            <div className="grid grid-cols-2 gap-4 pt-6 border-t border-zinc-200 dark:border-zinc-800 text-left">
+            <div className="grid grid-cols-2 gap-4 pt-6 border-t border-border text-left">
               <div>
-                <div className="text-[10px] text-zinc-400 uppercase font-semibold">Nomor Registrasi Dokumen</div>
-                <div className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                <div className="text-[10px] text-text-subtle uppercase font-semibold">Nomor Registrasi Dokumen</div>
+                <div className="font-mono text-xs font-bold text-text">
                   {selectedCertForPreview.certificateNumber ||
                     'CERT-EO-' + selectedCertForPreview.id.slice(0, 8).toUpperCase()}
                 </div>
-                <div className="text-[10px] text-zinc-400 mt-1">Status: Terverifikasi Digital</div>
+                <div className="text-[10px] text-text-muted mt-1">Status: Terverifikasi Digital</div>
               </div>
 
               <div className="text-right">
-                <div className="text-[10px] text-zinc-400 uppercase font-semibold">Komite Pelaksana</div>
-                <div className="font-serif font-bold text-xs text-zinc-900 dark:text-zinc-100 mt-0.5">
+                <div className="text-[10px] text-text-subtle uppercase font-semibold">Komite Pelaksana</div>
+                <div className="font-serif font-bold text-xs text-text mt-0.5">
                   EventOps Organizing Committee
                 </div>
-                <div className="text-[10px] text-emerald-600 font-semibold mt-1">
+                <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
                   ✓ Validated by Cryptographic Signature
                 </div>
               </div>
@@ -497,14 +498,14 @@ export function PostEventClient({
             <div className="flex items-center justify-center gap-3 pt-4 border-t border-border">
               <button
                 onClick={() => window.print()}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-sm"
+                className="px-5 py-2.5 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-md shadow-accent/20 transition-all hover:scale-105"
               >
                 <Printer className="w-4 h-4" />
                 <span>Cetak Piagam Resmi</span>
               </button>
               <button
                 onClick={() => setSelectedCertForPreview(null)}
-                className="px-4 py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-semibold rounded-xl"
+                className="px-5 py-2.5 bg-surface-muted hover:bg-border text-text text-xs font-semibold rounded-xl border border-border transition-colors"
               >
                 Tutup
               </button>

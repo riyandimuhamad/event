@@ -64,7 +64,7 @@ export function AppShell({
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+    <div className="flex min-h-screen bg-bg text-text">
       {/* Sidebar with desktop collapse and mobile drawer support */}
       <Sidebar
         orgSlug={orgSlug}
@@ -77,8 +77,12 @@ export function AppShell({
         onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
-      {/* Main Layout Area */}
-      <div className="flex-1 flex flex-col min-w-0 transition-all duration-200">
+      {/* Main Layout Area - padded to clear floating sidebar on large screens */}
+      <div
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
+          isSidebarCollapsed ? 'lg:pl-28' : 'lg:pl-72'
+        }`}
+      >
         <Header
           orgName={orgName}
           eventName={eventName}
@@ -89,7 +93,7 @@ export function AppShell({
           onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
           {children}
         </main>
       </div>

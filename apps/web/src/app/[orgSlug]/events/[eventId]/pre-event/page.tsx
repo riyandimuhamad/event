@@ -40,40 +40,40 @@ export default async function PreEventPage({ params }: PreEventPageProps) {
           return (
             <div
               key={item.id}
-              className="bg-white dark:bg-zinc-800 border border-border rounded-xl p-5 shadow-sm space-y-4"
+              className="bg-surface border border-border rounded-2xl p-5 shadow-sm space-y-4 hover:border-accent/40 transition-colors"
             >
               <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-accent-subtle text-accent dark:text-[#FFC46B] border border-accent/20 flex items-center justify-center">
                   <Icon className="w-5 h-5" />
                 </div>
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-700">
+                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-surface-muted text-text-muted border border-border">
                   {item.category}
                 </span>
               </div>
 
               <div>
-                <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-base">{item.name}</h2>
+                <h2 className="font-bold text-text text-base">{item.name}</h2>
                 {item.variant && (
-                  <p className="text-xs text-zinc-500 mt-0.5">Varian: {item.variant}</p>
+                  <p className="text-xs text-text-muted mt-0.5">Varian: {item.variant}</p>
                 )}
               </div>
 
               <div className="space-y-2 pt-2 border-t border-border">
                 <div className="flex justify-between text-xs">
-                  <span className="text-zinc-500">Total Stok Fisik:</span>
-                  <span className="font-bold text-zinc-800 dark:text-zinc-200 tabular-nums">
+                  <span className="text-text-muted">Total Stok Fisik:</span>
+                  <span className="font-bold text-text tabular-nums">
                     {item.totalStock} unit
                   </span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-zinc-500">Telah Diambil:</span>
-                  <span className="font-bold text-emerald-600 tabular-nums">
+                  <span className="text-text-muted">Telah Diambil:</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
                     {item.distributed} unit
                   </span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-zinc-500">Sisa Tersedia:</span>
-                  <span className="font-bold text-indigo-600 tabular-nums">
+                  <span className="text-text-muted">Sisa Tersedia:</span>
+                  <span className="font-bold text-accent dark:text-[#FFC46B] tabular-nums">
                     {remaining} unit
                   </span>
                 </div>

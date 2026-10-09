@@ -303,7 +303,7 @@ export function DayOfClient({
           onClick={() => setActiveTab('consumption')}
           className={`pb-3 text-sm font-bold border-b-2 flex items-center gap-2 transition-all ${
             activeTab === 'consumption'
-              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+              ? 'border-accent text-accent dark:text-[#FFC46B]'
               : 'border-transparent text-text-muted hover:text-text'
           }`}
         >
@@ -314,7 +314,7 @@ export function DayOfClient({
           onClick={() => setActiveTab('checkin')}
           className={`pb-3 text-sm font-bold border-b-2 flex items-center gap-2 transition-all ${
             activeTab === 'checkin'
-              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+              ? 'border-accent text-accent dark:text-[#FFC46B]'
               : 'border-transparent text-text-muted hover:text-text'
           }`}
         >
@@ -341,8 +341,8 @@ export function DayOfClient({
                   type="button"
                   className={`p-4 rounded-2xl border text-left transition-all ${
                     isSelected
-                      ? 'bg-accent-subtle border-indigo-500 ring-2 ring-indigo-500/30 shadow-md'
-                      : 'premium-card hover:border-zinc-300 dark:hover:border-zinc-700'
+                      ? 'bg-accent-subtle border-accent ring-2 ring-accent/30 shadow-md'
+                      : 'premium-card hover:border-border'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -356,7 +356,7 @@ export function DayOfClient({
                   <div className="font-bold text-sm text-text truncate">{s.label}</div>
                   <div className="w-full bg-surface-muted rounded-full h-1.5 mt-2.5 overflow-hidden">
                     <div
-                      className="bg-indigo-600 h-1.5 rounded-full transition-all duration-300"
+                      className="bg-accent h-1.5 rounded-full transition-all duration-300"
                       style={{ width: `${slotPercent}%` }}
                     ></div>
                   </div>
@@ -396,7 +396,7 @@ export function DayOfClient({
               {/* Progress Bar */}
               <div className="w-full bg-surface-muted rounded-full h-3 mt-4 overflow-hidden p-0.5">
                 <div
-                  className="bg-gradient-to-r from-indigo-500 via-indigo-600 to-teal-500 h-full rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-accent via-[#A83E45] to-[#FFC46B] h-full rounded-full transition-all duration-300"
                   style={{ width: `${servedPercentage}%` }}
                 ></div>
               </div>
@@ -434,7 +434,7 @@ export function DayOfClient({
                   placeholder="Cari nama atau kode..."
                   value={recipientSearch}
                   onChange={(e) => setRecipientSearch(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-border pl-8 pr-3 py-2 bg-surface focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full text-xs rounded-xl border border-border pl-8 pr-3 py-2 bg-surface focus:outline-none focus:ring-2 focus:ring-accent"
                 />
               </div>
             </div>
@@ -475,7 +475,7 @@ export function DayOfClient({
                         onClick={() => handleDistributeMeal(rec)}
                         disabled={!rec.hasCheckedIn}
                         type="button"
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl shadow-sm transition-all hover:scale-105 active:scale-95"
+                        className="px-4 py-2 bg-accent hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl shadow-sm transition-all hover:scale-105 active:scale-95 shadow-accent/20"
                       >
                         {t('dayOf.giveMeal')}
                       </button>
@@ -493,7 +493,7 @@ export function DayOfClient({
         <div className="max-w-xl mx-auto space-y-6">
           <div className="premium-card p-8">
             <div className="text-center mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white mx-auto flex items-center justify-center mb-3 shadow-lg shadow-indigo-500/20">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#7A2E33] to-[#4A171B] text-[#FFC46B] mx-auto flex items-center justify-center mb-3 shadow-lg shadow-accent/20 border border-[#7A2E33]/60">
                 <QrCode className="w-7 h-7" />
               </div>
               <h2 className="text-xl font-extrabold text-text">Stasiun Presensi Check-in</h2>
@@ -511,13 +511,13 @@ export function DayOfClient({
                   placeholder="Ketik kode: VOL-0001"
                   value={volunteerCodeInput}
                   onChange={(e) => setVolunteerCodeInput(e.target.value.toUpperCase())}
-                  className="w-full text-center text-xl font-mono font-black tracking-widest rounded-2xl border border-border p-4 bg-surface focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner"
+                  className="w-full text-center text-xl font-mono font-black tracking-widest rounded-2xl border border-border p-4 bg-surface focus:outline-none focus:ring-2 focus:ring-accent shadow-inner text-text"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-sm rounded-xl shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                className="w-full py-3.5 bg-accent hover:bg-accent-hover text-white font-extrabold text-sm rounded-xl shadow-md shadow-accent/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
                 Konfirmasi Check-in Lapangan
               </button>

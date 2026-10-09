@@ -29,28 +29,28 @@ export default async function DivisionsPage({ params }: DivisionsPageProps) {
         {divisions.map((d) => (
           <div
             key={d.id}
-            className="bg-white dark:bg-zinc-800 border border-border rounded-xl p-5 shadow-sm space-y-4 hover:border-zinc-300 transition-colors"
+            className="bg-surface border border-border rounded-2xl p-5 shadow-sm space-y-4 hover:border-accent/40 transition-colors"
           >
             <div className="flex items-start justify-between">
               <div>
-                <span className="font-mono text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-0.5 rounded border border-indigo-200">
+                <span className="font-mono text-xs font-bold text-accent dark:text-[#FFC46B] bg-accent-subtle px-2.5 py-0.5 rounded-lg border border-accent/25">
                   {d.code}
                 </span>
-                <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mt-2">
+                <h2 className="text-lg font-bold text-text mt-2">
                   {d.name}
                 </h2>
               </div>
             </div>
 
-            <p className="text-xs text-zinc-500 line-clamp-2">{d.description || 'Tidak ada deskripsi.'}</p>
+            <p className="text-xs text-text-muted line-clamp-2">{d.description || 'Tidak ada deskripsi.'}</p>
 
             <div className="pt-2 border-t border-border space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-500 flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5 text-indigo-600" />
+                <span className="text-text-muted flex items-center gap-1.5">
+                  <Shield className="w-3.5 h-3.5 text-accent dark:text-[#FFC46B]" />
                   Kepala Divisi:
                 </span>
-                <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+                <span className="font-semibold text-text">
                   {d.headUser?.fullName || 'Belum Ditunjuk'}
                 </span>
               </div>

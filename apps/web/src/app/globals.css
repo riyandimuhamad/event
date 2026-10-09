@@ -4,55 +4,83 @@
 
 @layer base {
   :root {
-    --bg: #F8FAFC;
+    /* Maroon Luxury & Warm Paper Palette (Light Mode) */
+    --bg: #F7F4EE;
     --surface: #FFFFFF;
-    --surface-muted: #F1F5F9;
+    --surface-muted: #EFEBE3;
     --surface-elevated: #FFFFFF;
-    --border: #E2E8F0;
-    --border-subtle: #F1F5F9;
-    --text: #0F172A;
-    --text-muted: #64748B;
-    --text-subtle: #94A3B8;
-    --accent: #4F46E5;
-    --accent-hover: #4338CA;
-    --accent-subtle: #EEF2FF;
-    --success: #10B981;
-    --success-subtle: #ECFDF5;
-    --warning: #F59E0B;
-    --warning-subtle: #FFFBEB;
-    --danger: #EF4444;
-    --danger-subtle: #FEF2F2;
-    --info: #0284C7;
-    --info-subtle: #F0F9FF;
+    --border: #E2DDD3;
+    --border-subtle: #EBE6DC;
+    --text: #1C1412;
+    --text-muted: #7A7066;
+    --text-subtle: #A3998E;
     
-    --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-    --card-shadow-hover: 0 10px 25px -5px rgb(0 0 0 / 0.07), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+    /* Brand Maroon / Wine Accents */
+    --accent: #7A2A2E;
+    --accent-hover: #632024;
+    --accent-subtle: #F6EDED;
+    --accent-contrast: #FFFFFF;
+
+    /* Functional semantic alerts */
+    --success: #2A7E4B;
+    --success-subtle: #EDF7F0;
+    --warning: #C27803;
+    --warning-subtle: #FEF8ED;
+    --danger: #BA2828;
+    --danger-subtle: #FDF1F1;
+    --info: #3562A6;
+    --info-subtle: #EDF3FC;
+
+    /* Warm Maroon Tokens */
+    --maroon-frame: #7A2E33;
+    --maroon-brand: #7A2A2E;
+    --maroon-night: #2A1411;
+    --maroon-card: #3B1816;
+    --maroon-cream: #EFE9DF;
+    --maroon-glow: #FFC46B;
+
+    --card-shadow: 0 1px 3px 0 rgba(40, 20, 10, 0.04), 0 1px 2px -1px rgba(40, 20, 10, 0.04);
+    --card-shadow-hover: 0 12px 28px -6px rgba(40, 20, 10, 0.09), 0 6px 12px -4px rgba(40, 20, 10, 0.04);
   }
 
   .dark {
-    --bg: #090A0F;
-    --surface: #11131B;
-    --surface-muted: #1A1D27;
-    --surface-elevated: #161822;
-    --border: #232736;
-    --border-subtle: #181B26;
-    --text: #F8FAFC;
-    --text-muted: #94A3B8;
-    --text-subtle: #64748B;
-    --accent: #6366F1;
-    --accent-hover: #818CF8;
-    --accent-subtle: rgba(99, 102, 241, 0.12);
-    --success: #34D399;
-    --success-subtle: rgba(52, 211, 153, 0.12);
-    --warning: #FBBF24;
-    --warning-subtle: rgba(251, 191, 36, 0.12);
-    --danger: #F87171;
-    --danger-subtle: rgba(248, 113, 113, 0.12);
-    --info: #38BDF8;
-    --info-subtle: rgba(56, 189, 248, 0.12);
+    /* Deep Chocolate Burgundy & Linen Palette (Dark Mode) */
+    --bg: #1B0E0D;
+    --surface: #241312;
+    --surface-muted: #2E1917;
+    --surface-elevated: #361E1C;
+    --border: #3D2422;
+    --border-subtle: #2D1A18;
+    --text: #EFE9DF;
+    --text-muted: #ABA095;
+    --text-subtle: #7A7067;
 
-    --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
-    --card-shadow-hover: 0 10px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+    /* Brand Maroon Accents */
+    --accent: #A83E45;
+    --accent-hover: #BD4B53;
+    --accent-subtle: rgba(168, 62, 69, 0.18);
+    --accent-contrast: #FFFFFF;
+
+    /* Functional semantic alerts */
+    --success: #44B871;
+    --success-subtle: rgba(68, 184, 113, 0.14);
+    --warning: #F5A623;
+    --warning-subtle: rgba(245, 166, 35, 0.14);
+    --danger: #E85D5D;
+    --danger-subtle: rgba(232, 93, 93, 0.14);
+    --info: #5B95E0;
+    --info-subtle: rgba(91, 149, 224, 0.14);
+
+    /* Warm Maroon Tokens */
+    --maroon-frame: #7A2E33;
+    --maroon-brand: #A83E45;
+    --maroon-night: #150A09;
+    --maroon-card: #2B1413;
+    --maroon-cream: #EFE9DF;
+    --maroon-glow: #FFC46B;
+
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 14px 30px -6px rgba(0, 0, 0, 0.7), 0 8px 14px -4px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -66,14 +94,14 @@ body {
 
 /* Glassmorphism primitives */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(247, 244, 238, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
 }
 
 .dark .glass-panel {
-  background: rgba(17, 19, 27, 0.85);
+  background: rgba(36, 19, 18, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
@@ -90,7 +118,7 @@ body {
 
 .premium-card:hover {
   box-shadow: var(--card-shadow-hover);
-  border-color: rgba(99, 102, 241, 0.3);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
 }
 
 .tabular-nums {
@@ -102,34 +130,32 @@ body {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 9999px;
+  background: color-mix(in srgb, var(--text-muted) 30%, transparent);
+  border-radius: 999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: color-mix(in srgb, var(--text-muted) 50%, transparent);
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
+/* Subtle page transition */
 .animate-fade-in {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Print stylesheets per design.md Section 12 */
-@media print {
-  body {
-    background: #FFFFFF !important;
-    color: #000000 !important;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
   }
-  .no-print {
-    display: none !important;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

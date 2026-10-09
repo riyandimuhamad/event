@@ -35,18 +35,18 @@ export default async function VendorsPage({ params }: VendorsPageProps) {
         {vendors.map((v) => (
           <div
             key={v.id}
-            className="bg-white dark:bg-zinc-800 border border-border rounded-xl p-5 shadow-sm space-y-4"
+            className="bg-surface border border-border rounded-2xl p-5 shadow-sm space-y-4 hover:border-accent/40 transition-colors"
           >
             <div className="flex items-start justify-between">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300">
+                <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-surface-muted text-text-muted">
                   {v.category}
                 </span>
-                <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mt-1">
+                <h2 className="text-lg font-bold text-text mt-1">
                   {v.name}
                 </h2>
               </div>
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-accent-subtle text-accent dark:text-[#FFC46B] border border-accent/20 flex items-center justify-center">
                 <Truck className="w-4 h-4" />
               </div>
             </div>

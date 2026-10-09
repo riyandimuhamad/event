@@ -95,3 +95,30 @@ Dokumentasi perubahan, penambahan dependensi, dan pencatatan keputusan per miles
 - **Executive Account Popover**:
   - Penggantian elemen `<select>` akun kasar dengan Role Switcher dropdown berdesain executive card lengkap dengan avatar, role badge, dan deskripsi peran.
 
+## [0.3.0] - 2026-10-09 - Soft UI Dashboard React Layout & Maroon Luxury Palette Harmonization
+
+### Soft UI Dashboard React Architecture
+- **Struktur Tata Letak 4-Tier**: Mengadopsi arsitektur hierarki visual referensi Soft UI Dashboard React (`21st.dev/@creativetimofficial/templates/soft-ui-dashboard-react`):
+  1. **Tier 1 (4 Mini Stat KPI Cards)**: Grid 4 kartu metrik (Fase Berjalan, Permintaan Logistik, Presensi Relawan, Distribusi Konsumsi) dengan indikator tren dan kotak ikon gradien rounded-square di sisi kanan.
+  2. **Tier 2 (Featured Banner & Rocket Card)**: 
+     - *Built by Developers Card* (7 kolom): Banner komando event dengan deskripsi orkestrasi 6 divisi, tanggal/venue badge, tautan pengadaan logistik, dan kartu ilustrasi target hadirin di sisi kanan.
+     - *Work with the Rockets Card* (5 kolom): Kartu highlight gelap (Maroon Night) dengan indikator radial circular kesiapan Hari-H operasional, metrik presensi/konsumsi, dan inspeksi posko lapangan.
+  3. **Tier 3 (Analytics & Charts)**:
+     - *Active Users Card* (5 kolom): Kontainer gelap dengan SVG Bar Chart interaktif distribusi beban shift relawan (pagi-malam) + 4 mini metric badge di baris bawah.
+     - *Sales Overview Card* (7 kolom): SVG Dual-Line & Area Chart kurva bezier halus dengan gradien Amber Glow & Wine Maroon untuk memantau arus permintaan vs realisasi logistik.
+  4. **Tier 4 (Data Tables & Timelines)**:
+     - *Projects Table* (8 kolom): Tabel status pemenuhan tugas per divisi lengkap dengan badge inisial divisi, koordinator/anggota tim, jumlah logistik, dan bar progres persentase Soft UI.
+     - *Orders Overview Timeline* (4 kolom): Linimasa vertikal histori log audit append-only dengan node lingkaran berwarna dan timestamp WIB.
+
+### Floating Inset Sidebar & Header
+- **Floating Sidebar**: Menransformasi sidebar menjadi kartu mengambang (*floating inset card*) dengan radius `rounded-2xl`, border halus, 32x32px square icon box pada setiap menu navigasi, dan widget panduan operasional (SOP & Docs) di bagian bawah.
+- **Floating Glass Header**: Mengambang di atas konten dengan breadcrumbs home, input pencarian berestetika Soft UI, pill status online, dan integrasi role switcher.
+
+### Harmonisasi Palet Warna Landing Page (Maroon Luxury & Warm Linen)
+- Mengadopsi warna brand landing page secara konsisten di seluruh dashboard:
+  - Background kanvas: `#F7F4EE` (Warm Linen)
+  - Dark Surface / Header: `#2A1411` (Maroon Night)
+  - Brand Accent: `#7A2E33` (Royal Maroon) & `#FFC46B` (Warm Amber Glow)
+  - Typography: Espresso ink `#1C1412` dan kontras linen `#EFE9DF`
+- Harmonisasi seluruh sub-halaman dashboard (Divisi, Panitia, Relawan, Kebutuhan Antar-Divisi, Vendor, Talent, Pre-Event, Hari H, dan Pasca-Event).
+

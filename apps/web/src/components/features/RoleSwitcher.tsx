@@ -24,7 +24,7 @@ const ROLES: RoleOption[] = [
     email: 'eventmanager@eventops.local',
     name: 'Siti Rahma',
     roleTitle: 'Event Manager',
-    badgeColor: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 border-indigo-200',
+    badgeColor: 'bg-accent-subtle text-accent dark:text-[#FFC46B] border-accent/20',
     description: 'Akses operasional penuh event, approval relawan, manajemen slot.',
   },
   {
@@ -88,7 +88,7 @@ export function RoleSwitcher({ currentEmail }: { currentEmail?: string }) {
         type="button"
         className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-border bg-surface hover:bg-surface-muted transition-all duration-150 shadow-sm"
       >
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white flex items-center justify-center font-bold text-xs shadow-inner">
+        <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#7A2E33] to-[#4A171B] text-[#FFC46B] flex items-center justify-center font-bold text-xs shadow-inner border border-[#7A2E33]/40">
           {activeRole.name.charAt(0)}
         </div>
         <div className="text-left hidden sm:block">
@@ -108,7 +108,7 @@ export function RoleSwitcher({ currentEmail }: { currentEmail?: string }) {
           <div className="p-3 border-b border-border/60">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-text flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
+                <Sparkles className="w-3.5 h-3.5 text-[#FFC46B]" />
                 Simulasi Peran & Akses (RBAC)
               </span>
               <span className="text-[10px] font-semibold text-text-muted bg-surface-muted px-2 py-0.5 rounded-full border border-border">
@@ -130,14 +130,14 @@ export function RoleSwitcher({ currentEmail }: { currentEmail?: string }) {
                   type="button"
                   className={`w-full text-left p-2.5 rounded-xl transition-all flex items-start gap-3 ${
                     isSelected
-                      ? 'bg-accent-subtle border border-indigo-500/20 text-accent'
+                      ? 'bg-accent-subtle border border-accent/30 text-accent'
                       : 'hover:bg-surface-muted border border-transparent text-text'
                   }`}
                 >
                   <div
                     className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5 ${
                       isSelected
-                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                        ? 'bg-accent text-white shadow-md shadow-accent/20'
                         : 'bg-surface-muted text-text-muted border border-border'
                     }`}
                   >
@@ -157,7 +157,7 @@ export function RoleSwitcher({ currentEmail }: { currentEmail?: string }) {
                     </p>
                   </div>
                   {isSelected && (
-                    <Check className="w-4 h-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-1" />
+                    <Check className="w-4 h-4 text-accent dark:text-[#FFC46B] flex-shrink-0 mt-1" />
                   )}
                 </button>
               );

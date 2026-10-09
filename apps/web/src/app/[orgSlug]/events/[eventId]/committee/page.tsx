@@ -53,8 +53,8 @@ export default async function CommitteePage({ params }: CommitteePageProps) {
               {committee.map((c) => (
                 <tr key={c.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-700/20">
                   <td className="px-6 py-4">
-                    <div className="font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-indigo-600" />
+                    <div className="font-semibold text-text flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-accent dark:text-[#FFC46B]" />
                       <span>{c.fullName}</span>
                     </div>
                   </td>

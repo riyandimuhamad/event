@@ -28,6 +28,14 @@ module.exports = {
         'danger-subtle': 'var(--danger-subtle)',
         info: 'var(--info)',
         'info-subtle': 'var(--info-subtle)',
+        maroon: {
+          frame: 'var(--maroon-frame)',
+          brand: 'var(--maroon-brand)',
+          night: 'var(--maroon-night)',
+          card: 'var(--maroon-card)',
+          cream: 'var(--maroon-cream)',
+          glow: 'var(--maroon-glow)',
+        },
       },
       boxShadow: {
         premium: 'var(--card-shadow)',
