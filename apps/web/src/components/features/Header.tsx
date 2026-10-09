@@ -20,7 +20,7 @@ export function Header({
   isMobileMenuOpen,
 }: HeaderProps) {
   return (
-    <header className="w-full rounded-2xl bg-[#2A1411] border border-[#3E1F1A] shadow-md px-4 sm:px-5 py-3 flex items-center justify-between gap-4 transition-all">
+    <header className="w-full rounded-2xl bg-[#5D1F23] border border-[#7A2E33]/60 shadow-xl px-4 sm:px-5 py-3 flex items-center justify-between gap-4 transition-all">
       {/* Left: Mobile menu trigger + Breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0">
         {/* Mobile menu trigger */}
@@ -28,18 +28,18 @@ export function Header({
           onClick={onMobileMenuToggle}
           type="button"
           aria-label="Buka menu navigasi"
-          className="lg:hidden p-1.5 rounded-xl text-[#A89A8E] hover:text-white hover:bg-[#351915] border border-[#3E1F1A]"
+          className="lg:hidden p-1.5 rounded-xl text-[#E0CDCF] hover:text-[#FFC46B] hover:bg-[#481418] border border-white/10"
         >
           {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
         </button>
 
         {/* Organization / Event Breadcrumb & Page Title */}
         <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-1.5 text-[11px] text-[#A89A8E] font-medium truncate">
-            <Home className="w-3.5 h-3.5 text-[#8C7A70] flex-shrink-0" />
-            <span className="text-[#5A4540]">/</span>
-            <span className="truncate max-w-[120px] sm:max-w-[180px] text-[#C9BEB2]">{orgName}</span>
-            <span className="text-[#5A4540]">/</span>
+          <div className="flex items-center gap-1.5 text-[11px] text-[#E8D7D8] font-medium truncate">
+            <Home className="w-3.5 h-3.5 text-[#FFC46B] flex-shrink-0" />
+            <span className="text-[#D4B2B5]">/</span>
+            <span className="truncate max-w-[120px] sm:max-w-[180px] text-[#E8D7D8]">{orgName}</span>
+            <span className="text-[#D4B2B5]">/</span>
             <span className="text-[#FFFFFF] font-semibold truncate max-w-[140px] sm:max-w-xs">{eventName}</span>
           </div>
           <div className="text-xs sm:text-sm font-extrabold text-[#FFFFFF] tracking-tight truncate mt-0.5">
