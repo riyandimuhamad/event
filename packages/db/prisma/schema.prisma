@@ -1,0 +1,737 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ----------------------------------------------------
+// 2. IDENTITAS & TENANT
+// ----------------------------------------------------
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  email        String    @unique
+  fullName     String    @map("full_name")
+  phone        String?
+  avatarUrl    String?   @map("avatar_url")
+  locale       String    @default("id-ID")
+  timezone     String    @default("Asia/Jakarta")
+  lastLoginAt  DateTime? @map("last_login_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  memberships       OrganizationMember[]
+  divisionMembers   DivisionMember[]
+  committeeMembers  CommitteeMember[]
+  volunteers        Volunteer[]
+  requestedReqs     Requisition[]            @relation("RequisitionRequestedBy")
+  approvedReqs      Requisition[]            @relation("RequisitionApprovedBy")
+  comments          Comment[]
+  notifications     Notification[]
+  files             File[]
+  assignedTasks     Task[]
+  headOfDivisions   Division[]               @relation("DivisionHead")
+
+  @@map("users")
+}
+
+model Organization {
+  id          String   @id @default(uuid()) @db.Uuid
+  slug        String   @unique
+  name        String
+  description String?
+  logoUrl     String?  @map("logo_url")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  members          OrganizationMember[]
+  events           Event[]
+  divisions        Division[]
+  committeeMembers CommitteeMember[]
+  volunteers       Volunteer[]
+  requisitions     Requisition[]
+  vendors          Vendor[]
+  files            File[]
+  comments         Comment[]
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  userId         String       @map("user_id") @db.Uuid
+  role           String       // OWNER, ADMIN, MEMBER
+  joinedAt       DateTime     @default(now()) @map("joined_at") @db.Timestamptz
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@map("organization_members")
+}
+
+// ----------------------------------------------------
+// 3. EVENT & DIVISI
+// ----------------------------------------------------
+
+model Event {
+  id                String       @id @default(uuid()) @db.Uuid
+  organizationId    String       @map("organization_id") @db.Uuid
+  name              String
+  slug              String
+  description       String?
+  venueName         String?      @map("venue_name")
+  venueAddress      String?      @map("venue_address")
+  venueLat          Decimal?     @map("venue_lat") @db.Decimal(9, 6)
+  venueLng          Decimal?     @map("venue_lng") @db.Decimal(9, 6)
+  startsAt          DateTime     @map("starts_at") @db.Timestamptz
+  endsAt            DateTime     @map("ends_at") @db.Timestamptz
+  timezone          String       @default("Asia/Jakarta")
+  status            String       @default("DRAFT") // DRAFT, ACTIVE, ARCHIVED
+  currentPhase      String       @default("PRE_EVENT") @map("current_phase") // PRE_EVENT, DAY_OF, POST_EVENT, CLOSED
+  expectedAttendees Int?         @map("expected_attendees")
+  deletedAt         DateTime?    @map("deleted_at") @db.Timestamptz
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  phases            EventPhase[]
+  divisions         Division[]
+  committeeMembers  CommitteeMember[]
+  volunteers        Volunteer[]
+  shifts            Shift[]
+  inventoryItems    InventoryItem[]
+  printJobs         PrintJob[]
+  requisitions      Requisition[]
+  tasks             Task[]
+  vendorOrders      VendorOrder[]
+  vendorCrews       VendorCrew[]
+  talents           Talent[]
+  sponsors          Sponsor[]
+  consumptionSlots  ConsumptionSlot[]
+  benefits          Benefit[]
+
+  @@unique([organizationId, slug])
+  @@map("events")
+}
+
+model EventPhase {
+  id        String   @id @default(uuid()) @db.Uuid
+  eventId   String   @map("event_id") @db.Uuid
+  phase     String   // PRE_EVENT, DAY_OF, POST_EVENT
+  title     String
+  startsAt  DateTime @map("starts_at") @db.Timestamptz
+  endsAt    DateTime @map("ends_at") @db.Timestamptz
+  status    String   @default("PLANNED") // PLANNED, ACTIVE, DONE
+
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("event_phases")
+}
+
+model Division {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  eventId        String       @map("event_id") @db.Uuid
+  name           String
+  code           String
+  description    String?
+  headUserId     String?      @map("head_user_id") @db.Uuid
+  sortOrder      Int          @default(0) @map("sort_order")
+  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  event          Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  headUser       User?        @relation("DivisionHead", fields: [headUserId], references: [id])
+
+  members              DivisionMember[]
+  committeeMembers     CommitteeMember[]
+  volunteers           Volunteer[]
+  shifts               Shift[]
+  tasks                Task[]
+  vendorOrders         VendorOrder[]
+  requisitionsFrom     Requisition[]    @relation("RequisitionFromDivision")
+  requisitionsTo       Requisition[]    @relation("RequisitionToDivision")
+
+  @@unique([eventId, code])
+  @@map("divisions")
+}
+
+model DivisionMember {
+  id         String   @id @default(uuid()) @db.Uuid
+  divisionId String   @map("division_id") @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  role       String   @default("MEMBER") // HEAD, MEMBER
+
+  division   Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([divisionId, userId])
+  @@map("division_members")
+}
+
+// ----------------------------------------------------
+// 4. COMMITTEE & VOLUNTEER
+// ----------------------------------------------------
+
+model CommitteeMember {
+  id                    String       @id @default(uuid()) @db.Uuid
+  organizationId        String       @map("organization_id") @db.Uuid
+  eventId               String       @map("event_id") @db.Uuid
+  userId                String?      @map("user_id") @db.Uuid
+  divisionId            String       @map("division_id") @db.Uuid
+  fullName              String       @map("full_name")
+  email                 String?
+  phone                 String?
+  nationalIdEncrypted   Bytes?       @map("national_id_encrypted")
+  position              String?
+  employmentType        String       @default("VOLUNTEER_COMMITTEE") @map("employment_type") // VOLUNTEER_COMMITTEE, PAID, CONTRACT
+  agreementStatus       String       @default("DRAFT") @map("agreement_status") // DRAFT, SIGNED, TERMINATED
+  joinedAt              DateTime?    @map("joined_at") @db.Date
+  confirmed             Boolean      @default(false)
+  deletedAt             DateTime?    @map("deleted_at") @db.Timestamptz
+  createdAt             DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  event                 Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user                  User?        @relation(fields: [userId], references: [id])
+  division              Division     @relation(fields: [divisionId], references: [id])
+
+  @@map("committee_members")
+}
+
+model Volunteer {
+  id                    String       @id @default(uuid()) @db.Uuid
+  organizationId        String       @map("organization_id") @db.Uuid
+  eventId               String       @map("event_id") @db.Uuid
+  userId                String?      @map("user_id") @db.Uuid
+  code                  String
+  fullName              String       @map("full_name")
+  email                 String?
+  phone                 String?
+  nationalIdEncrypted   Bytes?       @map("national_id_encrypted")
+  shirtSize             String?      @map("shirt_size") // XS, S, M, L, XL, XXL, XXXL
+  divisionId            String?      @map("division_id") @db.Uuid
+  registrationStatus    String       @default("PENDING") @map("registration_status") // PENDING, APPROVED, REJECTED, WITHDRAWN
+  reviewedBy            String?      @map("reviewed_by") @db.Uuid
+  reviewedAt            DateTime?    @map("reviewed_at") @db.Timestamptz
+  notes                 String?
+  deletedAt             DateTime?    @map("deleted_at") @db.Timestamptz
+  createdAt             DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  event                 Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user                  User?        @relation(fields: [userId], references: [id])
+  division              Division?    @relation(fields: [divisionId], references: [id])
+
+  shifts                VolunteerShift[]
+
+  @@unique([eventId, code])
+  @@index([eventId, registrationStatus])
+  @@map("volunteers")
+}
+
+model Shift {
+  id         String   @id @default(uuid()) @db.Uuid
+  eventId    String   @map("event_id") @db.Uuid
+  divisionId String   @map("division_id") @db.Uuid
+  name       String
+  startsAt   DateTime @map("starts_at") @db.Timestamptz
+  endsAt     DateTime @map("ends_at") @db.Timestamptz
+  capacity   Int?
+
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  division   Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+
+  volunteerShifts VolunteerShift[]
+  crewAttendances CrewAttendance[]
+
+  @@map("shifts")
+}
+
+model VolunteerShift {
+  id           String    @id @default(uuid()) @db.Uuid
+  volunteerId  String    @map("volunteer_id") @db.Uuid
+  shiftId      String    @map("shift_id") @db.Uuid
+  status       String    @default("ASSIGNED") // ASSIGNED, CONFIRMED, CANCELLED, NO_SHOW, COMPLETED
+  checkedInAt  DateTime? @map("checked_in_at") @db.Timestamptz
+  checkedOutAt DateTime? @map("checked_out_at") @db.Timestamptz
+  checkedInBy  String?   @map("checked_in_by") @db.Uuid
+
+  volunteer    Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  shift        Shift     @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+
+  @@unique([volunteerId, shiftId])
+  @@map("volunteer_shifts")
+}
+
+// ----------------------------------------------------
+// 5. LOGISTIK PRA-EVENT & INVENTORY
+// ----------------------------------------------------
+
+model InventoryItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  eventId     String   @map("event_id") @db.Uuid
+  category    String   // SHIRT, ID_CARD, LANYARD, WRISTBAND, CERTIFICATE, OTHER
+  variant     String?
+  name        String
+  totalStock  Int      @map("total_stock")
+  reserved    Int      @default(0)
+  distributed Int      @default(0)
+
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  distributions InventoryDistribution[]
+
+  @@map("inventory_items")
+}
+
+model InventoryDistribution {
+  id              String        @id @default(uuid()) @db.Uuid
+  inventoryItemId String        @map("inventory_item_id") @db.Uuid
+  recipientType   String        @map("recipient_type") // VOLUNTEER, COMMITTEE, VENDOR_CREW, TALENT, SPONSOR
+  recipientId     String        @map("recipient_id") @db.Uuid
+  quantity        Int
+  status          String        @default("PENDING") // PENDING, TAKEN, CANCELLED
+  takenAt         DateTime?     @map("taken_at") @db.Timestamptz
+  handedBy        String?       @map("handed_by") @db.Uuid
+  clientOpId      String?       @unique @map("client_op_id") @db.Uuid
+
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
+
+  @@map("inventory_distributions")
+}
+
+model PrintJob {
+  id         String    @id @default(uuid()) @db.Uuid
+  eventId    String    @map("event_id") @db.Uuid
+  type       String    // ID_CARD, CERTIFICATE, LABEL
+  status     String    @default("QUEUED") // QUEUED, PRINTED, FAILED
+  targetIds  String[]  @map("target_ids")
+  printedAt  DateTime? @map("printed_at") @db.Timestamptz
+
+  event      Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("print_jobs")
+}
+
+// ----------------------------------------------------
+// 6. REQUISITION (KEBUTUHAN ANTAR-DIVISI)
+// ----------------------------------------------------
+
+model Requisition {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  eventId        String       @map("event_id") @db.Uuid
+  code           String
+  title          String
+  description    String?
+  fromDivisionId String       @map("from_division_id") @db.Uuid
+  toDivisionId   String       @map("to_division_id") @db.Uuid
+  priority       String       @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  neededBy       DateTime?    @map("needed_by") @db.Timestamptz
+  status         String       @default("DRAFT") // DRAFT, SUBMITTED, APPROVED, REJECTED, IN_PROGRESS, FULFILLED, CLOSED
+  requestedBy    String       @map("requested_by") @db.Uuid
+  approvedBy     String?      @map("approved_by") @db.Uuid
+  version        Int          @default(1)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  event          Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  fromDivision   Division     @relation("RequisitionFromDivision", fields: [fromDivisionId], references: [id])
+  toDivision     Division     @relation("RequisitionToDivision", fields: [toDivisionId], references: [id])
+  requester      User         @relation("RequisitionRequestedBy", fields: [requestedBy], references: [id])
+  approver       User?        @relation("RequisitionApprovedBy", fields: [approvedBy], references: [id])
+
+  items          RequisitionItem[]
+  events         RequisitionEvent[]
+  tasks          Task[]
+  vendorOrders   VendorOrder[]
+
+  @@unique([eventId, code])
+  @@index([toDivisionId, status])
+  @@map("requisitions")
+}
+
+model RequisitionItem {
+  id            String      @id @default(uuid()) @db.Uuid
+  requisitionId String      @map("requisition_id") @db.Uuid
+  name          String
+  quantity      Decimal     @db.Decimal(12, 2)
+  unit          String
+  notes         String?
+
+  requisition   Requisition @relation(fields: [requisitionId], references: [id], onDelete: Cascade)
+
+  @@map("requisition_items")
+}
+
+model RequisitionEvent {
+  id            String      @id @default(uuid()) @db.Uuid
+  requisitionId String      @map("requisition_id") @db.Uuid
+  fromStatus    String?     @map("from_status")
+  toStatus      String      @map("to_status")
+  actorId       String      @map("actor_id") @db.Uuid
+  reason        String?
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  requisition   Requisition @relation(fields: [requisitionId], references: [id], onDelete: Cascade)
+
+  @@map("requisition_events")
+}
+
+model Comment {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  entityType     String       @map("entity_type")
+  entityId       String       @map("entity_id") @db.Uuid
+  authorId       String       @map("author_id") @db.Uuid
+  body           String
+  mentions       String[]     @default([])
+  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  author         User         @relation(fields: [authorId], references: [id])
+
+  @@map("comments")
+}
+
+model Task {
+  id            String       @id @default(uuid()) @db.Uuid
+  eventId       String       @map("event_id") @db.Uuid
+  divisionId    String       @map("division_id") @db.Uuid
+  title         String
+  assigneeId    String?      @map("assignee_id") @db.Uuid
+  dueAt         DateTime?    @map("due_at") @db.Timestamptz
+  status        String       @default("TODO") // TODO, IN_PROGRESS, DONE
+  requisitionId String?      @map("requisition_id") @db.Uuid
+
+  event         Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  division      Division     @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+  assignee      User?        @relation(fields: [assigneeId], references: [id])
+  requisition   Requisition? @relation(fields: [requisitionId], references: [id])
+
+  @@map("tasks")
+}
+
+// ----------------------------------------------------
+// 7. VENDOR & CREW
+// ----------------------------------------------------
+
+model Vendor {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  name           String
+  category       String       // CATERING, SOUND, DECORATION, EQUIPMENT, SECURITY, OTHER
+  contactName    String       @map("contact_name")
+  contactPhone   String?      @map("contact_phone")
+  contactEmail   String?      @map("contact_email")
+  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  orders         VendorOrder[]
+  crews          VendorCrew[]
+
+  @@map("vendors")
+}
+
+model VendorOrder {
+  id            String       @id @default(uuid()) @db.Uuid
+  eventId       String       @map("event_id") @db.Uuid
+  vendorId      String       @map("vendor_id") @db.Uuid
+  requisitionId String?      @map("requisition_id") @db.Uuid
+  divisionId    String       @map("division_id") @db.Uuid
+  description   String
+  amount        BigInt       // In Rupiah
+  status        String       @default("DRAFT") // DRAFT, CONFIRMED, DELIVERED, PAID, CANCELLED
+  dueAt         DateTime?    @map("due_at") @db.Timestamptz
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  event         Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  vendor        Vendor       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  requisition   Requisition? @relation(fields: [requisitionId], references: [id])
+  division      Division     @relation(fields: [divisionId], references: [id])
+
+  @@map("vendor_orders")
+}
+
+model VendorCrew {
+  id                  String           @id @default(uuid()) @db.Uuid
+  eventId             String           @map("event_id") @db.Uuid
+  vendorId            String           @map("vendor_id") @db.Uuid
+  fullName            String           @map("full_name")
+  role                String
+  phone               String?
+  nationalIdEncrypted Bytes?           @map("national_id_encrypted")
+  shirtSize           String?          @map("shirt_size")
+  status              String           @default("ACTIVE") // ACTIVE, REMOVED
+
+  event               Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  vendor              Vendor           @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  attendances         CrewAttendance[]
+
+  @@map("vendor_crew")
+}
+
+model CrewAttendance {
+  id           String     @id @default(uuid()) @db.Uuid
+  vendorCrewId String     @map("vendor_crew_id") @db.Uuid
+  shiftId      String?    @map("shift_id") @db.Uuid
+  checkedInAt  DateTime?  @map("checked_in_at") @db.Timestamptz
+  checkedOutAt DateTime?  @map("checked_out_at") @db.Timestamptz
+
+  vendorCrew   VendorCrew @relation(fields: [vendorCrewId], references: [id], onDelete: Cascade)
+  shift        Shift?     @relation(fields: [shiftId], references: [id])
+
+  @@map("crew_attendance")
+}
+
+// ----------------------------------------------------
+// 8. TALENT
+// ----------------------------------------------------
+
+model Talent {
+  id                String       @id @default(uuid()) @db.Uuid
+  eventId           String       @map("event_id") @db.Uuid
+  name              String
+  category          String
+  managementName    String?      @map("management_name")
+  managementContact String?      @map("management_contact")
+  managementEmail   String?      @map("management_email")
+  riderNotes        String?      @map("rider_notes")
+  fee               BigInt?
+  contractStatus    String       @default("DRAFT") @map("contract_status") // DRAFT, SIGNED, CANCELLED
+
+  event             Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  shows             TalentShow[]
+  communications    TalentCommunication[]
+
+  @@map("talents")
+}
+
+model TalentShow {
+  id        String   @id @default(uuid()) @db.Uuid
+  talentId  String   @map("talent_id") @db.Uuid
+  stageName String   @map("stage_name")
+  startsAt  DateTime @map("starts_at") @db.Timestamptz
+  endsAt    DateTime @map("ends_at") @db.Timestamptz
+  status    String   @default("SCHEDULED") // SCHEDULED, SOUNDCHECK, PERFORMED, CANCELLED
+
+  talent    Talent   @relation(fields: [talentId], references: [id], onDelete: Cascade)
+
+  @@map("talent_shows")
+}
+
+model TalentCommunication {
+  id         String   @id @default(uuid()) @db.Uuid
+  talentId   String   @map("talent_id") @db.Uuid
+  channel    String   // EMAIL, PHONE, WHATSAPP, IN_PERSON
+  summary    String
+  occurredAt DateTime @map("occurred_at") @db.Timestamptz
+  loggedBy   String   @map("logged_by") @db.Uuid
+
+  talent     Talent   @relation(fields: [talentId], references: [id], onDelete: Cascade)
+
+  @@map("talent_communications")
+}
+
+// ----------------------------------------------------
+// 9. SPONSOR
+// ----------------------------------------------------
+
+model Sponsor {
+  id            String               @id @default(uuid()) @db.Uuid
+  eventId       String               @map("event_id") @db.Uuid
+  companyName   String               @map("company_name")
+  packageName   String               @map("package_name")
+  packageValue  BigInt               @map("package_value")
+  paymentStatus String               @default("UNPAID") @map("payment_status") // UNPAID, PARTIAL, PAID
+  amountPaid    BigInt               @default(0) @map("amount_paid")
+  repName       String?              @map("rep_name")
+  repEmail      String?              @map("rep_email")
+  repUserId     String?              @map("rep_user_id") @db.Uuid
+
+  event         Event                @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  deliverables  SponsorDeliverable[]
+
+  @@map("sponsors")
+}
+
+model SponsorDeliverable {
+  id          String    @id @default(uuid()) @db.Uuid
+  sponsorId   String    @map("sponsor_id") @db.Uuid
+  title       String
+  status      String    @default("PENDING") // PENDING, IN_PROGRESS, DELIVERED
+  deliveredAt DateTime? @map("delivered_at") @db.Timestamptz
+  assetFileId String?   @map("asset_file_id") @db.Uuid
+
+  sponsor     Sponsor   @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+
+  @@map("sponsor_deliverables")
+}
+
+// ----------------------------------------------------
+// 10. KONSUMSI (HARI H)
+// ----------------------------------------------------
+
+model ConsumptionSlot {
+  id               String   @id @default(uuid()) @db.Uuid
+  eventId          String   @map("event_id") @db.Uuid
+  kind             String   // BREAKFAST, LUNCH, DINNER, DRINK, SNACK
+  label            String
+  startsAt         DateTime @map("starts_at") @db.Timestamptz
+  endsAt           DateTime @map("ends_at") @db.Timestamptz
+  targetRecipients Int      @map("target_recipients")
+  servedCount      Int      @default(0) @map("served_count")
+  status           String   @default("OPEN") // OPEN, CLOSED
+
+  event            Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  distributions    ConsumptionDistribution[]
+
+  @@map("consumption_slots")
+}
+
+model ConsumptionDistribution {
+  id            String          @id @default(uuid()) @db.Uuid
+  slotId        String          @map("slot_id") @db.Uuid
+  recipientType String          @map("recipient_type") // VOLUNTEER, COMMITTEE, VENDOR_CREW, TALENT, SPONSOR
+  recipientId   String          @map("recipient_id") @db.Uuid
+  quantity      Int             @default(1)
+  distributedAt DateTime        @default(now()) @map("distributed_at") @db.Timestamptz
+  distributedBy String          @map("distributed_by") @db.Uuid
+  clientOpId    String?         @unique @map("client_op_id") @db.Uuid
+
+  slot          ConsumptionSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+
+  @@unique([slotId, recipientType, recipientId])
+  @@map("consumption_distributions")
+}
+
+// ----------------------------------------------------
+// 11. BENEFIT (FEE & SERTIFIKAT)
+// ----------------------------------------------------
+
+model Benefit {
+  id                String         @id @default(uuid()) @db.Uuid
+  eventId           String         @map("event_id") @db.Uuid
+  recipientType     String         @map("recipient_type") // VOLUNTEER, COMMITTEE, TALENT, VENDOR_CREW
+  recipientId       String         @map("recipient_id") @db.Uuid
+  kind              String         // FEE, CERTIFICATE
+  amount            BigInt?        // For FEE
+  status            String         // FEE: UNPAID, PROCESSING, PAID. CERTIFICATE: NOT_PRINTED, PRINTED, DELIVERED
+  paidAt            DateTime?      @map("paid_at") @db.Timestamptz
+  proofFileId       String?        @map("proof_file_id") @db.Uuid
+  certificateNumber String?        @map("certificate_number")
+
+  event             Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  events            BenefitEvent[]
+
+  @@unique([eventId, recipientType, recipientId, kind])
+  @@map("benefits")
+}
+
+model BenefitEvent {
+  id         String   @id @default(uuid()) @db.Uuid
+  benefitId  String   @map("benefit_id") @db.Uuid
+  fromStatus String?  @map("from_status")
+  toStatus   String   @map("to_status")
+  actorId    String   @map("actor_id") @db.Uuid
+  note       String?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  benefit    Benefit  @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+
+  @@map("benefit_events")
+}
+
+// ----------------------------------------------------
+// 12. FILES & ATTACHMENTS
+// ----------------------------------------------------
+
+model File {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  storageKey     String       @unique @map("storage_key")
+  originalName   String       @map("original_name")
+  mimeType       String       @map("mime_type")
+  sizeBytes      BigInt       @map("size_bytes")
+  sha256         String
+  uploadedBy     String       @map("uploaded_by") @db.Uuid
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  uploader       User         @relation(fields: [uploadedBy], references: [id])
+
+  links          FileLink[]
+
+  @@map("files")
+}
+
+model FileLink {
+  id         String   @id @default(uuid()) @db.Uuid
+  fileId     String   @map("file_id") @db.Uuid
+  entityType String   @map("entity_type")
+  entityId   String   @map("entity_id") @db.Uuid
+
+  file       File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([fileId, entityType, entityId])
+  @@map("file_links")
+}
+
+// ----------------------------------------------------
+// 13. AUDIT & NOTIFIKASI
+// ----------------------------------------------------
+
+model AuditLog {
+  id             BigInt    @id @default(autoincrement())
+  organizationId String    @map("organization_id") @db.Uuid
+  eventId        String?   @map("event_id") @db.Uuid
+  actorId        String?   @map("actor_id") @db.Uuid
+  action         String
+  entityType     String    @map("entity_type")
+  entityId       String    @map("entity_id") @db.Uuid
+  before         Json?
+  after          Json?
+  ip             String?
+  userAgent      String?   @map("user_agent")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([organizationId, createdAt(sort: Desc)])
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
+
+model Notification {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  type      String
+  title     String
+  body      String
+  link      String?
+  readAt    DateTime? @map("read_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}

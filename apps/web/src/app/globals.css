@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #FAFAF9;
+  --surface: #FFFFFF;
+  --surface-muted: #F4F4F5;
+  --border: #E4E4E7;
+  --text: #18181B;
+  --text-muted: #71717A;
+  --accent: #4F46E5;
+  --success: #15803D;
+  --warning: #B45309;
+  --danger: #B91C1C;
+  --info: #0369A1;
+}
+
+.dark {
+  --bg: #0F0F10;
+  --surface: #18181B;
+  --surface-muted: #27272A;
+  --border: #3F3F46;
+  --text: #FAFAFA;
+  --text-muted: #A1A1AA;
+  --accent: #818CF8;
+  --success: #4ADE80;
+  --warning: #FBBF24;
+  --danger: #F87171;
+  --info: #38BDF8;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Print stylesheets per design.md Section 12 */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

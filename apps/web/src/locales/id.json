@@ -1,0 +1,135 @@
+{
+  "common": {
+    "appName": "EventOps",
+    "appTagline": "Platform Manajemen Event Terpadu",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "edit": "Ubah",
+    "create": "Buat Baru",
+    "search": "Cari...",
+    "filter": "Filter",
+    "all": "Semua",
+    "loading": "Memuat data...",
+    "noData": "Tidak ada data ditemukan.",
+    "actions": "Aksi",
+    "status": "Status",
+    "priority": "Prioritas",
+    "date": "Tanggal",
+    "back": "Kembali",
+    "close": "Tutup",
+    "confirm": "Konfirmasi",
+    "notes": "Catatan",
+    "overview": "Ringkasan",
+    "details": "Detail",
+    "history": "Riwayat",
+    "export": "Ekspor",
+    "active": "Aktif",
+    "success": "Berhasil",
+    "error": "Terjadi kesalahan",
+    "switchRole": "Ganti Peran Uji Coba"
+  },
+  "nav": {
+    "overview": "Overview",
+    "divisions": "Divisi",
+    "committee": "Panitia Resmi",
+    "volunteers": "Relawan (Volunteer)",
+    "requisitions": "Kebutuhan Antar-Divisi",
+    "vendors": "Vendor & Kru",
+    "talents": "Talent & Pengisi Acara",
+    "sponsors": "Sponsor & Mitra",
+    "preEvent": "Pra-Event (Logistik)",
+    "dayOf": "Hari H (Operasional)",
+    "postEvent": "Pasca-Event (Benefit)",
+    "auditLog": "Jejak Audit"
+  },
+  "phases": {
+    "PRE_EVENT": "Pra-Event",
+    "DAY_OF": "Hari H",
+    "POST_EVENT": "Pasca-Event",
+    "CLOSED": "Selesai"
+  },
+  "requisition": {
+    "title": "Kebutuhan Antar-Divisi",
+    "subtitle": "Pengajuan perlengkapan, konsumsi, dan kebutuhan teknis lintas divisi",
+    "tabIncoming": "Kebutuhan Masuk",
+    "tabOutgoing": "Kebutuhan Keluar",
+    "createNew": "Ajukan Kebutuhan Baru",
+    "fromDivision": "Divisi Pembuat",
+    "toDivision": "Divisi Tujuan",
+    "neededBy": "Dibutuhkan Sebelum",
+    "itemCount": "Jumlah Item",
+    "approve": "Setujui Kebutuhan",
+    "reject": "Tolak Kebutuhan",
+    "startProgress": "Mulai Kerjakan",
+    "fulfill": "Tandai Terpenuhi",
+    "closeRequisition": "Konfirmasi & Tutup",
+    "rejectReasonPlaceholder": "Tuliskan alasan penolakan secara jelas (minimal 10 karakter)...",
+    "status": {
+      "DRAFT": "Draft",
+      "SUBMITTED": "Diajukan",
+      "APPROVED": "Disetujui",
+      "REJECTED": "Ditolak",
+      "IN_PROGRESS": "Dikerjakan",
+      "FULFILLED": "Terpenuhi",
+      "CLOSED": "Ditutup"
+    },
+    "priority": {
+      "LOW": "Rendah",
+      "MEDIUM": "Sedang",
+      "HIGH": "Tinggi",
+      "URGENT": "Mendesak"
+    }
+  },
+  "volunteers": {
+    "title": "Manajemen Relawan (Official Volunteer)",
+    "subtitle": "Daftar relawan, penugasan shift, dan status pendaftaran",
+    "code": "Kode Relawan",
+    "name": "Nama Lengkap",
+    "division": "Divisi",
+    "shirtSize": "Ukuran Kaos",
+    "shift": "Shift Penugasan",
+    "status": {
+      "PENDING": "Menunggu",
+      "APPROVED": "Diterima",
+      "REJECTED": "Ditolak",
+      "WITHDRAWN": "Mengundurkan Diri"
+    },
+    "checkIn": "Check-in Hari H",
+    "checkInSuccess": "Check-in berhasil dicatat",
+    "alreadyCheckedIn": "Relawan sudah melakukan check-in pada pukul"
+  },
+  "dayOf": {
+    "title": "Operasional Hari H",
+    "subtitle": "Pemberian konsumsi dan presensi lapangan",
+    "mealDistribution": "Distribusi Konsumsi",
+    "checkInStation": "Stasiun Check-in",
+    "servedCount": "Terlayani",
+    "target": "Target",
+    "giveMeal": "Berikan Makan",
+    "alreadyServed": "Penerima sudah mengambil konsumsi pada slot ini!",
+    "offlineSync": "Sinkronisasi Offline",
+    "queuedOffline": "Tersimpan di perangkat lokal, menunggu koneksi online."
+  },
+  "postEvent": {
+    "title": "Pasca-Event & Distribusi Benefit",
+    "subtitle": "Pembayaran fee relawan/panitia dan penerbitan sertifikat resmi",
+    "feeTab": "Pencairan Fee",
+    "certTab": "Sertifikat",
+    "nominal": "Nominal Fee",
+    "proof": "Bukti Transfer",
+    "uploadProof": "Unggah Bukti Transfer",
+    "disburse": "Cairkan Fee",
+    "printCert": "Cetak Sertifikat",
+    "feeStatus": {
+      "UNPAID": "Belum Dibayar",
+      "PROCESSING": "Sedang Diproses",
+      "PAID": "Sudah Dibayar"
+    },
+    "certStatus": {
+      "NOT_PRINTED": "Belum Dicetak",
+      "PRINTED": "Sudah Dicetak",
+      "DELIVERED": "Diterima Relawan"
+    }
+  }
+}

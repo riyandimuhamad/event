@@ -1,0 +1,22 @@
+{
+  "name": "eventops",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm --workspace=apps/web run dev",
+    "build": "npm --workspace=packages/shared run build && npm --workspace=packages/db run db:generate && npm --workspace=apps/web run build",
+    "test": "npm --workspace=packages/shared run test && npm --workspace=apps/web run test",
+    "typecheck": "npm --workspace=packages/shared run typecheck && npm --workspace=apps/web run typecheck",
+    "db:generate": "npm --workspace=packages/db run db:generate",
+    "db:migrate": "npm --workspace=packages/db run db:migrate",
+    "db:push": "npm --workspace=packages/db run db:push",
+    "db:seed": "npm --workspace=packages/db run db:seed"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
