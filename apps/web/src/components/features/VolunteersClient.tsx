@@ -616,7 +616,7 @@ export function VolunteersClient({
                 <th className="px-6 py-3.5">Kontak (Email / WA)</th>
                 <th className="px-6 py-3.5">Divisi Penempatan</th>
                 <th className="px-6 py-3.5">Ukuran Kaos</th>
-                <th className="px-6 py-3.5">Shift & Presensi</th>
+                <th className="px-6 py-3.5">Presensi & Shift</th>
                 <th className="px-6 py-3.5">Status Pendaftaran</th>
                 <th className="px-6 py-3.5 text-right">Aksi & ID Card</th>
               </tr>
@@ -669,15 +669,6 @@ export function VolunteersClient({
                     </td>
                     <td className="px-6 py-4">
                       <div className="space-y-1">
-                        {vol.shifts.length > 0 ? (
-                          <div className="text-xs font-medium text-text">
-                            {vol.shifts[0].shift.name}
-                          </div>
-                        ) : (
-                          <div className="text-[11px] text-text-muted italic">
-                            Tanpa Shift
-                          </div>
-                        )}
                         {checkedIn ? (
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
                             <CheckCircle2 className="w-3 h-3" /> Sudah Check-in
@@ -686,6 +677,15 @@ export function VolunteersClient({
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded">
                             <Clock className="w-3 h-3" /> Belum Check-in
                           </span>
+                        )}
+                        {vol.shifts.length > 0 ? (
+                          <div className="text-xs font-medium text-text">
+                            {vol.shifts[0].shift.name}
+                          </div>
+                        ) : (
+                          <div className="text-[11px] text-text-muted italic">
+                            Tanpa Shift
+                          </div>
                         )}
                       </div>
                     </td>
