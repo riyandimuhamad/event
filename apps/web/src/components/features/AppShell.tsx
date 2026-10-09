@@ -83,7 +83,7 @@ export function AppShell({
           isSidebarCollapsed ? 'lg:pl-[104px]' : 'lg:pl-[304px]'
         }`}
       >
-        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-10 flex flex-col gap-6">
+        <div className="w-full px-4 sm:px-6 lg:px-8 pt-4 pb-10 flex flex-col gap-6">
           <Header
             orgName={orgName}
             eventName={eventName}
