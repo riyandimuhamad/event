@@ -16,6 +16,10 @@ import {
   Shirt,
   Calendar,
   Building,
+  Plus,
+  Trash2,
+  X,
+  AlertCircle,
 } from 'lucide-react';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Actor } from '@eventops/shared';
@@ -62,6 +66,74 @@ export function VolunteersClient({
   const [selectedPresence, setSelectedPresence] = useState<'all' | 'checked_in' | 'not_checked_in'>('all');
   const [selectedVolunteerForIdCard, setSelectedVolunteerForIdCard] = useState<VolunteerData | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // New volunteer form state
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [newFullName, setNewFullName] = useState('');
+  const [newDivisionId, setNewDivisionId] = useState(divisions[0]?.id || '');
+  const [newShirtSize, setNewShirtSize] = useState('L');
+  const [newEmail, setNewEmail] = useState('');
+  const [newPhone, setNewPhone] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleCreateVolunteer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const res = await fetch(`/api/v1/volunteers?orgSlug=${orgSlug}&eventId=${eventId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: newFullName,
+          divisionId: newDivisionId || undefined,
+          shirtSize: newShirtSize,
+          email: newEmail || undefined,
+          phone: newPhone || undefined,
+          registrationStatus: 'APPROVED',
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message || 'Gagal mendaftarkan relawan');
+
+      setIsCreateModalOpen(false);
+      setNewFullName('');
+      setNewEmail('');
+      setNewPhone('');
+      router.refresh();
+
+      const newVol: VolunteerData = {
+        ...json.data,
+        shifts: [],
+        division: divisions.find((d) => d.id === newDivisionId) || null,
+      };
+      setVolunteers((prev) => [newVol, ...prev]);
+    } catch (err: unknown) {
+      setErrorMessage((err as Error).message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteVolunteer = async (volunteerId: string, fullName: string) => {
+    if (!confirm(`Hapus relawan ${fullName}?`)) return;
+
+    try {
+      const res = await fetch(`/api/v1/volunteers/${volunteerId}?orgSlug=${orgSlug}&eventId=${eventId}`, {
+        method: 'DELETE',
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message || 'Gagal menghapus relawan');
+
+      setVolunteers((prev) => prev.filter((v) => v.id !== volunteerId));
+      router.refresh();
+    } catch (err: unknown) {
+      alert((err as Error).message);
+    }
+  };
 
   // Statistics calculation
   const totalVolunteers = volunteers.length;
@@ -133,6 +205,16 @@ export function VolunteersClient({
             {t('volunteers.subtitle')}
           </p>
         </div>
+
+        {isManagerOrOwner && (
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="px-4 py-2.5 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-xl flex items-center gap-2 shadow-sm transition-all"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Tambah Relawan Baru</span>
+          </button>
+        )}
       </div>
 
       {/* KPI Counters */}
@@ -326,6 +408,16 @@ export function VolunteersClient({
                             </button>
                           </div>
                         )}
+
+                        {isManagerOrOwner && (
+                          <button
+                            onClick={() => handleDeleteVolunteer(vol.id, vol.fullName)}
+                            title="Hapus Relawan"
+                            className="p-1.5 rounded-lg text-text-muted hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -390,24 +482,36 @@ export function VolunteersClient({
                   <QrCode className="w-3.5 h-3.5" /> ID Card Pas
                 </button>
 
-                {vol.registrationStatus === 'PENDING' && canApprove && (
-                  <div className="flex gap-2">
+                <div className="flex items-center gap-2">
+                  {vol.registrationStatus === 'PENDING' && canApprove && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleUpdateStatus(vol.id, 'APPROVED')}
+                        disabled={isUpdating}
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Terima
+                      </button>
+                      <button
+                        onClick={() => handleUpdateStatus(vol.id, 'REJECTED')}
+                        disabled={isUpdating}
+                        className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1"
+                      >
+                        <XCircle className="w-3.5 h-3.5" /> Tolak
+                      </button>
+                    </div>
+                  )}
+
+                  {isManagerOrOwner && (
                     <button
-                      onClick={() => handleUpdateStatus(vol.id, 'APPROVED')}
-                      disabled={isUpdating}
-                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1"
+                      onClick={() => handleDeleteVolunteer(vol.id, vol.fullName)}
+                      title="Hapus Relawan"
+                      className="p-1.5 text-text-muted hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                     >
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Terima
+                      <Trash2 className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={() => handleUpdateStatus(vol.id, 'REJECTED')}
-                      disabled={isUpdating}
-                      className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1"
-                    >
-                      <XCircle className="w-3.5 h-3.5" /> Tolak
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           );
@@ -488,6 +592,115 @@ export function VolunteersClient({
                 Tutup
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Tambah Relawan Baru */}
+      {isCreateModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-xl border border-border space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h3 className="text-base font-bold text-text">Tambah Relawan Baru</h3>
+              <button
+                onClick={() => setIsCreateModalOpen(false)}
+                className="text-text-muted hover:text-text p-1 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {errorMessage && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleCreateVolunteer} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold text-text mb-1">Nama Lengkap Relawan *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Farhan Nugraha"
+                  value={newFullName}
+                  onChange={(e) => setNewFullName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-surface-muted border border-border text-text focus:outline-none focus:border-accent"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-text mb-1">Divisi Penugasan</label>
+                <select
+                  value={newDivisionId}
+                  onChange={(e) => setNewDivisionId(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-surface-muted border border-border text-text focus:outline-none focus:border-accent"
+                >
+                  <option value="">-- Tanpa Divisi (Umum) --</option>
+                  {divisions.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name} ({d.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-text mb-1">Ukuran Kaos</label>
+                  <select
+                    value={newShirtSize}
+                    onChange={(e) => setNewShirtSize(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-surface-muted border border-border text-text focus:outline-none focus:border-accent"
+                  >
+                    {['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'].map((s) => (
+                      <option key={s} value={s}>
+                        Size {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-semibold text-text mb-1">No. Handphone / WA</label>
+                  <input
+                    type="tel"
+                    placeholder="08123456789"
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-surface-muted border border-border text-text focus:outline-none focus:border-accent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-text mb-1">Email</label>
+                <input
+                  type="email"
+                  placeholder="volunteer@eventops.local"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-surface-muted border border-border text-text focus:outline-none focus:border-accent"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateModalOpen(false)}
+                  className="px-4 py-2 bg-surface-muted hover:bg-border text-text font-semibold rounded-xl"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-4 py-2 bg-accent hover:bg-accent-hover text-white font-bold rounded-xl disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Mendaftarkan...' : 'Daftarkan Relawan'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

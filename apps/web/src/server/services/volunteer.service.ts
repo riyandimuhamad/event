@@ -187,4 +187,85 @@ export class VolunteerService {
       message: 'Check-in berhasil.',
     };
   }
+
+  public static async createVolunteer(
+    actor: Actor,
+    eventId: string,
+    data: {
+      fullName: string;
+      email?: string;
+      phone?: string;
+      shirtSize?: string;
+      divisionId?: string;
+      registrationStatus?: VolunteerRegistrationStatus;
+    }
+  ) {
+    if (!RbacGuard.can(actor, 'write', 'volunteer', { organizationId: actor.organizationId, eventId })) {
+      throw new Error('FORBIDDEN');
+    }
+
+    // Generate next unique volunteer code
+    const totalCount = await prisma.volunteer.count({
+      where: { eventId },
+    });
+    const code = `VOL-${(totalCount + 1).toString().padStart(4, '0')}`;
+
+    const created = await prisma.volunteer.create({
+      data: {
+        organizationId: actor.organizationId,
+        eventId,
+        code,
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        shirtSize: data.shirtSize || 'L',
+        divisionId: data.divisionId,
+        registrationStatus: data.registrationStatus || 'APPROVED',
+      },
+      include: {
+        division: true,
+      },
+    });
+
+    await AuditLogger.log({
+      organizationId: actor.organizationId,
+      eventId,
+      actorId: actor.userId,
+      action: 'volunteer.created',
+      entityType: 'Volunteer',
+      entityId: created.id,
+      after: { code, fullName: created.fullName, divisionId: data.divisionId },
+    });
+
+    return created;
+  }
+
+  public static async deleteVolunteer(actor: Actor, volunteerId: string) {
+    if (!RbacGuard.can(actor, 'write', 'volunteer', { organizationId: actor.organizationId })) {
+      throw new Error('FORBIDDEN');
+    }
+
+    const vol = await prisma.volunteer.findFirst({
+      where: withOrgScope(actor.organizationId, { id: volunteerId, deletedAt: null }),
+    });
+
+    if (!vol) throw new Error('NOT_FOUND');
+
+    const updated = await prisma.volunteer.update({
+      where: { id: vol.id },
+      data: { deletedAt: new Date() },
+    });
+
+    await AuditLogger.log({
+      organizationId: actor.organizationId,
+      eventId: vol.eventId,
+      actorId: actor.userId,
+      action: 'volunteer.deleted',
+      entityType: 'Volunteer',
+      entityId: vol.id,
+      before: { code: vol.code, fullName: vol.fullName },
+    });
+
+    return updated;
+  }
 }

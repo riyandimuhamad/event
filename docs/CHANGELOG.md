@@ -2,6 +2,36 @@
 
 Dokumentasi perubahan, penambahan dependensi, dan pencatatan keputusan per milestone sesuai aturan di `rules.md`.
 
+## [0.2.0] - 2026-10-09
+
+### Full-Stack Relational CRUD across Core Operational Modules
+- **Divisi (`/divisions`)**:
+  - `POST /api/v1/divisions`: Pembuatan divisi baru dengan pemilihan Kepala Divisi (`divisionHeadId`) dari anggota organisasi.
+  - `DELETE /api/v1/divisions/[id]`: Penegakan aturan **Rule B2** (pencegahan penghapusan divisi jika memiliki committee aktif, volunteer, atau requisition terkait).
+  - UI Modal interaktif dengan validasi form dan feedback error 409 Conflict.
+- **Panitia Resmi (`/committee`)**:
+  - `POST /api/v1/committee`: Pendaftaran panitia resmi yang tertaut langsung ke `Division` aktif dalam event.
+  - `DELETE /api/v1/committee/[id]`: Penghapusan panitia resmi dengan audit log otomatis.
+- **Volunteer / Relawan (`/volunteers`)**:
+  - `POST /api/v1/volunteers`: Pendaftaran relawan dengan penugasan divisi, pemilihan ukuran kaos, dan kontak darurat.
+  - Status lifecycle (Approve, Reject, Delete) terhubung ke relasi divisi dan rekap kuota.
+- **Kebutuhan Antar-Divisi (`/requisitions`)**:
+  - Pembuatan requisition (`POST /api/v1/requisitions`) dengan relasi `fromDivision` dan `toDivision`, item barang, serta transisi state machine berbasis izin RBAC.
+- **Vendor & Kru Lapangan (`/vendors`)**:
+  - `POST /api/v1/vendors`: Registrasi mitra vendor dengan kategori layanan dan kontak PIC.
+  - `POST /api/v1/vendors/[id]/crews`: Pendaftaran kru lapangan terpaut ke vendor mitra.
+  - `DELETE /api/v1/vendors/[id]`: Penghapusan vendor beserta data terasosiasi.
+- **Talent & Showtime (`/talents`)**:
+  - `POST /api/v1/talents`: Penambahan artis/talent panggung, PIC pendamping, dan rider teknis.
+  - `POST /api/v1/talents/[id]/shows`: Penjadwalan tampil panggung (*showtime*) dengan panggung, waktu mulai, dan selesai.
+  - `DELETE /api/v1/talents/[id]`: Penghapusan data talent.
+- **Sponsor & Deliverables (`/sponsors`)**:
+  - `POST /api/v1/sponsors`: Registrasi sponsor mitra dengan paket tier (Platinum, Gold, Silver), nominal kontrak, dan status pelunasan.
+  - `POST /api/v1/sponsors/[id]/deliverables`: Pendaftaran deliverables kemitraan (logo panggung, banner, mention media sosial).
+  - `DELETE /api/v1/sponsors/[id]`: Penghapusan sponsor mitra.
+- **Tema & Desain UI**:
+  - Seluruh modal input, tombol aksi, dan tabel data konsisten mengadopsi tema **Warm Linen & Royal Maroon Light Mode** dengan estetika Soft UI.
+
 ## [0.1.0] - 2026-10-09
 
 ### Fondasi & Arsitektur (M0)
