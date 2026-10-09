@@ -262,6 +262,64 @@ export class VolunteerService {
     });
   }
 
+  public static async createShift(
+    actor: Actor,
+    eventId: string,
+    data: {
+      name: string;
+      divisionId?: string;
+      startsAt: string;
+      endsAt: string;
+      capacity?: number;
+    }
+  ) {
+    if (!RbacGuard.can(actor, 'write', 'volunteer', { organizationId: actor.organizationId, eventId })) {
+      throw new Error('FORBIDDEN');
+    }
+
+    let targetDivisionId = data.divisionId;
+    if (!targetDivisionId) {
+      const firstDiv = await prisma.division.findFirst({
+        where: { eventId, deletedAt: null },
+      });
+      if (!firstDiv) throw new Error('Mohon buat divisi terlebih dahulu sebelum menambah shift');
+      targetDivisionId = firstDiv.id;
+    }
+
+    return prisma.shift.create({
+      data: {
+        eventId,
+        divisionId: targetDivisionId,
+        name: data.name,
+        startsAt: new Date(data.startsAt),
+        endsAt: new Date(data.endsAt),
+        capacity: data.capacity ? Number(data.capacity) : null,
+      },
+      include: {
+        division: true,
+      },
+    });
+  }
+
+  public static async deleteShift(actor: Actor, shiftId: string) {
+    const shift = await prisma.shift.findUnique({
+      where: { id: shiftId },
+      include: { event: true },
+    });
+
+    if (!shift || shift.event.organizationId !== actor.organizationId) {
+      throw new Error('NOT_FOUND');
+    }
+
+    if (!RbacGuard.can(actor, 'write', 'volunteer', { organizationId: actor.organizationId, eventId: shift.eventId })) {
+      throw new Error('FORBIDDEN');
+    }
+
+    return prisma.shift.delete({
+      where: { id: shiftId },
+    });
+  }
+
   public static async updateVolunteer(
     actor: Actor,
     volunteerId: string,

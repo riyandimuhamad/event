@@ -43,7 +43,7 @@ export function Header({
             <span className="text-[#FFFFFF] font-semibold truncate max-w-[140px] sm:max-w-xs">{eventName}</span>
           </div>
           <div className="text-xs sm:text-sm font-extrabold text-[#FFFFFF] tracking-tight truncate mt-0.5">
-            Pusat Komando Operasional
+            Dashboard Operasional Event
           </div>
         </div>
       </div>

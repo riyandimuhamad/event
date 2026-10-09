@@ -230,4 +230,145 @@ export class EventService {
       auditLogs,
     };
   }
+
+  public static async getEvents(actor: Actor) {
+    return prisma.event.findMany({
+      where: withOrgScope(actor.organizationId, { deletedAt: null }),
+      include: {
+        organization: true,
+        divisions: { where: { deletedAt: null } },
+        volunteers: { where: { deletedAt: null } },
+        committeeMembers: { where: { deletedAt: null } },
+        shifts: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  public static async createEvent(
+    actor: Actor,
+    data: {
+      name: string;
+      slug?: string;
+      description?: string;
+      venueName?: string;
+      venueAddress?: string;
+      startsAt: string;
+      endsAt: string;
+      expectedAttendees?: number;
+      currentPhase?: string;
+    }
+  ) {
+    if (actor.orgRole !== 'OWNER' && actor.orgRole !== 'ADMIN') {
+      throw new Error('FORBIDDEN');
+    }
+
+    const generatedSlug = data.slug || data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const startsAt = new Date(data.startsAt);
+    const endsAt = new Date(data.endsAt);
+
+    const event = await prisma.event.create({
+      data: {
+        organizationId: actor.organizationId,
+        name: data.name,
+        slug: generatedSlug,
+        description: data.description || null,
+        venueName: data.venueName || null,
+        venueAddress: data.venueAddress || null,
+        startsAt,
+        endsAt,
+        status: 'ACTIVE',
+        currentPhase: data.currentPhase || 'PRE_EVENT',
+        expectedAttendees: data.expectedAttendees ? Number(data.expectedAttendees) : null,
+      },
+      include: {
+        organization: true,
+        divisions: true,
+        volunteers: true,
+        committeeMembers: true,
+        shifts: true,
+      },
+    });
+
+    await prisma.eventPhase.createMany({
+      data: [
+        {
+          eventId: event.id,
+          phase: 'PRE_EVENT',
+          title: 'Pra-Event & Persiapan Logistik',
+          startsAt: new Date(startsAt.getTime() - 7 * 24 * 60 * 60 * 1000),
+          endsAt: startsAt,
+          status: 'ACTIVE',
+        },
+        {
+          eventId: event.id,
+          phase: 'DAY_OF',
+          title: 'Operasional Hari H',
+          startsAt,
+          endsAt,
+          status: 'PLANNED',
+        },
+        {
+          eventId: event.id,
+          phase: 'POST_EVENT',
+          title: 'Pasca-Event & Distribusi Benefit',
+          startsAt: endsAt,
+          endsAt: new Date(endsAt.getTime() + 7 * 24 * 60 * 60 * 1000),
+          status: 'PLANNED',
+        },
+      ],
+    });
+
+    return event;
+  }
+
+  public static async updateEvent(
+    actor: Actor,
+    eventId: string,
+    data: {
+      name?: string;
+      description?: string;
+      venueName?: string;
+      venueAddress?: string;
+      startsAt?: string;
+      endsAt?: string;
+      status?: string;
+      currentPhase?: string;
+      expectedAttendees?: number;
+    }
+  ) {
+    if (actor.orgRole !== 'OWNER' && actor.orgRole !== 'ADMIN') {
+      throw new Error('FORBIDDEN');
+    }
+
+    const event = await prisma.event.findFirst({
+      where: withOrgScope(actor.organizationId, { id: eventId, deletedAt: null }),
+    });
+
+    if (!event) throw new Error('NOT_FOUND');
+
+    const updated = await prisma.event.update({
+      where: { id: event.id },
+      data: {
+        name: data.name ?? event.name,
+        description: data.description !== undefined ? data.description : event.description,
+        venueName: data.venueName !== undefined ? data.venueName : event.venueName,
+        venueAddress: data.venueAddress !== undefined ? data.venueAddress : event.venueAddress,
+        startsAt: data.startsAt ? new Date(data.startsAt) : event.startsAt,
+        endsAt: data.endsAt ? new Date(data.endsAt) : event.endsAt,
+        status: data.status ?? event.status,
+        currentPhase: data.currentPhase ?? event.currentPhase,
+        expectedAttendees: data.expectedAttendees !== undefined ? Number(data.expectedAttendees) : event.expectedAttendees,
+      },
+      include: {
+        organization: true,
+        divisions: true,
+        volunteers: true,
+        committeeMembers: true,
+        shifts: true,
+      },
+    });
+
+    return updated;
+  }
 }

@@ -94,4 +94,52 @@ export class CommitteeService {
 
     return updated;
   }
+
+  public static async updateCommitteeMember(
+    actor: Actor,
+    committeeMemberId: string,
+    data: {
+      divisionId?: string;
+      fullName?: string;
+      email?: string;
+      phone?: string;
+      position?: string;
+    }
+  ) {
+    if (!RbacGuard.can(actor, 'write', 'committee', { organizationId: actor.organizationId })) {
+      throw new Error('FORBIDDEN');
+    }
+
+    const member = await prisma.committeeMember.findFirst({
+      where: withOrgScope(actor.organizationId, { id: committeeMemberId, deletedAt: null }),
+    });
+
+    if (!member) throw new Error('NOT_FOUND');
+
+    const updated = await prisma.committeeMember.update({
+      where: { id: member.id },
+      data: {
+        ...(data.divisionId ? { divisionId: data.divisionId } : {}),
+        ...(data.fullName ? { fullName: data.fullName } : {}),
+        ...(data.email !== undefined ? { email: data.email } : {}),
+        ...(data.phone !== undefined ? { phone: data.phone } : {}),
+        ...(data.position !== undefined ? { position: data.position } : {}),
+      },
+      include: {
+        division: true,
+      },
+    });
+
+    await AuditLogger.log({
+      organizationId: actor.organizationId,
+      eventId: member.eventId,
+      actorId: actor.userId,
+      action: 'committee.updated',
+      entityType: 'CommitteeMember',
+      entityId: member.id,
+      after: { fullName: updated.fullName, position: updated.position },
+    });
+
+    return updated;
+  }
 }

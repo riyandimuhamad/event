@@ -14,6 +14,7 @@ import {
   BadgeDollarSign,
   PackageOpen,
   CalendarCheck,
+  Calendar,
   Award,
   PanelLeftClose,
   PanelLeftOpen,
@@ -61,6 +62,12 @@ export function Sidebar({
   }, []);
 
   const allNavItems = [
+    {
+      title: 'Daftar Event EO',
+      href: `/${orgSlug}/events`,
+      icon: Calendar,
+      show: true,
+    },
     {
       title: t('nav.overview'),
       href: `${basePath}/overview`,
@@ -133,7 +140,10 @@ export function Sidebar({
   ];
 
   const navLink = (item: { href: string; title: string; icon: React.ElementType }) => {
-    const isActive = pathname.startsWith(item.href);
+    const isActive =
+      item.href === `/${orgSlug}/events`
+        ? pathname === `/${orgSlug}/events`
+        : pathname === item.href || pathname.startsWith(`${item.href}/`);
     const Icon = item.icon;
     return (
       <Link

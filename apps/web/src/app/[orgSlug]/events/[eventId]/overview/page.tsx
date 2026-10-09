@@ -219,7 +219,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
             <div className="space-y-2 max-w-md">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-accent dark:text-[#FFC46B] uppercase tracking-wider">
-                  Pusat Komando & Orkestrasi
+                  Overview & Ringkasan Event
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
                   ● Status: {event.status}
