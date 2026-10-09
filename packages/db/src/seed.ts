@@ -151,6 +151,7 @@ async function main() {
 
   const event = await prisma.event.create({
     data: {
+      id: '697840e1-5ace-48fa-b866-f4825cc05c22',
       organizationId: org.id,
       name: 'Festival Musik Nusantara 2026',
       slug: 'fmn-2026',
