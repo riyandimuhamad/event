@@ -337,7 +337,7 @@ async function main() {
       organizationId: org.id,
       eventId: event.id,
       code,
-      fullName: `${fn} ${ln} ${i}`,
+      fullName: `${fn} ${ln}`,
       email: `volunteer.${i}@eventops.local`,
       phone: `0818${i.toString().padStart(6, '0')}`,
       shirtSize: shirtSizes[i % shirtSizes.length],
