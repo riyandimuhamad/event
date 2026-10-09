@@ -197,8 +197,8 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
             </div>
 
             {/* Illustration panel card on right */}
-            <div className="w-full sm:w-48 h-40 rounded-xl bg-gradient-to-tr from-[#2A1411] via-[#4A171B] to-[#7A2E33] p-4 flex flex-col justify-between text-white shadow-md relative overflow-hidden flex-shrink-0">
-              <div className="absolute top-0 right-0 -mr-6 -mt-6 w-24 h-24 rounded-full bg-[#FFC46B]/20 blur-xl pointer-events-none" />
+            <div className="w-full sm:w-48 h-40 rounded-xl bg-gradient-to-tr from-[#1A1F2D] via-[#2A1C25] to-[#401C24] p-4 flex flex-col justify-between text-white shadow-md border border-border/80 relative overflow-hidden flex-shrink-0">
+              <div className="absolute top-0 right-0 -mr-6 -mt-6 w-24 h-24 rounded-full bg-[#FFC46B]/15 blur-xl pointer-events-none" />
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#FFC46B]">
                   Target Acara
@@ -209,7 +209,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
                 <div className="text-2xl font-black text-white tracking-tight">
                   {event.expectedAttendees ? event.expectedAttendees.toLocaleString('id-ID') : '5.000'}
                 </div>
-                <div className="text-[10px] text-[#EFE9DF]/80">Hadirin Terkonfirmasi</div>
+                <div className="text-[10px] text-white/80">Hadirin Terkonfirmasi</div>
               </div>
               <div className="text-[10px] text-emerald-300 font-semibold flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-[#FFC46B]" />
@@ -233,17 +233,17 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
         </div>
 
         {/* Right Card: "Work with the rockets" style dark highlight card (5 cols) */}
-        <div className="lg:col-span-5 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#2A1411] via-[#1C0D0B] to-[#140807] text-[#EFE9DF] p-6 border border-[#7A2E33]/40 shadow-xl flex flex-col justify-between">
+        <div className="lg:col-span-5 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#161B24] via-[#1A202D] to-[#121620] text-text p-6 border border-border shadow-lg flex flex-col justify-between">
           {/* Ambient glows */}
-          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 rounded-full bg-[#FFC46B]/10 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 rounded-full bg-[#7A2E33]/30 blur-2xl pointer-events-none" />
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 rounded-full bg-[#FFC46B]/5 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 rounded-full bg-accent/15 blur-2xl pointer-events-none" />
 
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-bold uppercase tracking-wider text-[#FFC46B]">
                 Kesiapan Lapangan
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#7A2E33]/60 text-[#FFC46B] border border-[#FFC46B]/40">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-accent/20 text-[#FFC46B] border border-[#FFC46B]/30">
                 Normal Operasional
               </span>
             </div>
@@ -251,12 +251,12 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
             <h3 className="text-lg font-bold text-white mb-1">
               Kesiapan Hari-H Operasional
             </h3>
-            <p className="text-xs text-[#EFE9DF]/80 leading-relaxed mb-6">
+            <p className="text-xs text-text-muted leading-relaxed mb-6">
               Kalkulasi otomatis dari kesiapan konsumsi, absensi relawan bershift, dan resolusi logistik darurat.
             </p>
 
             {/* Circular Progress & Metrics Row */}
-            <div className="flex items-center gap-6 bg-black/30 border border-white/10 rounded-xl p-4 backdrop-blur-xs">
+            <div className="flex items-center gap-6 bg-surface-muted/70 border border-border rounded-xl p-4 backdrop-blur-xs">
               <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center">
                 <svg className="w-20 h-20 -rotate-90 transform" viewBox="0 0 36 36">
                   <path
@@ -284,21 +284,21 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
               <div className="space-y-1.5 text-xs">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <span className="text-[#EFE9DF]">Presensi: {metrics.attendancePercentage}%</span>
+                  <span className="text-text">Presensi: {metrics.attendancePercentage}%</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#FFC46B]" />
-                  <span className="text-[#EFE9DF]">Konsumsi: {metrics.mealPercentage}%</span>
+                  <span className="text-text">Konsumsi: {metrics.mealPercentage}%</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-rose-400" />
-                  <span className="text-[#EFE9DF]">{metrics.urgentRequisitionsCount} Kebutuhan Mendesak</span>
+                  <span className="text-text">{metrics.urgentRequisitionsCount} Kebutuhan Mendesak</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="relative z-10 pt-6 mt-4 border-t border-white/10">
+          <div className="relative z-10 pt-6 mt-4 border-t border-border">
             <Link
               href={`/${params.orgSlug}/events/${params.eventId}/day-of`}
               className="text-xs font-bold text-[#FFC46B] flex items-center justify-between hover:text-white transition-colors"
@@ -318,7 +318,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
         <div className="lg:col-span-5 bg-surface rounded-2xl border border-border shadow-sm p-5 flex flex-col justify-between">
           <div>
             {/* Dark Chart Container */}
-            <div className="bg-gradient-to-br from-[#241312] to-[#180C0B] rounded-xl p-4 mb-4 border border-[#7A2E33]/30 shadow-inner">
+            <div className="bg-gradient-to-br from-[#111622] to-[#0E121B] rounded-xl p-4 mb-4 border border-border shadow-inner">
               <div className="flex items-center justify-between text-white/70 mb-2 text-xs">
                 <span className="font-semibold text-white/90">Distribusi Beban Shift (Pagi - Malam)</span>
                 <span className="text-[11px] text-[#FFC46B] font-mono">150 Relawan</span>
@@ -338,7 +338,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
                   <div key={i} className="flex-1 flex flex-col items-center gap-1.5 group">
                     <div className="w-full bg-white/5 rounded-t-md h-32 flex items-end">
                       <div
-                        className="w-full rounded-t-md bg-gradient-to-t from-[#7A2E33] to-[#FFC46B] group-hover:to-white transition-all duration-300"
+                        className="w-full rounded-t-md bg-gradient-to-t from-accent to-[#FFC46B] group-hover:to-white transition-all duration-300"
                         style={{ height: bar.height }}
                         title={`${bar.label}: ${bar.val}`}
                       />
@@ -437,8 +437,8 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
                   </linearGradient>
                   {/* Gradient for Maroon area */}
                   <linearGradient id="maroonGlowGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#7A2E33" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#7A2E33" stopOpacity="0.0" />
+                    <stop offset="0%" stopColor="#C94B54" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#C94B54" stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
 
@@ -456,7 +456,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
                 <path
                   d="M0,130 C60,110 120,140 180,90 C240,40 300,70 360,50 C420,30 460,45 500,25"
                   fill="none"
-                  stroke="#7A2E33"
+                  stroke="#C94B54"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />
@@ -475,9 +475,9 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
                 />
 
                 {/* Data Points on Amber line */}
-                <circle cx="180" cy="105" r="4" fill="#FFC46B" stroke="#2A1411" strokeWidth="2" />
-                <circle cx="360" cy="60" r="4" fill="#FFC46B" stroke="#2A1411" strokeWidth="2" />
-                <circle cx="500" cy="28" r="4" fill="#FFC46B" stroke="#2A1411" strokeWidth="2" />
+                <circle cx="180" cy="105" r="4" fill="#FFC46B" stroke="#161B22" strokeWidth="2" />
+                <circle cx="360" cy="60" r="4" fill="#FFC46B" stroke="#161B22" strokeWidth="2" />
+                <circle cx="500" cy="28" r="4" fill="#FFC46B" stroke="#161B22" strokeWidth="2" />
               </svg>
 
               {/* X-axis labels */}

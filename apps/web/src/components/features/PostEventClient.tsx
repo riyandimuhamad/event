@@ -124,10 +124,10 @@ export function PostEventClient({
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-2xl font-bold tracking-tight text-text">
             {t('postEvent.title')}
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-0.5">
+          <p className="text-text-muted text-sm mt-0.5">
             {t('postEvent.subtitle')}
           </p>
         </div>
@@ -135,11 +135,11 @@ export function PostEventClient({
 
       {/* KPI Stats Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-        <div className="p-4 rounded-xl border border-border bg-white dark:bg-zinc-800/80 shadow-sm">
-          <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
-            <DollarSign className="w-3.5 h-3.5 text-zinc-400" /> Total Anggaran Fee
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-sm">
+          <div className="text-xs font-medium text-text-muted flex items-center gap-1.5">
+            <DollarSign className="w-3.5 h-3.5 text-text-subtle" /> Total Anggaran Fee
           </div>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mt-1 tabular-nums">
+          <div className="text-xl font-bold text-text mt-1 tabular-nums">
             Rp {totalFeeBudget.toLocaleString('id-ID')}
           </div>
         </div>
@@ -204,10 +204,10 @@ export function PostEventClient({
 
       {/* Tab 1: Fees */}
       {activeTab === 'fee' && (
-        <div className="bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-surface border border-border rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-zinc-50 dark:bg-zinc-900/60 border-b border-border text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+              <thead className="bg-surface-muted border-b border-border text-xs font-semibold text-text-muted uppercase tracking-wider">
                 <tr>
                   <th className="px-6 py-3.5">Penerima & Divisi</th>
                   <th className="px-6 py-3.5">Nominal Honorarium</th>
@@ -218,20 +218,20 @@ export function PostEventClient({
               </thead>
               <tbody className="divide-y divide-border">
                 {feeBenefits.map((b) => (
-                  <tr key={b.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-700/20">
+                  <tr key={b.id} className="hover:bg-surface-muted/60 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-zinc-900 dark:text-zinc-100">
+                      <div className="font-semibold text-text">
                         {b.recipientName}
                       </div>
-                      <div className="text-xs text-zinc-400">{b.recipientDivision}</div>
+                      <div className="text-xs text-text-muted">{b.recipientDivision}</div>
                     </td>
-                    <td className="px-6 py-4 font-bold tabular-nums text-zinc-800 dark:text-zinc-200">
+                    <td className="px-6 py-4 font-bold tabular-nums text-text">
                       Rp {b.amountNumber.toLocaleString('id-ID')}
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={b.status} context="benefit" />
                     </td>
-                    <td className="px-6 py-4 text-xs text-zinc-500 dark:text-zinc-400">
+                    <td className="px-6 py-4 text-xs text-text-muted">
                       {b.paidAt
                         ? new Date(b.paidAt).toLocaleDateString('id-ID', {
                             day: 'numeric',
@@ -277,10 +277,10 @@ export function PostEventClient({
 
       {/* Tab 2: Certificates */}
       {activeTab === 'certificate' && (
-        <div className="bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-surface border border-border rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-zinc-50 dark:bg-zinc-900/60 border-b border-border text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+              <thead className="bg-surface-muted border-b border-border text-xs font-semibold text-text-muted uppercase tracking-wider">
                 <tr>
                   <th className="px-6 py-3.5">Penerima & Divisi</th>
                   <th className="px-6 py-3.5">Nomor Registrasi Sertifikat</th>
@@ -290,14 +290,14 @@ export function PostEventClient({
               </thead>
               <tbody className="divide-y divide-border">
                 {certBenefits.map((b) => (
-                  <tr key={b.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-700/20">
+                  <tr key={b.id} className="hover:bg-surface-muted/60 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-zinc-900 dark:text-zinc-100">
+                      <div className="font-semibold text-text">
                         {b.recipientName}
                       </div>
-                      <div className="text-xs text-zinc-400">{b.recipientDivision}</div>
+                      <div className="text-xs text-text-muted">{b.recipientDivision}</div>
                     </td>
-                    <td className="px-6 py-4 font-mono text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                    <td className="px-6 py-4 font-mono text-xs font-bold text-text">
                       {b.certificateNumber || 'CERT-EO-' + b.id.slice(0, 8).toUpperCase()}
                     </td>
                     <td className="px-6 py-4">
@@ -306,7 +306,7 @@ export function PostEventClient({
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => setSelectedCertForPreview(b)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-zinc-800 dark:text-zinc-200 rounded-xl text-xs font-semibold transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-muted hover:bg-surface border border-border text-text rounded-xl text-xs font-semibold transition-colors"
                       >
                         <Printer className="w-3.5 h-3.5" />
                         <span>Pratinjau / Cetak</span>
@@ -323,15 +323,15 @@ export function PostEventClient({
       {/* Disbursement Dialog Modal with Audit File Upload */}
       {disbursingBenefit && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-border space-y-4">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl border border-border space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-border">
-              <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
+              <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <UploadCloud className="w-5 h-5 text-emerald-600" />
                 <span>Konfirmasi Pencairan Honorarium</span>
               </h3>
               <button
                 onClick={() => setDisbursingBenefit(null)}
-                className="text-zinc-400 hover:text-zinc-600"
+                className="text-text-muted hover:text-text"
               >
                 ✕
               </button>
@@ -344,21 +344,21 @@ export function PostEventClient({
               </div>
             )}
 
-            <div className="bg-zinc-50 dark:bg-zinc-900/60 p-3.5 rounded-xl border border-border text-xs space-y-1.5">
+            <div className="bg-surface-muted p-3.5 rounded-xl border border-border text-xs space-y-1.5">
               <div className="flex justify-between">
-                <span className="text-zinc-500">Penerima Dana:</span>
-                <span className="font-bold text-zinc-900 dark:text-zinc-100">
+                <span className="text-text-muted">Penerima Dana:</span>
+                <span className="font-bold text-text">
                   {disbursingBenefit.recipientName}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500">Divisi / Peran:</span>
-                <span className="text-zinc-700 dark:text-zinc-300">
+                <span className="text-text-muted">Divisi / Peran:</span>
+                <span className="text-text">
                   {disbursingBenefit.recipientDivision}
                 </span>
               </div>
               <div className="flex justify-between pt-1 border-t border-border">
-                <span className="text-zinc-500">Nominal Transfer:</span>
+                <span className="text-text-muted">Nominal Transfer:</span>
                 <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums">
                   Rp {disbursingBenefit.amountNumber.toLocaleString('id-ID')}
                 </span>
@@ -367,13 +367,13 @@ export function PostEventClient({
 
             <form onSubmit={handleDisburseSubmit} className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                <label className="block font-semibold text-text mb-1">
                   Metode Penyaluran Dana
                 </label>
                 <select
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full rounded-xl border border-border p-2 bg-zinc-50 dark:bg-zinc-900"
+                  className="w-full rounded-xl border border-border p-2 bg-surface text-text"
                 >
                   <option value="TRANSFER_BCA">Bank BCA (Transfer Antar Bank)</option>
                   <option value="TRANSFER_MANDIRI">Bank Mandiri</option>
@@ -383,7 +383,7 @@ export function PostEventClient({
               </div>
 
               <div>
-                <label className="block font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                <label className="block font-semibold text-text mb-1">
                   Nomor Referensi Transaksi
                 </label>
                 <input
@@ -391,22 +391,22 @@ export function PostEventClient({
                   required
                   value={referenceNo}
                   onChange={(e) => setReferenceNo(e.target.value)}
-                  className="w-full rounded-xl border border-border p-2 font-mono bg-zinc-50 dark:bg-zinc-900"
+                  className="w-full rounded-xl border border-border p-2 font-mono bg-surface text-text"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                <label className="block font-semibold text-text mb-1">
                   File Bukti Transfer (Audit Requirement)
                 </label>
-                <div className="p-3 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-xl flex items-center justify-between bg-zinc-50 dark:bg-zinc-900/50">
+                <div className="p-3 border-2 border-dashed border-border rounded-xl flex items-center justify-between bg-surface-muted">
                   <div className="flex items-center gap-2">
                     <FileCheck className="w-4 h-4 text-emerald-600" />
-                    <span className="font-mono text-[11px] text-zinc-700 dark:text-zinc-300 truncate max-w-[200px]">
+                    <span className="font-mono text-[11px] text-text truncate max-w-[200px]">
                       {proofFileName}
                     </span>
                   </div>
-                  <span className="text-[10px] text-zinc-400">Siap Dilampirkan</span>
+                  <span className="text-[10px] text-text-muted">Siap Dilampirkan</span>
                 </div>
               </div>
 
@@ -422,7 +422,7 @@ export function PostEventClient({
                 <button
                   type="button"
                   onClick={() => setDisbursingBenefit(null)}
-                  className="px-4 py-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 rounded-xl"
+                  className="px-4 py-2 text-text-muted hover:bg-surface-muted rounded-xl"
                 >
                   Batal
                 </button>

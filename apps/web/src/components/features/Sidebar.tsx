@@ -195,7 +195,7 @@ export function Sidebar({
                   <div
                     className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
                       isActive
-                        ? 'bg-gradient-to-tr from-[#7A2E33] to-[#4A171B] text-[#FFC46B] shadow-md shadow-accent/25 border border-[#7A2E33]/50'
+                        ? 'bg-gradient-to-tr from-[#8B2E35] to-[#5A1C22] text-[#FFC46B] shadow-md shadow-accent/20 border border-[#A83842]/40'
                         : 'bg-surface text-text-muted border border-border/80 shadow-xs group-hover:text-text group-hover:scale-105'
                     }`}
                   >
@@ -238,7 +238,7 @@ export function Sidebar({
                   <div
                     className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
                       isActive
-                        ? 'bg-gradient-to-tr from-[#7A2E33] to-[#4A171B] text-[#FFC46B] shadow-md shadow-accent/25 border border-[#7A2E33]/50'
+                        ? 'bg-gradient-to-tr from-[#8B2E35] to-[#5A1C22] text-[#FFC46B] shadow-md shadow-accent/20 border border-[#A83842]/40'
                         : 'bg-surface text-text-muted border border-border/80 shadow-xs group-hover:text-text group-hover:scale-105'
                     }`}
                   >
@@ -254,18 +254,18 @@ export function Sidebar({
       {/* Bottom Soft UI Help Card Widget */}
       {!isCollapsed ? (
         <div className="p-3">
-          <div className="p-4 rounded-2xl bg-gradient-to-tr from-[#3B1816] via-[#2A1411] to-[#1C0D0B] border border-[#7A2E33]/40 text-white shadow-md space-y-2.5">
-            <div className="w-8 h-8 rounded-xl bg-white/10 text-[#FFC46B] flex items-center justify-center border border-white/10 shadow-inner">
+          <div className="p-4 rounded-2xl bg-surface-muted border border-border shadow-sm space-y-2.5">
+            <div className="w-8 h-8 rounded-xl bg-accent-subtle text-accent dark:text-[#FFC46B] flex items-center justify-center border border-accent/25 shadow-xs">
               <Award className="w-4 h-4" />
             </div>
             <div>
-              <div className="font-bold text-xs text-white">Butuh Bantuan & SOP?</div>
-              <div className="text-[11px] text-[#EFE9DF]/70 mt-0.5 leading-snug">
+              <div className="font-bold text-xs text-text">Butuh Bantuan & SOP?</div>
+              <div className="text-[11px] text-text-muted mt-0.5 leading-snug">
                 Panduan alur operasional & audit trail
               </div>
             </div>
             <div className="pt-0.5">
-              <span className="w-full inline-block text-center py-1.5 px-3 rounded-xl bg-white text-[#1C1412] font-black text-[10px] tracking-wider shadow-sm uppercase">
+              <span className="w-full inline-block text-center py-1.5 px-3 rounded-xl bg-accent text-white font-bold text-[10px] tracking-wider shadow-xs uppercase hover:bg-accent-hover transition-colors">
                 PANDUAN OPERASIONAL
               </span>
             </div>

@@ -126,10 +126,10 @@ export function VolunteersClient({
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-2xl font-bold tracking-tight text-text">
             {t('volunteers.title')}
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-0.5">
+          <p className="text-text-muted text-sm mt-0.5">
             {t('volunteers.subtitle')}
           </p>
         </div>
@@ -137,16 +137,16 @@ export function VolunteersClient({
 
       {/* KPI Counters */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-        <div className="p-4 rounded-xl border border-border bg-white dark:bg-zinc-800/80 shadow-sm">
-          <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-zinc-400" /> Total Relawan Terdaftar
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-sm">
+          <div className="text-xs font-medium text-text-muted flex items-center gap-1.5">
+            <Users className="w-3.5 h-3.5 text-text-subtle" /> Total Relawan Terdaftar
           </div>
-          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mt-1">
+          <div className="text-2xl font-bold text-text mt-1">
             {totalVolunteers}
           </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-emerald-200/60 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-950/20 shadow-sm">
+        <div className="p-4 rounded-xl border border-emerald-300/40 dark:border-emerald-800/40 bg-emerald-50/50 dark:bg-emerald-950/20 shadow-sm">
           <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
             <UserCheck className="w-3.5 h-3.5" /> Diterima (Approved)
           </div>
@@ -155,7 +155,7 @@ export function VolunteersClient({
           </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-amber-200/60 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 shadow-sm">
+        <div className="p-4 rounded-xl border border-amber-300/40 dark:border-amber-800/40 bg-amber-50/50 dark:bg-amber-950/20 shadow-sm">
           <div className="text-xs font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
             <Clock className="w-3.5 h-3.5" /> Menunggu Seleksi
           </div>
@@ -183,7 +183,7 @@ export function VolunteersClient({
             placeholder="Cari nama relawan atau kode VOL-XXXX..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full text-xs rounded-xl border border-border pl-9 pr-3 py-2 bg-surface focus:outline-none focus:ring-2 focus:ring-accent"
+            className="w-full text-xs rounded-xl border border-border pl-9 pr-3 py-2 bg-surface text-text focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
 
@@ -204,7 +204,7 @@ export function VolunteersClient({
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="text-xs rounded-xl border border-border px-3 py-2 bg-zinc-50 dark:bg-zinc-900 font-medium text-zinc-700 dark:text-zinc-300"
+            className="text-xs rounded-xl border border-border px-3 py-2 bg-surface font-medium text-text"
           >
             <option value="all">Semua Status</option>
             <option value="APPROVED">Diterima (APPROVED)</option>
@@ -215,7 +215,7 @@ export function VolunteersClient({
           <select
             value={selectedPresence}
             onChange={(e) => setSelectedPresence(e.target.value as any)}
-            className="text-xs rounded-xl border border-border px-3 py-2 bg-zinc-50 dark:bg-zinc-900 font-medium text-zinc-700 dark:text-zinc-300"
+            className="text-xs rounded-xl border border-border px-3 py-2 bg-surface font-medium text-text"
           >
             <option value="all">Semua Presensi</option>
             <option value="checked_in">Sudah Check-in</option>
@@ -225,10 +225,10 @@ export function VolunteersClient({
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden lg:block bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-sm overflow-hidden">
+      <div className="hidden lg:block bg-surface border border-border rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-zinc-50 dark:bg-zinc-900/60 border-b border-border text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+            <thead className="bg-surface-muted border-b border-border text-xs font-semibold text-text-muted uppercase tracking-wider">
               <tr>
                 <th className="px-6 py-3.5">Relawan & Kode ID</th>
                 <th className="px-6 py-3.5">Divisi Penempatan</th>
@@ -246,7 +246,7 @@ export function VolunteersClient({
                 const checkedIn = vol.shifts.some((s) => s.checkedInAt !== null);
 
                 return (
-                  <tr key={vol.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-700/20">
+                  <tr key={vol.id} className="hover:bg-surface-muted/60 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <button
@@ -347,37 +347,37 @@ export function VolunteersClient({
           return (
             <div
               key={vol.id}
-              className="bg-white dark:bg-zinc-800 border border-border rounded-xl p-4 shadow-sm space-y-3"
+              className="bg-surface border border-border rounded-xl p-4 shadow-sm space-y-3"
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <div className="font-bold text-zinc-900 dark:text-zinc-100">{vol.fullName}</div>
-                  <div className="font-mono text-xs text-zinc-400 tabular-nums">{vol.code}</div>
+                  <div className="font-bold text-text">{vol.fullName}</div>
+                  <div className="font-mono text-xs text-text-muted tabular-nums">{vol.code}</div>
                 </div>
                 <StatusBadge status={vol.registrationStatus} context="volunteer" />
               </div>
 
               <div className="text-xs space-y-1.5 pt-1 border-t border-border">
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Divisi:</span>
-                  <span className="font-medium text-zinc-800 dark:text-zinc-200">
+                  <span className="text-text-muted">Divisi:</span>
+                  <span className="font-medium text-text">
                     {vol.division?.name || 'Belum Ditentukan'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Ukuran Kaos:</span>
-                  <span className="font-mono font-bold text-zinc-700 dark:text-zinc-300">
+                  <span className="text-text-muted">Ukuran Kaos:</span>
+                  <span className="font-mono font-bold text-text">
                     {vol.shirtSize || '-'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-zinc-500">Presensi Shift:</span>
+                  <span className="text-text-muted">Presensi Shift:</span>
                   {checkedIn ? (
                     <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
                       <CheckCircle2 className="w-3 h-3" /> Sudah Check-in
                     </span>
                   ) : (
-                    <span className="text-[11px] text-zinc-400">Belum Check-in</span>
+                    <span className="text-[11px] text-text-muted">Belum Check-in</span>
                   )}
                 </div>
               </div>

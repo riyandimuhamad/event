@@ -242,10 +242,10 @@ export function RequisitionsClient({
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-2xl font-bold tracking-tight text-text">
             {t('requisition.title')}
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-0.5">
+          <p className="text-text-muted text-sm mt-0.5">
             {t('requisition.subtitle')}
           </p>
         </div>
@@ -347,14 +347,14 @@ export function RequisitionsClient({
 
         {/* Filter Pills */}
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
-          <span className="text-xs font-semibold text-zinc-500 flex items-center gap-1 mr-1">
+          <span className="text-xs font-semibold text-text-muted flex items-center gap-1 mr-1">
             <Filter className="w-3.5 h-3.5" /> Filter:
           </span>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="text-xs rounded-lg border border-border px-2.5 py-1 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-medium"
+            className="text-xs rounded-lg border border-border px-2.5 py-1 bg-surface text-text font-medium"
           >
             <option value="ALL">Semua Status</option>
             <option value="DRAFT">DRAFT</option>
@@ -369,7 +369,7 @@ export function RequisitionsClient({
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="text-xs rounded-lg border border-border px-2.5 py-1 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-medium"
+            className="text-xs rounded-lg border border-border px-2.5 py-1 bg-surface text-text font-medium"
           >
             <option value="ALL">Semua Prioritas</option>
             <option value="URGENT">Mendesak (URGENT)</option>
@@ -383,10 +383,10 @@ export function RequisitionsClient({
       {/* Requisitions List */}
       <div className="grid grid-cols-1 gap-4">
         {filtered.length === 0 ? (
-          <div className="p-12 text-center bg-white dark:bg-zinc-800 border border-border rounded-xl text-zinc-500 text-sm">
-            <FileText className="w-10 h-10 mx-auto text-zinc-400 mb-2 stroke-[1.5]" />
-            <div className="font-semibold text-zinc-700 dark:text-zinc-300">Tidak ada data kebutuhan</div>
-            <p className="text-xs text-zinc-400 mt-1">Coba sesuaikan filter atau tambahkan kebutuhan baru.</p>
+          <div className="p-12 text-center bg-surface border border-border rounded-xl text-text-muted text-sm">
+            <FileText className="w-10 h-10 mx-auto text-text-subtle mb-2 stroke-[1.5]" />
+            <div className="font-semibold text-text">Tidak ada data kebutuhan</div>
+            <p className="text-xs text-text-muted mt-1">Coba sesuaikan filter atau tambahkan kebutuhan baru.</p>
           </div>
         ) : (
           filtered.map((req) => {
@@ -398,43 +398,43 @@ export function RequisitionsClient({
             return (
               <div
                 key={req.id}
-                className="bg-white dark:bg-zinc-800 border border-border rounded-xl p-5 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all space-y-4"
+                className="bg-surface border border-border rounded-2xl p-5 shadow-sm hover:border-accent/40 transition-all space-y-4"
               >
                 {/* Header row: Code, Status, Priority, Requester */}
                 <div className="flex flex-wrap items-center justify-between gap-2.5">
                   <div className="flex items-center flex-wrap gap-2">
-                    <span className="font-mono text-xs font-bold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-700 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-600">
+                    <span className="font-mono text-xs font-bold text-text bg-surface-muted px-2 py-0.5 rounded border border-border">
                       {req.code}
                     </span>
                     <StatusBadge status={req.status} context="requisition" />
                     <StatusBadge status={req.priority} context="priority" />
                   </div>
 
-                  <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-zinc-400" />
+                  <div className="text-xs text-text-muted flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-text-subtle" />
                     <span>Pemohon:</span>
-                    <strong className="text-zinc-700 dark:text-zinc-200">{req.requester.fullName}</strong>
+                    <strong className="text-text">{req.requester.fullName}</strong>
                   </div>
                 </div>
 
                 {/* Main Body */}
                 <div>
-                  <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+                  <h2 className="text-base font-bold text-text">
                     {req.title}
                   </h2>
                   {req.description && (
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+                    <p className="text-sm text-text-muted mt-1">
                       {req.description}
                     </p>
                   )}
                 </div>
 
                 {/* Division Routing */}
-                <div className="flex items-center gap-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900/60 p-2.5 rounded-lg border border-border">
-                  <span className="text-zinc-500 flex items-center gap-1">
+                <div className="flex items-center gap-2 text-xs font-semibold text-text bg-surface-muted p-2.5 rounded-lg border border-border">
+                  <span className="text-text-muted flex items-center gap-1">
                     <Building className="w-3.5 h-3.5" /> Dari:
                   </span>
-                  <span className="bg-white dark:bg-zinc-800 px-2 py-0.5 rounded border border-border text-zinc-800 dark:text-zinc-200">
+                  <span className="bg-surface px-2 py-0.5 rounded border border-border text-text">
                     {req.fromDivision.name} ({req.fromDivision.code})
                   </span>
                   <ArrowRight className="w-4 h-4 text-text-muted mx-1 flex-shrink-0" />
@@ -446,14 +446,14 @@ export function RequisitionsClient({
 
                 {/* Items preview */}
                 <div className="space-y-1.5">
-                  <div className="text-xs font-semibold text-zinc-500">
+                  <div className="text-xs font-semibold text-text-muted">
                     Daftar Kebutuhan ({req.items.length} item):
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {req.items.map((itm) => (
                       <span
                         key={itm.id}
-                        className="text-xs bg-zinc-50 dark:bg-zinc-700/50 border border-border px-2.5 py-1 rounded-md text-zinc-700 dark:text-zinc-200"
+                        className="text-xs bg-surface-muted border border-border px-2.5 py-1 rounded-md text-text"
                       >
                         <strong>{itm.quantity}</strong> {itm.unit} — {itm.name}
                       </span>
@@ -461,13 +461,13 @@ export function RequisitionsClient({
                   </div>
                 </div>
 
-                {/* Footer Toolbar: Detail view and action buttons separated without collision */}
+                {/* Footer Toolbar */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-border">
                   <button
                     onClick={() => setSelectedReqForDetail(req)}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg border border-border transition-colors"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-text hover:bg-surface-muted rounded-lg border border-border transition-colors"
                   >
-                    <History className="w-3.5 h-3.5 text-zinc-500" />
+                    <History className="w-3.5 h-3.5 text-text-muted" />
                     <span>Lihat Detail & Riwayat ({req.events.length})</span>
                   </button>
 
@@ -552,31 +552,31 @@ export function RequisitionsClient({
 
       {/* Requisition Detail & Audit History Modal */}
       {selectedReqForDetail && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-border max-h-[90vh] overflow-y-auto space-y-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-surface rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-border max-h-[90vh] overflow-y-auto space-y-6">
             <div className="flex items-start justify-between pb-4 border-b border-border">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-mono text-xs font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-700 px-2 py-0.5 rounded">
+                  <span className="font-mono text-xs font-bold text-text bg-surface-muted px-2 py-0.5 rounded border border-border">
                     {selectedReqForDetail.code}
                   </span>
                   <StatusBadge status={selectedReqForDetail.status} context="requisition" />
                   <StatusBadge status={selectedReqForDetail.priority} context="priority" />
                 </div>
-                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+                <h3 className="text-xl font-bold text-text">
                   {selectedReqForDetail.title}
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedReqForDetail(null)}
-                className="p-1 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                className="p-1 rounded-lg text-text-muted hover:text-text hover:bg-surface-muted"
               >
                 ✕
               </button>
             </div>
 
             {selectedReqForDetail.description && (
-              <div className="text-sm text-zinc-600 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-xl border border-border">
+              <div className="text-sm text-text bg-surface-muted p-3 rounded-xl border border-border">
                 {selectedReqForDetail.description}
               </div>
             )}
@@ -653,7 +653,7 @@ export function RequisitionsClient({
             <div className="pt-4 border-t border-border flex justify-end">
               <button
                 onClick={() => setSelectedReqForDetail(null)}
-                className="px-4 py-2 bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 text-zinc-800 dark:text-zinc-200 text-xs font-semibold rounded-lg"
+                className="px-4 py-2 bg-surface-muted hover:bg-surface border border-border text-text text-xs font-semibold rounded-lg"
               >
                 Tutup
               </button>
@@ -709,15 +709,15 @@ export function RequisitionsClient({
 
       {/* Create Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-border max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-surface rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-border max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-border">
-              <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+              <h3 className="text-lg font-bold text-text">
                 {t('requisition.createNew')}
               </h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                className="text-text-muted hover:text-text"
               >
                 ✕
               </button>
@@ -725,7 +725,7 @@ export function RequisitionsClient({
 
             <form onSubmit={handleCreateRequisition} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                <label className="block text-xs font-semibold text-text mb-1">
                   Judul Kebutuhan
                 </label>
                 <input
@@ -734,19 +734,19 @@ export function RequisitionsClient({
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="Misal: Panggung Utama & Sound System 20k Watt"
-                  className="w-full text-xs rounded-xl border border-border p-2.5 bg-zinc-50 dark:bg-zinc-900"
+                  className="w-full text-xs rounded-xl border border-border p-2.5 bg-surface text-text"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-text mb-1">
                     {t('requisition.fromDivision')}
                   </label>
                   <select
                     value={newFromDiv}
                     onChange={(e) => setNewFromDiv(e.target.value)}
-                    className="w-full text-xs rounded-xl border border-border p-2.5 bg-zinc-50 dark:bg-zinc-900"
+                    className="w-full text-xs rounded-xl border border-border p-2.5 bg-surface text-text"
                   >
                     {divisions.map((d) => (
                       <option key={d.id} value={d.id}>

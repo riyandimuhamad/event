@@ -122,3 +122,22 @@ Dokumentasi perubahan, penambahan dependensi, dan pencatatan keputusan per miles
   - Typography: Espresso ink `#1C1412` dan kontras linen `#EFE9DF`
 - Harmonisasi seluruh sub-halaman dashboard (Divisi, Panitia, Relawan, Kebutuhan Antar-Divisi, Vendor, Talent, Pre-Event, Hari H, dan Pasca-Event).
 
+## [0.3.1] - 2026-10-09 - Eye-Friendly Ergonomic Dark Mode Overhaul
+
+### Ergonomic Dark Palette (Anti-Eye Strain / Anti Sakit Mata)
+- **Eliminasi Kanvas Coklat-Merah Keruh**: Mengganti palet dark mode yang sebelumnya berbasis *deep chocolate red* (`#1B0E0D`, `#241312`, `#3D2422`) yang menyebabkan *chromatic aberration* dan silau mata, dengan **Slate Obsidian Palette berstandar industri modern**:
+  - Background kanvas: `#0D1117` (Deep Soft Obsidian / Slate Matte)
+  - Surface kartu & kontainer: `#161B22` (Soft Layered Surface)
+  - Surface interaktif & baris tabel: `#1F2631` (Subtle Neutral Hover)
+  - Elevated popover & modal: `#282E3D`
+  - Border garis: `#2B3342` (Garis netral tegas tanpa kilau merah yang menyilaukan)
+  - Tipografi: Off-white alami `#F0F3F6` dan slate muted `#94A3B8` dengan kontras WCAG AAA.
+
+### Kalibrasi Aksen Wine Maroon & Amber
+- Aksen warna maroon dikalibrasi menjadi *Soft Wine Rose* (`#C94B54`) yang sejuk di mata pada latar gelap dan tidak menimbulkan *glare*.
+- Tombol widget SOP pada sidebar yang sebelumnya putih pekat diubah menjadi tombol aksen bertema serasi (`bg-accent hover:bg-accent-hover text-white`).
+- Area chart & bar chart pada halaman overview dikalibrasi menggunakan gradien lembut slate dan rose-amber tanpa warna saturasi tajam.
+
+### Standarisasi Token Desain Komponen
+- Menyelaraskan seluruh kelas hardcoded `zinc-` pada tabel `VolunteersClient`, `RequisitionsClient`, dan `PostEventClient` ke token desain semantik (`bg-surface`, `bg-surface-muted`, `border-border`, `text-text`, `text-text-muted`) sehingga transisi antara Light dan Dark mode berjalan serasi dan nyaman di mata.
+
