@@ -319,4 +319,69 @@ export class VolunteerService {
 
     return updated;
   }
+
+  public static async bulkImportVolunteers(
+    actor: Actor,
+    eventId: string,
+    items: Array<{
+      fullName: string;
+      email?: string;
+      phone?: string;
+      shirtSize?: string;
+      divisionId?: string;
+      registrationStatus?: VolunteerRegistrationStatus;
+      notes?: string;
+    }>
+  ) {
+    if (!RbacGuard.can(actor, 'write', 'volunteer', { organizationId: actor.organizationId, eventId })) {
+      throw new Error('FORBIDDEN');
+    }
+
+    if (!items || items.length === 0) {
+      throw new Error('Data relawan untuk diimpor tidak boleh kosong');
+    }
+
+    const startCount = await prisma.volunteer.count({
+      where: { eventId },
+    });
+
+    const createdList = [];
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const code = `VOL-${(startCount + i + 1).toString().padStart(4, '0')}`;
+
+      const vol = await prisma.volunteer.create({
+        data: {
+          organizationId: actor.organizationId,
+          eventId,
+          code,
+          fullName: item.fullName,
+          email: item.email || null,
+          phone: item.phone || null,
+          shirtSize: item.shirtSize || 'L',
+          divisionId: item.divisionId || null,
+          registrationStatus: item.registrationStatus || 'PENDING',
+          notes: item.notes || null,
+        },
+        include: {
+          division: true,
+        },
+      });
+      createdList.push(vol);
+    }
+
+    await AuditLogger.log({
+      organizationId: actor.organizationId,
+      eventId,
+      actorId: actor.userId,
+      action: 'volunteer.bulk_imported',
+      entityType: 'Volunteer',
+      entityId: eventId,
+      after: { count: createdList.length },
+    });
+
+    return createdList;
+  }
 }
+
