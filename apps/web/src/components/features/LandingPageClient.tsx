@@ -16,23 +16,21 @@ import {
   LogIn,
   KeyRound,
   Check,
+  Boxes,
+  ClipboardList,
+  Clock,
+  Sparkles,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 interface LandingPageProps {
   dashboardUrl: string;
-  eventName: string;
-  orgName: string;
 }
 
-export function LandingPageClient({
-  dashboardUrl,
-  eventName,
-  orgName,
-}: LandingPageProps) {
+export function LandingPageClient({ dashboardUrl }: LandingPageProps) {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [selectedRoleEmail, setSelectedRoleEmail] = useState('budi.owner@nusantaracreative.id');
-  const [activeWorkflowTab, setActiveWorkflowTab] = useState<'pre' | 'dayof' | 'post'>('dayof');
+  const [activeWorkflowTab, setActiveWorkflowTab] = useState<'logistik' | 'hari_h' | 'pasca'>('hari_h');
 
   const demoAccounts = [
     {
@@ -62,13 +60,13 @@ export function LandingPageClient({
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
-      {/* Navbar */}
+    <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 selection:bg-zinc-800 selection:text-white">
+      {/* Top Navbar */}
       <nav className="fixed top-0 inset-x-0 z-40 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-bold text-xs">
+          <div className="flex items-center gap-8">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-bold text-xs tracking-tight">
                 EO
               </div>
               <span className="font-bold text-sm tracking-tight text-zinc-900 dark:text-zinc-100">
@@ -76,15 +74,15 @@ export function LandingPageClient({
               </span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-5 text-xs text-zinc-600 dark:text-zinc-400">
-              <a href="#modul" className="hover:text-zinc-900 dark:hover:text-zinc-100">
-                Modul Lapangan
+            <div className="hidden md:flex items-center gap-6 text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+              <a href="#fitur" className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                Fitur Produk
               </a>
-              <a href="#tahapan" className="hover:text-zinc-900 dark:hover:text-zinc-100">
-                Tahapan Acara
+              <a href="#alur" className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                Alur Operasional
               </a>
-              <a href="#keamanan" className="hover:text-zinc-900 dark:hover:text-zinc-100">
-                Hak Akses & Log
+              <a href="#keamanan" className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                Hak Akses & Audit
               </a>
             </div>
           </div>
@@ -94,7 +92,7 @@ export function LandingPageClient({
 
             <button
               onClick={() => setIsLoginModalOpen(true)}
-              className="px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors inline-flex items-center gap-1.5"
+              className="px-3.5 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors inline-flex items-center gap-1.5"
             >
               <LogIn className="w-3.5 h-3.5" />
               <span>Masuk</span>
@@ -104,35 +102,33 @@ export function LandingPageClient({
               href={dashboardUrl}
               className="px-3.5 py-1.5 text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-lg transition-colors"
             >
-              Buka Dashboard
+              Buka Aplikasi
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section (General Product Value Proposition) */}
       <section className="pt-28 pb-16 px-4 sm:px-6 max-w-4xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 text-xs font-medium mb-5">
-          <span>{orgName}</span>
-          <span>·</span>
-          <span className="text-zinc-900 dark:text-zinc-100 font-semibold">{eventName}</span>
+          <span>Perangkat Lunak Manajemen Operasional Acara</span>
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 leading-tight">
-          Sistem koordinasi lapangan dan logistik kepanitiaan event.
+          Sistem manajemen operasional terpadu untuk event organizer.
         </h1>
 
         <p className="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-          Mencatat pengadaan antar-divisi, presensi relawan via QR, pembagian makanan per slot waktu,
-          dan verifikasi transfer honorarium dalam satu sistem terintegrasi.
+          Kelola pengadaan kebutuhan antar-divisi, presensi staf dan relawan via QR, distribusi
+          konsumsi lapangan, serta verifikasi pencairan honorarium dalam satu aplikasi terpusat.
         </p>
 
-        <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             href={dashboardUrl}
             className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-lg transition-colors inline-flex items-center justify-center gap-1.5"
           >
-            <span>Masuk ke Dashboard</span>
+            <span>Coba Demo Interaktif</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
 
@@ -141,176 +137,248 @@ export function LandingPageClient({
             className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 rounded-lg border border-zinc-200 dark:border-zinc-800 transition-colors inline-flex items-center justify-center gap-1.5"
           >
             <KeyRound className="w-3.5 h-3.5 text-zinc-400" />
-            <span>Pilih Akun Demo Pengujian</span>
+            <span>Pilih Akun Demo & Masuk</span>
           </button>
         </div>
+      </section>
 
-        {/* Operational Metrics */}
-        <div className="mt-14 pt-6 border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
-          <div className="p-3 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-200 dark:border-zinc-800">
-            <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">150</div>
-            <div className="text-[11px] text-zinc-500 mt-0.5">Relawan dengan Shift</div>
-          </div>
-          <div className="p-3 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-200 dark:border-zinc-800">
-            <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">6 Divisi</div>
-            <div className="text-[11px] text-zinc-500 mt-0.5">Struktur Kepanitiaan</div>
-          </div>
-          <div className="p-3 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-200 dark:border-zinc-800">
-            <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">6 Slot</div>
-            <div className="text-[11px] text-zinc-500 mt-0.5">Jadwal Distribusi Makan</div>
-          </div>
-          <div className="p-3 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-200 dark:border-zinc-800">
-            <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">10</div>
-            <div className="text-[11px] text-zinc-500 mt-0.5">Pengadaan Antar-Divisi</div>
+      {/* Simulated Product UI Frame */}
+      <section className="px-4 sm:px-6 max-w-5xl mx-auto pb-16">
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-2 sm:p-3 shadow-xl">
+          <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
+            {/* Top Bar of Window */}
+            <div className="h-9 bg-zinc-100 dark:bg-zinc-800/60 border-b border-zinc-200 dark:border-zinc-800 px-4 flex items-center justify-between text-[11px] text-zinc-500">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                <span className="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                <span className="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+              </div>
+              <span className="font-mono text-[10px]">app.eventops.id/workspace/command-center</span>
+              <span className="text-[10px] text-zinc-400">Pratinjau Antarmuka</span>
+            </div>
+
+            {/* Dashboard Mockup Grid */}
+            <div className="p-5 space-y-4">
+              <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                <div>
+                  <div className="text-[10px] uppercase font-bold text-zinc-400">Ringkasan Operasional</div>
+                  <div className="text-base font-bold text-zinc-900 dark:text-zinc-100">Command Center Acara</div>
+                </div>
+                <div className="flex gap-2">
+                  <span className="px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-medium">
+                    Fase Hari H
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-xs font-semibold">
+                    Kesiapan Lapangan: 85%
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3 bg-zinc-50 dark:bg-zinc-800/40 rounded-lg border border-zinc-200 dark:border-zinc-800">
+                  <div className="text-[11px] text-zinc-500 font-medium">Pengadaan Antar-Divisi</div>
+                  <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mt-1">Status: Disetujui & Dikerjakan</div>
+                  <div className="text-[10px] text-zinc-400 mt-0.5">Validasi alur divisi transparan</div>
+                </div>
+
+                <div className="p-3 bg-zinc-50 dark:bg-zinc-800/40 rounded-lg border border-zinc-200 dark:border-zinc-800">
+                  <div className="text-[11px] text-zinc-500 font-medium">Presensi & Stasiun QR</div>
+                  <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mt-1">Check-in Terverifikasi</div>
+                  <div className="text-[10px] text-zinc-400 mt-0.5">Otomatis membuka jatah konsumsi</div>
+                </div>
+
+                <div className="p-3 bg-zinc-50 dark:bg-zinc-800/40 rounded-lg border border-zinc-200 dark:border-zinc-800">
+                  <div className="text-[11px] text-zinc-500 font-medium">Pencairan Honorarium</div>
+                  <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mt-1">Verifikasi Bukti Transfer</div>
+                  <div className="text-[10px] text-zinc-400 mt-0.5">Append-only audit logging aktif</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Modules Section */}
-      <section id="modul" className="py-16 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-900/20">
+      {/* Core Features Grid */}
+      <section id="fitur" className="py-16 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-900/20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
           <div>
             <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-              Modul Operasional Utama
+              Kemampuan Utama Sistem
             </h2>
             <p className="text-xs text-zinc-500 mt-1">
-              Aturan validasi langsung berjalan di backend untuk mencegah kesalahan di lapangan.
+              Dirancang untuk mengatasi friksi umum antara divisi logistik, konsumsi, dan kepanitiaan.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Feature 1 */}
             <div className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2.5">
               <div className="w-8 h-8 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
                 <Layers className="w-4 h-4 stroke-[1.75]" />
               </div>
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                Pengadaan Kebutuhan (Requisition)
+                Pengadaan Kebutuhan (Requisitions)
               </h3>
               <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                Pengajuan barang antar divisi melalui tahapan Draft, Diajukan, Disetujui, Dikerjakan, Terpenuhi,
-                dan Ditutup. Penolakan wajib menyertakan alasan tertulis minimal 10 karakter.
+                Alur pengajuan barang dan jasa antar-divisi dengan status terkontrol (Draft, Diajukan, Disetujui,
+                Dikerjakan, Terpenuhi, Ditutup). Penolakan wajib menyertakan alasan tertulis minimal 10 karakter.
               </p>
             </div>
 
+            {/* Feature 2 */}
+            <div className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2.5">
+              <div className="w-8 h-8 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
+                <QrCode className="w-4 h-4 stroke-[1.75]" />
+              </div>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                Presensi Relawan & Kru Lapangan
+              </h3>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Stasiun check-in berbasis kode QR unik per personil. Mengelompokkan penugasan shift dan
+                secara otomatis memverifikasi kehadiran sebelum memberikan hak akses konsumsi.
+              </p>
+            </div>
+
+            {/* Feature 3 */}
             <div className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2.5">
               <div className="w-8 h-8 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
                 <Utensils className="w-4 h-4 stroke-[1.75]" />
               </div>
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                Presensi & Jatah Makan Hari H
+                Distribusi Konsumsi Hari H
               </h3>
               <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                Relawan memindai QR code saat hadir. Jatah konsumsi hanya terbuka bagi yang sudah check-in.
-                Satu orang hanya dapat mengambil 1 jatah per slot untuk mencegah duplikasi.
+                Manajemen kuota makanan per slot waktu. Sistem membatasi satu penerima hanya mendapatkan
+                satu porsi per sesi, serta mendukung antrean lokal offline jika sinyal seluler di venue terganggu.
               </p>
             </div>
 
+            {/* Feature 4 */}
+            <div className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2.5">
+              <div className="w-8 h-8 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
+                <Boxes className="w-4 h-4 stroke-[1.75]" />
+              </div>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                Inventaris & Logistik Atribut
+              </h3>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Pelacakan stok kaos per varian ukuran (S, M, L, XL, XXL) dan ID card. Membandingkan sisa fisik
+                terhadap jumlah personil terdaftar untuk mencegah kekurangan sebelum hari pelaksanaan.
+              </p>
+            </div>
+
+            {/* Feature 5 */}
             <div className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2.5">
               <div className="w-8 h-8 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
                 <Wallet className="w-4 h-4 stroke-[1.75]" />
               </div>
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                Pencairan Fee & Piagam Penghargaan
+                Pencairan Fee & Sertifikat
               </h3>
               <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                Pencairan honorarium wajib melampirkan berkas bukti transfer dan dibatasi khusus untuk Owner atau
-                Event Manager. Sertifikat resmi diterbitkan dengan nomor registrasi unik.
+                Pencairan honorarium panitia memerlukan nomor transaksi dan lampiran bukti transfer. Penerbitan
+                piagam penghargaan digital dengan nomor registrasi unik resmi.
+              </p>
+            </div>
+
+            {/* Feature 6 */}
+            <div className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2.5">
+              <div className="w-8 h-8 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
+                <ShieldCheck className="w-4 h-4 stroke-[1.75]" />
+              </div>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                Keamanan & Append-Only Audit Log
+              </h3>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                8 tingkatan hak akses berbasis peran (RBAC), enkripsi AES-256-GCM untuk data kontak personil,
+                dan pencatatan jejak audit permanen yang tidak dapat diubah atau dihapus.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Workflow Tabs */}
-      <section id="tahapan" className="py-16 max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
+      {/* Operational Workflow Tabs */}
+      <section id="alur" className="py-16 max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
         <div>
           <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Tiga Fase Pelaksanaan Event
+            Alur Kerja Siklus Acara
           </h2>
           <p className="text-xs text-zinc-500 mt-1">
-            Data dari persiapan awal mengalir langsung ke stasiun lapangan tanpa rekap manual berulang.
+            Data terhubung dari tahap persiapan, koordinasi lapangan, hingga rekonsiliasi pasca-event.
           </p>
         </div>
 
         <div className="flex border-b border-zinc-200 dark:border-zinc-800 space-x-6 text-xs">
           <button
-            onClick={() => setActiveWorkflowTab('pre')}
+            onClick={() => setActiveWorkflowTab('logistik')}
             className={`pb-2.5 font-semibold transition-colors border-b-2 ${
-              activeWorkflowTab === 'pre'
+              activeWorkflowTab === 'logistik'
                 ? 'border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100'
                 : 'border-transparent text-zinc-500 hover:text-zinc-800'
             }`}
           >
-            1. Pra-Event (Logistik & Persiapan)
+            Fase Pra-Event (Persiapan & Logistik)
           </button>
           <button
-            onClick={() => setActiveWorkflowTab('dayof')}
+            onClick={() => setActiveWorkflowTab('hari_h')}
             className={`pb-2.5 font-semibold transition-colors border-b-2 ${
-              activeWorkflowTab === 'dayof'
+              activeWorkflowTab === 'hari_h'
                 ? 'border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100'
                 : 'border-transparent text-zinc-500 hover:text-zinc-800'
             }`}
           >
-            2. Hari H (Operasional Lapangan)
+            Fase Hari H (Operasional Lapangan)
           </button>
           <button
-            onClick={() => setActiveWorkflowTab('post')}
+            onClick={() => setActiveWorkflowTab('pasca')}
             className={`pb-2.5 font-semibold transition-colors border-b-2 ${
-              activeWorkflowTab === 'post'
+              activeWorkflowTab === 'pasca'
                 ? 'border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100'
                 : 'border-transparent text-zinc-500 hover:text-zinc-800'
             }`}
           >
-            3. Pasca-Event (Keuangan & Sertifikat)
+            Fase Pasca-Event (Keuangan & Benefit)
           </button>
         </div>
 
-        <div className="p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-          {activeWorkflowTab === 'pre' && (
-            <div className="space-y-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+        <div className="p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-600 dark:text-zinc-400 space-y-2 leading-relaxed">
+          {activeWorkflowTab === 'logistik' && (
+            <>
               <div className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
-                Distribusi atribut, konfirmasi vendor, dan penugasan shift
+                Penyusunan Divisi, Rekrutmen Relawan, dan Pengadaan Kebutuhan
               </div>
               <p>
-                Stok fisik kaos dicatat per varian ukuran (S, M, L, XL, XXL). Sistem membandingkan sisa
-                stok dengan jumlah yang sudah diambil oleh panitia dan relawan agar kekurangan terdeteksi
-                sebelum acara dimulai.
+                Koordinator mengatur struktur kepanitiaan, membuka pendaftaran relawan, dan menginput
+                permohonan logistik antar-divisi. Kepala divisi tujuan memeriksa dan menyetujui atau menolak
+                pengajuan langsung di dalam platform.
               </p>
-              <div className="pt-2 text-[11px] text-zinc-500">
-                Mencakup riders teknis penampil panggung dan pemenuhan deliverables kontrak sponsor.
-              </div>
-            </div>
+            </>
           )}
 
-          {activeWorkflowTab === 'dayof' && (
-            <div className="space-y-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+          {activeWorkflowTab === 'hari_h' && (
+            <>
               <div className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
-                Stasiun check-in QR dan pembagian konsumsi per jadwal
+                Check-in QR di Gerbang dan Distribusi Konsumsi Berjadwal
               </div>
               <p>
-                Koordinator lapangan memvalidasi kehadiran via pemindai QR. Begitu relawan tercatat hadir,
-                opsi pembagian makanan di slot yang sedang buka langsung aktif. Sistem menolak pembagian jika
-                slot berstatus ditutup atau orang tersebut sudah pernah menerima di sesi yang sama.
+                Setiap relawan dan kru lapangan memindai kode identitas saat tiba di venue. Tim konsumsi
+                mendistribusikan makanan sesuai slot yang aktif, dengan sistem memvalidasi presensi dan
+                memblokir pengambilan ganda.
               </p>
-              <div className="pt-2 text-[11px] text-zinc-500">
-                Mendukung pencatatan antrean lokal jika jaringan seluler di lokasi konser mengalami gangguan.
-              </div>
-            </div>
+            </>
           )}
 
-          {activeWorkflowTab === 'post' && (
-            <div className="space-y-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+          {activeWorkflowTab === 'pasca' && (
+            <>
               <div className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
-                Pencairan honorarium panitia dan penerbitan piagam resmi
+                Pencairan Honorarium Terverifikasi dan Penerbitan Piagam
               </div>
               <p>
-                Setiap pembayaran fee mencatat nomor transaksi transfer dan ID file bukti transfer. Relawan
-                mendapatkan kartu piagam penghargaan dengan nomor registrasi unik yang siap dicetak.
+                Bagian keuangan dan event manager mencairkan fee dengan melampirkan berkas bukti transfer.
+                Relawan mendapatkan kartu tanda terima dan piagam penghargaan digital dengan nomor registrasi unik.
               </p>
-              <div className="pt-2 text-[11px] text-zinc-500">
-                Riwayat perubahan tercatat permanen di append-only audit log untuk pertanggungjawaban panitia.
-              </div>
-            </div>
+            </>
           )}
         </div>
       </section>
@@ -318,49 +386,52 @@ export function LandingPageClient({
       {/* Security & Access Section */}
       <section id="keamanan" className="py-16 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-900/20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="space-y-3">
               <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                Hak Akses Berbasis Peran & Audit Log
+                Tata Kelola Hak Akses & Jejak Audit
               </h2>
               <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                Tiap pengguna memiliki wewenang spesifik (Owner, Event Manager, Kepala Divisi, Panitia, Relawan,
-                hingga Vendor). Aksi penting seperti persetujuan logistik dan pencairan dana dicatat permanen di
-                tabel log tanpa opsi hapus.
+                Memastikan setiap peran panitia hanya dapat mengakses dan menyetujui modul sesuai wewenangnya.
+                Tindakan administratif tercatat permanen di riwayat audit.
               </p>
 
-              <div className="space-y-2 pt-2 text-xs text-zinc-700 dark:text-zinc-300">
+              <div className="space-y-2 pt-1 text-xs text-zinc-700 dark:text-zinc-300">
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-zinc-900 dark:text-zinc-100 flex-shrink-0" />
-                  <span>Enkripsi AES-256-GCM untuk nomor telepon dan kontak identitas panitia</span>
+                  <span>Isolasi data organisasi multi-tenant pada setiap kueri database</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-zinc-900 dark:text-zinc-100 flex-shrink-0" />
-                  <span>Isolasi data organisasi (Tenant Isolation) pada setiap kueri database</span>
+                  <span>Enkripsi AES-256-GCM untuk nomor kontak dan identitas personal panitia</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-zinc-900 dark:text-zinc-100 flex-shrink-0" />
-                  <span>Sanitasi otomatis agar password dan token tidak masuk ke riwayat audit</span>
+                  <span>Pencatatan audit log append-only dengan sanitasi otomatis data rahasia</span>
                 </div>
               </div>
             </div>
 
             <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-mono space-y-2">
               <div className="text-[11px] text-zinc-400 border-b border-zinc-200 dark:border-zinc-800 pb-2">
-                Contoh Catatan Riwayat Audit (Append-Only):
+                Struktur Peran dalam Sistem (RBAC):
               </div>
-              <div className="space-y-1.5 text-[11px]">
-                <div className="p-2 bg-zinc-50 dark:bg-zinc-800/40 rounded border border-zinc-100 dark:border-zinc-800">
-                  <div className="font-semibold text-zinc-800 dark:text-zinc-200">action: consumption.distributed</div>
-                  <div className="text-zinc-500 text-[10px]">actor: Dewi Lestari · slot: SIANG-D1 · qty: 1</div>
+              <div className="space-y-1 text-[11px]">
+                <div className="flex justify-between p-1.5 rounded bg-zinc-50 dark:bg-zinc-800/40">
+                  <span className="font-semibold text-zinc-800 dark:text-zinc-200">OWNER / EVENT_MANAGER</span>
+                  <span className="text-zinc-500">Akses penuh, pencairan fee, persetujuan</span>
                 </div>
-                <div className="p-2 bg-zinc-50 dark:bg-zinc-800/40 rounded border border-zinc-100 dark:border-zinc-800">
-                  <div className="font-semibold text-zinc-800 dark:text-zinc-200">action: requisition.approved</div>
-                  <div className="text-zinc-500 text-[10px]">actor: Siti Rahmawati · code: REQ-0004</div>
+                <div className="flex justify-between p-1.5 rounded bg-zinc-50 dark:bg-zinc-800/40">
+                  <span className="font-semibold text-zinc-800 dark:text-zinc-200">DIVISION_HEAD</span>
+                  <span className="text-zinc-500">Persetujuan kebutuhan divisi, seleksi relawan</span>
                 </div>
-                <div className="p-2 bg-zinc-50 dark:bg-zinc-800/40 rounded border border-zinc-100 dark:border-zinc-800">
-                  <div className="font-semibold text-zinc-800 dark:text-zinc-200">action: benefit.fee_disbursed</div>
-                  <div className="text-zinc-500 text-[10px]">actor: Budi Santoso · ref: TRX-882194</div>
+                <div className="flex justify-between p-1.5 rounded bg-zinc-50 dark:bg-zinc-800/40">
+                  <span className="font-semibold text-zinc-800 dark:text-zinc-200">COMMITTEE / OPERATOR</span>
+                  <span className="text-zinc-500">Distribusi konsumsi, presensi QR lapangan</span>
+                </div>
+                <div className="flex justify-between p-1.5 rounded bg-zinc-50 dark:bg-zinc-800/40">
+                  <span className="font-semibold text-zinc-800 dark:text-zinc-200">VOLUNTEER / VENDOR</span>
+                  <span className="text-zinc-500">Lihat shift, ID card, dan piagam digital</span>
                 </div>
               </div>
             </div>
@@ -374,18 +445,18 @@ export function LandingPageClient({
           <div className="flex items-center gap-2">
             <span className="font-semibold text-zinc-800 dark:text-zinc-200">EventOps</span>
             <span>·</span>
-            <span>{orgName}</span>
+            <span>Platform Operasional Event Organizer</span>
           </div>
 
           <div className="flex items-center gap-5">
-            <a href="#modul" className="hover:text-zinc-800 dark:hover:text-zinc-200">
-              Modul
+            <a href="#fitur" className="hover:text-zinc-800 dark:hover:text-zinc-200">
+              Fitur
             </a>
-            <a href="#tahapan" className="hover:text-zinc-800 dark:hover:text-zinc-200">
-              Tahapan
+            <a href="#alur" className="hover:text-zinc-800 dark:hover:text-zinc-200">
+              Alur Kerja
             </a>
             <Link href={dashboardUrl} className="font-semibold text-zinc-800 dark:text-zinc-200">
-              Buka Dashboard
+              Masuk Dashboard
             </Link>
           </div>
         </div>
@@ -400,7 +471,7 @@ export function LandingPageClient({
                 <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                   Masuk ke EventOps
                 </h3>
-                <p className="text-[11px] text-zinc-500 mt-0.5">Pilih akun pengujian untuk mencoba sistem</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Pilih akun demonstrasi untuk mencoba sistem</p>
               </div>
               <button
                 onClick={() => setIsLoginModalOpen(false)}

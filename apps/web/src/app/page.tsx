@@ -8,17 +8,8 @@ export default async function HomePage() {
   });
 
   const orgSlug = defaultEvent?.organization?.slug || 'nusantara-creative';
-  const orgName = defaultEvent?.organization?.name || 'Nusantara Creative Event Organizer';
   const eventId = defaultEvent?.id || '697840e1-5ace-48fa-b866-f4825cc05c22';
-  const eventName = defaultEvent?.name || 'Festival Musik Nusantara 2026';
-
   const dashboardUrl = `/${orgSlug}/events/${eventId}/overview`;
 
-  return (
-    <LandingPageClient
-      dashboardUrl={dashboardUrl}
-      eventName={eventName}
-      orgName={orgName}
-    />
-  );
+  return <LandingPageClient dashboardUrl={dashboardUrl} />;
 }
