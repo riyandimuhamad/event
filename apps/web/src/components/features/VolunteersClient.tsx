@@ -631,21 +631,12 @@ export function VolunteersClient({
                 return (
                   <tr key={vol.id} className="hover:bg-surface-muted/60 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => setSelectedVolunteerForIdCard(vol)}
-                          title="Klik untuk lihat ID Card"
-                          className="w-9 h-9 rounded-xl bg-accent-subtle text-accent dark:text-[#FFC46B] flex items-center justify-center font-mono font-bold text-xs border border-accent/25 hover:scale-105 transition-transform"
-                        >
-                          <QrCode className="w-4 h-4" />
-                        </button>
-                        <div>
-                          <div className="font-semibold text-text">
-                            {vol.fullName}
-                          </div>
-                          <div className="font-mono text-xs text-text-muted tabular-nums">
-                            {vol.code}
-                          </div>
+                      <div>
+                        <div className="font-semibold text-text">
+                          {vol.fullName}
+                        </div>
+                        <div className="font-mono text-xs text-text-muted tabular-nums">
+                          {vol.code}
                         </div>
                       </div>
                     </td>
