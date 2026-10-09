@@ -97,7 +97,7 @@
     },
     "checkIn": "Check-in Hari H",
     "checkInSuccess": "Check-in berhasil dicatat",
-    "alreadyCheckedIn": "Relawan sudah melakukan check-in pada pukul"
+    "alreadyCheckedIn": "Volunteer sudah melakukan check-in pada pukul"
   },
   "dayOf": {
     "title": "Operasional Hari H",
@@ -113,7 +113,7 @@
   },
   "postEvent": {
     "title": "Pasca-Event & Distribusi Benefit",
-    "subtitle": "Pembayaran fee relawan/panitia dan penerbitan sertifikat resmi",
+    "subtitle": "Pembayaran fee volunteer/panitia dan penerbitan sertifikat resmi",
     "feeTab": "Pencairan Fee",
     "certTab": "Sertifikat",
     "nominal": "Nominal Fee",
@@ -129,7 +129,7 @@
     "certStatus": {
       "NOT_PRINTED": "Belum Dicetak",
       "PRINTED": "Sudah Dicetak",
-      "DELIVERED": "Diterima Relawan"
+      "DELIVERED": "Diterima Volunteer"
     }
   }
 }

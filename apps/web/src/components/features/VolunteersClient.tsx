@@ -207,7 +207,7 @@ export function VolunteersClient({
       });
 
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error?.message || 'Gagal mendaftarkan relawan');
+      if (!res.ok) throw new Error(json.error?.message || 'Gagal mendaftarkan volunteer');
 
       setIsCreateModalOpen(false);
       setNewFullName('');
@@ -249,7 +249,7 @@ export function VolunteersClient({
       });
 
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error?.message || 'Gagal mengubah data relawan');
+      if (!res.ok) throw new Error(json.error?.message || 'Gagal mengubah data volunteer');
 
       setEditingVolunteer(null);
       router.refresh();
@@ -273,14 +273,14 @@ export function VolunteersClient({
   };
 
   const handleDeleteVolunteer = async (volunteerId: string, fullName: string) => {
-    if (!confirm(`Hapus relawan ${fullName}?`)) return;
+    if (!confirm(`Hapus volunteer ${fullName}?`)) return;
 
     try {
       const res = await fetch(`/api/v1/volunteers/${volunteerId}?orgSlug=${orgSlug}&eventId=${eventId}`, {
         method: 'DELETE',
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error?.message || 'Gagal menghapus relawan');
+      if (!res.ok) throw new Error(json.error?.message || 'Gagal menghapus volunteer');
 
       setVolunteers((prev) => prev.filter((v) => v.id !== volunteerId));
       router.refresh();
@@ -353,7 +353,7 @@ export function VolunteersClient({
         .filter((v) => v.fullName.trim().length > 0);
 
       if (volunteersToImport.length === 0) {
-        throw new Error('Tidak ada baris data relawan yang memiliki nama valid');
+        throw new Error('Tidak ada baris data volunteer yang memiliki nama valid');
       }
 
       const res = await fetch(`/api/v1/volunteers/import?orgSlug=${orgSlug}&eventId=${eventId}`, {
@@ -363,7 +363,7 @@ export function VolunteersClient({
       });
 
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error?.message || 'Gagal mengimpor relawan');
+      if (!res.ok) throw new Error(json.error?.message || 'Gagal mengimpor volunteer');
 
       const importedList = json.data?.volunteers || [];
       setImportSuccessCount(importedList.length || volunteersToImport.length);
@@ -399,7 +399,7 @@ export function VolunteersClient({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', 'template_import_relawan_eventops.csv');
+    link.setAttribute('download', 'template_import_volunteer_eventops.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -444,7 +444,7 @@ export function VolunteersClient({
       );
       if (!res.ok) {
         const json = await res.json();
-        alert(json.error?.message || 'Gagal mengubah status relawan');
+        alert(json.error?.message || 'Gagal mengubah status volunteer');
         return;
       }
 
@@ -489,7 +489,7 @@ export function VolunteersClient({
               className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-xl flex items-center gap-2 shadow-sm transition-all"
             >
               <Plus className="w-4 h-4" />
-              <span>Tambah Relawan Baru</span>
+              <span>Tambah Volunteer Baru</span>
             </button>
           </div>
         )}
@@ -499,7 +499,7 @@ export function VolunteersClient({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
         <div className="p-4 rounded-xl border border-border bg-surface shadow-sm">
           <div className="text-xs font-medium text-text-muted flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-text-subtle" /> Total Relawan Terdaftar
+            <Users className="w-3.5 h-3.5 text-text-subtle" /> Total Volunteer Terdaftar
           </div>
           <div className="text-2xl font-bold text-text mt-1">
             {totalVolunteers}
@@ -540,7 +540,7 @@ export function VolunteersClient({
           <Search className="w-4 h-4 text-text-muted absolute left-3 top-2.5" />
           <input
             type="text"
-            placeholder="Cari nama relawan atau kode VOL-XXXX..."
+            placeholder="Cari nama volunteer atau kode VOL-XXXX..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full text-xs rounded-xl border border-border pl-9 pr-3 py-2 bg-surface text-text focus:outline-none focus:ring-2 focus:ring-accent"
@@ -590,7 +590,7 @@ export function VolunteersClient({
           <table className="w-full text-left text-sm">
             <thead className="bg-surface-muted border-b border-border text-xs font-semibold text-text-muted uppercase tracking-wider sticky top-0 z-10">
               <tr>
-                <th className="px-6 py-3.5">Relawan & Kode ID</th>
+                <th className="px-6 py-3.5">Volunteer & Kode ID</th>
                 <th className="px-6 py-3.5">Divisi Penempatan</th>
                 <th className="px-6 py-3.5">Ukuran Kaos</th>
                 <th className="px-6 py-3.5">Shift & Presensi</th>
@@ -637,22 +637,26 @@ export function VolunteersClient({
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      {vol.shifts.length > 0 ? (
-                        <div className="space-y-1">
+                      <div className="space-y-1">
+                        {vol.shifts.length > 0 ? (
                           <div className="text-xs font-medium text-text">
                             {vol.shifts[0].shift.name}
                           </div>
-                          {checkedIn ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
-                              <CheckCircle2 className="w-3 h-3" /> Sudah Check-in
-                            </span>
-                          ) : (
-                            <span className="text-[11px] text-text-muted">Belum Check-in</span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-text-muted">Belum ada shift</span>
-                      )}
+                        ) : (
+                          <div className="text-[11px] text-text-muted italic">
+                            Tanpa Shift
+                          </div>
+                        )}
+                        {checkedIn ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
+                            <CheckCircle2 className="w-3 h-3" /> Sudah Check-in
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded">
+                            <Clock className="w-3 h-3" /> Belum Check-in
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={vol.registrationStatus} context="volunteer" />
@@ -671,7 +675,7 @@ export function VolunteersClient({
                             <button
                               onClick={() => handleUpdateStatus(vol.id, 'APPROVED')}
                               disabled={isUpdating}
-                              title="Terima Relawan"
+                              title="Terima Volunteer"
                               className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
                             >
                               <CheckCircle2 className="w-4 h-4" />
@@ -679,7 +683,7 @@ export function VolunteersClient({
                             <button
                               onClick={() => handleUpdateStatus(vol.id, 'REJECTED')}
                               disabled={isUpdating}
-                              title="Tolak Relawan"
+                              title="Tolak Volunteer"
                               className="p-1.5 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200"
                             >
                               <XCircle className="w-4 h-4" />
@@ -691,7 +695,7 @@ export function VolunteersClient({
                           <>
                             <button
                               onClick={() => openEditModal(vol)}
-                              title="Edit Data Relawan"
+                              title="Edit Data Volunteer"
                               className="p-1.5 rounded-lg text-text-muted hover:text-accent hover:bg-accent-subtle transition-colors"
                             >
                               <Pencil className="w-4 h-4" />
@@ -699,7 +703,7 @@ export function VolunteersClient({
 
                             <button
                               onClick={() => handleDeleteVolunteer(vol.id, vol.fullName)}
-                              title="Hapus Relawan"
+                              title="Hapus Volunteer"
                               className="p-1.5 rounded-lg text-text-muted hover:text-rose-600 hover:bg-rose-50 transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -777,14 +781,14 @@ export function VolunteersClient({
                     <>
                       <button
                         onClick={() => openEditModal(vol)}
-                        title="Edit Data Relawan"
+                        title="Edit Data Volunteer"
                         className="p-1.5 text-text-muted hover:text-accent hover:bg-accent-subtle rounded-lg transition-colors"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteVolunteer(vol.id, vol.fullName)}
-                        title="Hapus Relawan"
+                        title="Hapus Volunteer"
                         className="p-1.5 text-text-muted hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -872,7 +876,7 @@ export function VolunteersClient({
         </div>
       )}
 
-      {/* Modal Edit Data Relawan */}
+      {/* Modal Edit Data Volunteer */}
       {editingVolunteer && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-xl border border-border space-y-4">
@@ -880,7 +884,7 @@ export function VolunteersClient({
               <div className="flex items-center gap-2">
                 <Pencil className="w-4 h-4 text-accent" />
                 <h3 className="text-base font-bold text-text">
-                  Edit Data Relawan ({editingVolunteer.code})
+                  Edit Data Volunteer ({editingVolunteer.code})
                 </h3>
               </div>
               <button
@@ -1001,12 +1005,12 @@ export function VolunteersClient({
         </div>
       )}
 
-      {/* Modal Tambah Relawan Baru Manual */}
+      {/* Modal Tambah Volunteer Baru Manual */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-xl border border-border space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-base font-bold text-text">Tambah Relawan Baru</h3>
+              <h3 className="text-base font-bold text-text">Tambah Volunteer Baru</h3>
               <button
                 onClick={() => setIsCreateModalOpen(false)}
                 className="text-text-muted hover:text-text p-1 rounded-lg"
@@ -1024,7 +1028,7 @@ export function VolunteersClient({
 
             <form onSubmit={handleCreateVolunteer} className="space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-text mb-1">Nama Lengkap Relawan *</label>
+                <label className="block font-semibold text-text mb-1">Nama Lengkap Volunteer *</label>
                 <input
                   type="text"
                   required
@@ -1102,7 +1106,7 @@ export function VolunteersClient({
                   disabled={isSubmitting}
                   className="px-4 py-2 bg-accent hover:bg-accent-hover text-white font-bold rounded-xl disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Mendaftarkan...' : 'Daftarkan Relawan'}
+                  {isSubmitting ? 'Mendaftarkan...' : 'Daftarkan Volunteer'}
                 </button>
               </div>
             </form>
@@ -1118,7 +1122,7 @@ export function VolunteersClient({
               <div className="flex items-center gap-2">
                 <FileSpreadsheet className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 <div>
-                  <h3 className="text-base font-bold text-text">Import Relawan via CSV / Google Form</h3>
+                  <h3 className="text-base font-bold text-text">Import Volunteer via CSV / Google Form</h3>
                   <p className="text-xs text-text-muted">
                     Unggah file CSV hasil ekspor spreadsheet pendaftaran Google Form
                   </p>
@@ -1142,7 +1146,7 @@ export function VolunteersClient({
             {importSuccessCount !== null && (
               <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2 font-semibold">
                 <Check className="w-4 h-4 flex-shrink-0" />
-                <span>Berhasil mengimpor {importSuccessCount} data relawan!</span>
+                <span>Berhasil mengimpor {importSuccessCount} data volunteer!</span>
               </div>
             )}
 
@@ -1379,7 +1383,7 @@ export function VolunteersClient({
                   className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl disabled:opacity-50 flex items-center gap-1.5"
                 >
                   <Upload className="w-4 h-4" />
-                  <span>{isImporting ? 'Mengimpor...' : `Impor ${parsedRows.length} Relawan`}</span>
+                  <span>{isImporting ? 'Mengimpor...' : `Impor ${parsedRows.length} Volunteer`}</span>
                 </button>
               </div>
             </div>
