@@ -194,7 +194,7 @@ export function VolunteersClient({
   const isManagerOrOwner = actor.orgRole === 'OWNER' || actor.eventRole === 'EVENT_MANAGER';
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-[calc(100vh-7rem)] gap-4">
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -257,7 +257,7 @@ export function VolunteersClient({
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-surface border border-border rounded-xl p-4 shadow-sm flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+      <div className="bg-surface border border-border rounded-xl px-4 py-3 shadow-sm flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between flex-shrink-0">
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-text-muted absolute left-3 top-2.5" />
           <input
@@ -306,11 +306,11 @@ export function VolunteersClient({
         </div>
       </div>
 
-      {/* Desktop Table */}
-      <div className="hidden lg:block bg-surface border border-border rounded-2xl shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+      {/* Desktop Table — scrollable area only */}
+      <div className="flex-1 min-h-0 hidden lg:block bg-surface border border-border rounded-2xl shadow-sm overflow-hidden">
+        <div className="overflow-x-auto overflow-y-auto h-full">
           <table className="w-full text-left text-sm">
-            <thead className="bg-surface-muted border-b border-border text-xs font-semibold text-text-muted uppercase tracking-wider">
+            <thead className="bg-surface-muted border-b border-border text-xs font-semibold text-text-muted uppercase tracking-wider sticky top-0 z-10">
               <tr>
                 <th className="px-6 py-3.5">Relawan & Kode ID</th>
                 <th className="px-6 py-3.5">Divisi Penempatan</th>
