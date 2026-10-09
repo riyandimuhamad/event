@@ -120,48 +120,20 @@ export function Sidebar({
   const sidebarContent = (
     <div className="flex flex-col h-full bg-surface select-none rounded-2xl overflow-hidden">
       {/* Brand Header */}
-      <div className={`border-b border-border/80 ${
-        isCollapsed ? 'p-3 flex justify-center' : 'p-4 flex items-center justify-between'
-      }`}>
-        {!isCollapsed ? (
-          <>
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7A2E33] to-[#4A171B] text-[#FFC46B] flex items-center justify-center font-black text-xs tracking-wider shadow-md shadow-accent/20 border border-[#7A2E33]/50 flex-shrink-0">
-                EO
-              </div>
-              <div className="min-w-0">
-                <div className="font-extrabold text-sm text-text tracking-tight leading-none">
-                  EventOps
-                </div>
-                <div className="text-[11px] text-text-muted truncate mt-1">
-                  {orgName}
-                </div>
-              </div>
+      <div className="border-b border-border/80 p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7A2E33] to-[#4A171B] text-[#FFC46B] flex items-center justify-center font-black text-xs tracking-wider shadow-md shadow-accent/20 border border-[#7A2E33]/50 flex-shrink-0">
+            EO
+          </div>
+          <div className="min-w-0">
+            <div className="font-extrabold text-sm text-text tracking-tight leading-none">
+              EventOps
             </div>
-
-            {/* Collapse/Hide Button */}
-            <button
-              onClick={onToggleCollapse}
-              type="button"
-              title="Sembunyikan navigasi (Ctrl+B)"
-              aria-label="Sembunyikan navigasi"
-              className="p-1.5 rounded-xl text-text-subtle hover:text-text hover:bg-surface-muted transition-colors flex-shrink-0"
-            >
-              <PanelLeftClose className="w-4 h-4 stroke-[1.75]" />
-            </button>
-          </>
-        ) : (
-          /* Collapsed View Header */
-          <button
-            onClick={onToggleCollapse}
-            type="button"
-            title="Buka navigasi (Ctrl+B)"
-            aria-label="Buka navigasi"
-            className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7A2E33] to-[#4A171B] text-[#FFC46B] flex items-center justify-center font-black text-xs shadow-md shadow-accent/20 border border-[#7A2E33]/50"
-          >
-            <PanelLeftOpen className="w-4 h-4 stroke-[2]" />
-          </button>
-        )}
+            <div className="text-[11px] text-text-muted truncate mt-1">
+              {orgName}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Nav List */}

@@ -33,6 +33,26 @@ interface OverviewPageProps {
   };
 }
 
+function buildSmoothSvgPath(coords: { x: number; y: number }[]): string {
+  if (coords.length === 0) return '';
+  if (coords.length === 1) return `M ${coords[0].x.toFixed(1)},${coords[0].y.toFixed(1)}`;
+  let path = `M ${coords[0].x.toFixed(1)},${coords[0].y.toFixed(1)}`;
+  for (let i = 0; i < coords.length - 1; i++) {
+    const p0 = coords[i === 0 ? 0 : i - 1];
+    const p1 = coords[i];
+    const p2 = coords[i + 1];
+    const p3 = coords[i + 2] || p2;
+
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+    path += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+  }
+  return path;
+}
+
 export default async function OverviewPage({ params }: OverviewPageProps) {
   const actor = await getCurrentActor(params.orgSlug, params.eventId);
   const [data, divisions] = await Promise.all([
@@ -40,7 +60,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
     DivisionService.getDivisions(actor, params.eventId),
   ]);
 
-  const { event, metrics, auditLogs } = data;
+  const { event, metrics, analytics, auditLogs } = data;
 
   const startsFormatted = new Date(event.startsAt).toLocaleDateString('id-ID', {
     weekday: 'long',
@@ -59,6 +79,35 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
         3
     )
   );
+
+  // Dynamic line chart coordinates derived directly from backend analytics.flowPoints
+  const flowPts = analytics.flowPoints;
+  const maxFlowVal = Math.max(
+    ...flowPts.map((p) => Math.max(p.requested, p.fulfilled)),
+    100
+  );
+
+  const baselineY = 165;
+  const topY = 25;
+  const chartHeight = baselineY - topY; // 140px
+
+  const requestedCoords = flowPts.map((p, idx) => {
+    const x = flowPts.length > 1 ? (idx / (flowPts.length - 1)) * 500 : 250;
+    const y = baselineY - (p.requested / maxFlowVal) * chartHeight;
+    return { x, y, data: p };
+  });
+
+  const fulfilledCoords = flowPts.map((p, idx) => {
+    const x = flowPts.length > 1 ? (idx / (flowPts.length - 1)) * 500 : 250;
+    const y = baselineY - (p.fulfilled / maxFlowVal) * chartHeight;
+    return { x, y, data: p };
+  });
+
+  const maroonLinePath = buildSmoothSvgPath(requestedCoords);
+  const maroonAreaPath = `${maroonLinePath} L 500,${baselineY} L 0,${baselineY} Z`;
+
+  const amberLinePath = buildSmoothSvgPath(fulfilledCoords);
+  const amberAreaPath = `${amberLinePath} L 500,${baselineY} L 0,${baselineY} Z`;
 
   return (
     <div className="space-y-6 animate-fade-in text-text">
@@ -196,9 +245,9 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
               </div>
             </div>
 
-            {/* Illustration panel card on right */}
-            <div className="w-full sm:w-48 h-40 rounded-xl bg-gradient-to-tr from-[#1A1F2D] via-[#2A1C25] to-[#401C24] p-4 flex flex-col justify-between text-white shadow-md border border-border/80 relative overflow-hidden flex-shrink-0">
-              <div className="absolute top-0 right-0 -mr-6 -mt-6 w-24 h-24 rounded-full bg-[#FFC46B]/15 blur-xl pointer-events-none" />
+            {/* Target Acara Banner in Royal Maroon Brand Gradient */}
+            <div className="w-full sm:w-48 h-40 rounded-xl bg-gradient-to-tr from-[#7A2E33] via-[#8D353C] to-[#5C1E23] p-4 flex flex-col justify-between text-white shadow-md border border-[#7A2E33]/30 relative overflow-hidden flex-shrink-0">
+              <div className="absolute top-0 right-0 -mr-6 -mt-6 w-24 h-24 rounded-full bg-[#FFC46B]/20 blur-xl pointer-events-none" />
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#FFC46B]">
                   Target Acara
@@ -209,9 +258,9 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
                 <div className="text-2xl font-black text-white tracking-tight">
                   {event.expectedAttendees ? event.expectedAttendees.toLocaleString('id-ID') : '5.000'}
                 </div>
-                <div className="text-[10px] text-white/80">Hadirin Terkonfirmasi</div>
+                <div className="text-[10px] text-white/90">Hadirin Terkonfirmasi</div>
               </div>
-              <div className="text-[10px] text-emerald-300 font-semibold flex items-center gap-1">
+              <div className="text-[10px] text-[#FFC46B] font-semibold flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-[#FFC46B]" />
                 SOP Terverifikasi
               </div>
@@ -232,23 +281,23 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
           </div>
         </div>
 
-        {/* Right Card: "Work with the rockets" style dark highlight card (5 cols) */}
-        <div className="lg:col-span-5 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#161B24] via-[#1A202D] to-[#121620] text-text p-6 border border-border shadow-lg flex flex-col justify-between">
-          {/* Ambient glows */}
-          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 rounded-full bg-[#FFC46B]/5 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 rounded-full bg-accent/15 blur-2xl pointer-events-none" />
+        {/* Right Card: Kesiapan Lapangan in Clean Warm Light Mode */}
+        <div className="lg:col-span-5 relative overflow-hidden rounded-2xl bg-surface text-text p-6 border border-border shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+          {/* Subtle warm ambient glows */}
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 rounded-full bg-[#FFC46B]/15 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 rounded-full bg-[#7A2E33]/5 blur-2xl pointer-events-none" />
 
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#FFC46B]">
+              <span className="text-xs font-bold uppercase tracking-wider text-accent">
                 Kesiapan Lapangan
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-accent/20 text-[#FFC46B] border border-[#FFC46B]/30">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                 Normal Operasional
               </span>
             </div>
 
-            <h3 className="text-lg font-bold text-white mb-1">
+            <h3 className="text-lg font-bold text-text mb-1">
               Kesiapan Hari-H Operasional
             </h3>
             <p className="text-xs text-text-muted leading-relaxed mb-6">
@@ -256,18 +305,18 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
             </p>
 
             {/* Circular Progress & Metrics Row */}
-            <div className="flex items-center gap-6 bg-surface-muted/70 border border-border rounded-xl p-4 backdrop-blur-xs">
+            <div className="flex items-center gap-6 bg-[#FAF7F2] border border-border rounded-xl p-4">
               <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center">
                 <svg className="w-20 h-20 -rotate-90 transform" viewBox="0 0 36 36">
                   <path
-                    className="text-white/10"
+                    className="text-border"
                     strokeWidth="3.5"
                     stroke="currentColor"
                     fill="none"
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   />
                   <path
-                    className="text-[#FFC46B]"
+                    className="text-accent"
                     strokeDasharray={`${readinessScore}, 100`}
                     strokeWidth="3.5"
                     strokeLinecap="round"
@@ -276,23 +325,23 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   />
                 </svg>
-                <span className="absolute text-base font-black text-white tabular-nums">
+                <span className="absolute text-base font-black text-text tabular-nums">
                   {readinessScore}%
                 </span>
               </div>
 
               <div className="space-y-1.5 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <span className="text-text">Presensi: {metrics.attendancePercentage}%</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600" />
+                  <span className="text-text font-medium">Presensi: {metrics.attendancePercentage}%</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#FFC46B]" />
-                  <span className="text-text">Konsumsi: {metrics.mealPercentage}%</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-600" />
+                  <span className="text-text font-medium">Konsumsi: {metrics.mealPercentage}%</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-rose-400" />
-                  <span className="text-text">{metrics.urgentRequisitionsCount} Kebutuhan Mendesak</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-600" />
+                  <span className="text-text font-medium">{metrics.urgentRequisitionsCount} Kebutuhan Mendesak</span>
                 </div>
               </div>
             </div>
@@ -301,7 +350,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
           <div className="relative z-10 pt-6 mt-4 border-t border-border">
             <Link
               href={`/${params.orgSlug}/events/${params.eventId}/day-of`}
-              className="text-xs font-bold text-[#FFC46B] flex items-center justify-between hover:text-white transition-colors"
+              className="text-xs font-bold text-accent flex items-center justify-between hover:text-accent-hover transition-colors"
             >
               <span>Inspeksi Posko & Check-In Lapangan</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -317,33 +366,24 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
         {/* Left Card: Soft UI "Active Users" Bar Chart Card (5 cols) */}
         <div className="lg:col-span-5 bg-surface rounded-2xl border border-border shadow-sm p-5 flex flex-col justify-between">
           <div>
-            {/* Dark Chart Container */}
-            <div className="bg-gradient-to-br from-[#111622] to-[#0E121B] rounded-xl p-4 mb-4 border border-border shadow-inner">
-              <div className="flex items-center justify-between text-white/70 mb-2 text-xs">
-                <span className="font-semibold text-white/90">Distribusi Beban Shift (Pagi - Malam)</span>
-                <span className="text-[11px] text-[#FFC46B] font-mono">150 Relawan</span>
+            {/* Clean Warm Light Chart Container */}
+            <div className="bg-[#FAF7F2] rounded-xl p-4 mb-4 border border-border shadow-xs">
+              <div className="flex items-center justify-between text-text mb-2 text-xs">
+                <span className="font-bold text-text">Distribusi Beban Shift (Pagi - Malam)</span>
+                <span className="text-[11px] text-accent font-bold font-mono bg-white px-2 py-0.5 rounded border border-border">{metrics.totalVolunteers} Relawan</span>
               </div>
-              {/* Responsive SVG Bar Chart */}
+              {/* Responsive SVG Bar Chart connected to real DB shift data */}
               <div className="h-44 w-full flex items-end justify-between gap-2 pt-4 px-1">
-                {[
-                  { label: '07:00', height: '40%', val: '28 Org' },
-                  { label: '09:00', height: '65%', val: '45 Org' },
-                  { label: '11:00', height: '85%', val: '62 Org' },
-                  { label: '13:00', height: '95%', val: '70 Org' },
-                  { label: '15:00', height: '70%', val: '50 Org' },
-                  { label: '17:00', height: '88%', val: '65 Org' },
-                  { label: '19:00', height: '60%', val: '42 Org' },
-                  { label: '21:00', height: '35%', val: '24 Org' },
-                ].map((bar, i) => (
+                {analytics.shiftHourlyDistribution.map((bar, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center gap-1.5 group">
-                    <div className="w-full bg-white/5 rounded-t-md h-32 flex items-end">
+                    <div className="w-full bg-[#E8E1D7] rounded-t-md h-32 flex items-end">
                       <div
-                        className="w-full rounded-t-md bg-gradient-to-t from-accent to-[#FFC46B] group-hover:to-white transition-all duration-300"
-                        style={{ height: bar.height }}
-                        title={`${bar.label}: ${bar.val}`}
+                        className="w-full rounded-t-md bg-gradient-to-t from-[#7A2E33] to-[#D9822B] group-hover:to-[#FFC46B] transition-all duration-300"
+                        style={{ height: `${bar.percentage}%` }}
+                        title={`${bar.hour}: ${bar.count} Relawan (${bar.percentage}%)`}
                       />
                     </div>
-                    <span className="text-[9px] font-mono text-white/60">{bar.label}</span>
+                    <span className="text-[9px] font-mono font-medium text-text-muted">{bar.hour}</span>
                   </div>
                 ))}
               </div>
@@ -353,7 +393,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
             <div className="px-1">
               <h4 className="text-base font-bold text-text">Aktivitas Shift & Posko Relawan</h4>
               <p className="text-xs text-text-muted mt-0.5">
-                <span className="font-bold text-emerald-600 dark:text-emerald-400">(+28%)</span> relawan terdistribusi aktif di 6 zona posko
+                <span className="font-bold text-emerald-700 dark:text-emerald-400">+{metrics.attendancePercentage}%</span> relawan terkoordinasi aktif di seluruh posko lapangan
               </p>
             </div>
           </div>
@@ -411,17 +451,17 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
                   Arus Distribusi Logistik & Konsumsi
                 </h4>
                 <p className="text-xs text-text-muted mt-0.5">
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400">(+18% efisiensi)</span> realisasi kebutuhan antar-divisi berjalan mulus
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400">+{metrics.mealPercentage}% terpenuhi</span> ({metrics.totalMealsServed} dari {metrics.totalMealsTarget} porsi tersalurkan)
                 </p>
               </div>
               <div className="flex items-center gap-3 text-[11px] font-medium text-text-muted">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#7A2E33]" />
-                  <span>Permintaan Masuk</span>
+                  <span>Permintaan Masuk ({metrics.openRequisitionsCount})</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#FFC46B]" />
-                  <span>Kebutuhan Terpenuhi</span>
+                  <span>Konsumsi Terlayani ({metrics.totalMealsServed})</span>
                 </div>
               </div>
             </div>
@@ -437,8 +477,8 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
                   </linearGradient>
                   {/* Gradient for Maroon area */}
                   <linearGradient id="maroonGlowGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#C94B54" stopOpacity="0.35" />
-                    <stop offset="100%" stopColor="#C94B54" stopOpacity="0.0" />
+                    <stop offset="0%" stopColor="#7A2E33" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#7A2E33" stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
 
@@ -450,45 +490,68 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
 
                 {/* Maroon Area Fill & Line (Permintaan Masuk) */}
                 <path
-                  d="M0,130 C60,110 120,140 180,90 C240,40 300,70 360,50 C420,30 460,45 500,25 L500,165 L0,165 Z"
+                  d={maroonAreaPath}
                   fill="url(#maroonGlowGradient)"
                 />
                 <path
-                  d="M0,130 C60,110 120,140 180,90 C240,40 300,70 360,50 C420,30 460,45 500,25"
+                  d={maroonLinePath}
                   fill="none"
-                  stroke="#C94B54"
+                  stroke="#7A2E33"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />
 
                 {/* Amber Area Fill & Line (Kebutuhan Terpenuhi) */}
                 <path
-                  d="M0,150 C60,135 120,120 180,105 C240,65 300,80 360,60 C420,45 460,35 500,28 L500,165 L0,165 Z"
+                  d={amberAreaPath}
                   fill="url(#amberGlowGradient)"
                 />
                 <path
-                  d="M0,150 C60,135 120,120 180,105 C240,65 300,80 360,60 C420,45 460,35 500,28"
+                  d={amberLinePath}
                   fill="none"
                   stroke="#FFC46B"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />
 
-                {/* Data Points on Amber line */}
-                <circle cx="180" cy="105" r="4" fill="#FFC46B" stroke="#161B22" strokeWidth="2" />
-                <circle cx="360" cy="60" r="4" fill="#FFC46B" stroke="#161B22" strokeWidth="2" />
-                <circle cx="500" cy="28" r="4" fill="#FFC46B" stroke="#161B22" strokeWidth="2" />
+                {/* Data Points on Amber line (Fulfilled) */}
+                {fulfilledCoords.map((pt, idx) => (
+                  <circle
+                    key={`ful-${idx}`}
+                    cx={pt.x.toFixed(1)}
+                    cy={pt.y.toFixed(1)}
+                    r="4.5"
+                    fill="#FFC46B"
+                    stroke="#7A2E33"
+                    strokeWidth="2"
+                    className="cursor-pointer transition-transform hover:scale-150"
+                  >
+                    <title>{`${pt.data.time} WIB: ${pt.data.fulfilled} kebutuhan konsumsi & logistik terpenuhi`}</title>
+                  </circle>
+                ))}
+
+                {/* Data Points on Maroon line (Requested) */}
+                {requestedCoords.map((pt, idx) => (
+                  <circle
+                    key={`req-${idx}`}
+                    cx={pt.x.toFixed(1)}
+                    cy={pt.y.toFixed(1)}
+                    r="3.5"
+                    fill="#7A2E33"
+                    stroke="#FFFFFF"
+                    strokeWidth="1.5"
+                    className="cursor-pointer opacity-80 transition-transform hover:scale-150"
+                  >
+                    <title>{`${pt.data.time} WIB: ${pt.data.requested} akumulasi permintaan masuk`}</title>
+                  </circle>
+                ))}
               </svg>
 
-              {/* X-axis labels */}
+              {/* X-axis labels dynamically mapped to real analytics flow points */}
               <div className="flex justify-between text-[10px] font-mono text-text-muted mt-2 px-1">
-                <span>08:00</span>
-                <span>10:00</span>
-                <span>12:00</span>
-                <span>14:00</span>
-                <span>16:00</span>
-                <span>18:00</span>
-                <span>20:00</span>
+                {analytics.flowPoints.map((pt, idx) => (
+                  <span key={idx}>{pt.time}</span>
+                ))}
               </div>
             </div>
           </div>

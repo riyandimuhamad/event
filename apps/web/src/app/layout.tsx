@@ -21,7 +21,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className={`${inter.variable} font-sans`}>
-      <body className="antialiased selection:bg-indigo-500 selection:text-white bg-bg text-text">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){ try { document.documentElement.classList.remove('dark'); localStorage.removeItem('eventops_theme'); } catch(e){} })();`,
+          }}
+        />
+      </head>
+      <body className="antialiased selection:bg-[#7A2E33] selection:text-white bg-bg text-text">
         {children}
       </body>
     </html>

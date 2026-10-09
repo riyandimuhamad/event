@@ -141,3 +141,27 @@ Dokumentasi perubahan, penambahan dependensi, dan pencatatan keputusan per miles
 ### Standarisasi Token Desain Komponen
 - Menyelaraskan seluruh kelas hardcoded `zinc-` pada tabel `VolunteersClient`, `RequisitionsClient`, dan `PostEventClient` ke token desain semantik (`bg-surface`, `bg-surface-muted`, `border-border`, `text-text`, `text-text-muted`) sehingga transisi antara Light dan Dark mode berjalan serasi dan nyaman di mata.
 
+## [0.3.2] - 2026-10-09 - Integrasi Grafik Backend Nyata & Pemaksimalan Pure Light Mode
+
+### Integrasi Backend Database untuk Seluruh Grafik Analitik
+- **Distribusi Beban Shift Relawan (Bar Chart)**:
+  - Mengganti data dummy estimasi dengan kalkulasi langsung dari tabel Prisma `Shift` dan `VolunteerShift`.
+  - Sistem menghitung relawan yang bertugas pada setiap jendela operasional per 2 jam (07:00 s/d 21:00 WIB) sesuai jadwal shift hari H, persentase beban terhadap kapasitas total, serta tooltip jumlah personil aktif.
+- **Arus Distribusi Logistik & Konsumsi (Dual-Line & Area Chart)**:
+  - Mengganti koordinat kurva SVG statis prototype dengan fungsi generator kurva bezier dinamis `buildSmoothSvgPath` yang menghitung posisi `x, y` secara matematis langsung dari `analytics.flowPoints`.
+  - Titik data akumulasi dihitung dari target dan realisasi `ConsumptionSlot` (Sarapan, Makan Siang, Makan Malam) serta status pemenuhan pada tabel `Requisition`.
+  - Titik interaktif `<circle>` dilengkapi tooltip informatif real-time saat diarahkan kursor.
+
+### Pemaksimalan Pure Light Mode (Warm Linen & Royal Maroon)
+- **Eliminasi Kotak Gelap / Hitam yang Tertinggal**:
+  - Kartu **Kesiapan Lapangan** (5 kolom) dirombak dari kontainer hitam legam menjadi kartu Light Mode berlatar `bg-surface` dengan ornamen border warm linen dan indikator gauge lingkaran elegan.
+  - Kartu ilustrasi **Target Acara** diselaraskan ke gradien brand Royal Maroon (`#7A2E33` ke `#5C1E23`) dengan aksen teks emas `#FFC46B`.
+  - Kontainer **Distribusi Beban Shift** dirombak dari latar hitam menjadi kontainer berlatar terang lembut `#FAF7F2` dengan batang bar gradien Maroon-ke-Amber yang kontras dan bersih.
+- **Pembersihan Residual Dark Mode**:
+  - Menambahkan script inisialisasi pada `<head>` di `layout.tsx` untuk menghapus paksa kelas `.dark` dan membersihkan `eventops_theme` dari `localStorage`, menjamin tampilan tetap konsisten di Mode Terang.
+
+### Presisi Simetri Layout & Eliminasi Tombol Collapse
+- Header atas kini berada dalam kontainer yang sama persis dengan konten di bawahnya (`max-w-[1600px]`, padding simetris kiri-kanan, dan tinggi atas yang sejajar dengan floating sidebar).
+- Menghilangkan tombol collapse panel kiri pada header desktop dan sidebar brand area sesuai arahan pengguna.
+
+
