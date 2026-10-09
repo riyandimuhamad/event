@@ -14,7 +14,6 @@ import {
   BadgeDollarSign,
   PackageOpen,
   CalendarCheck,
-  Award,
   PanelLeftClose,
   PanelLeftOpen,
   Wifi,
@@ -208,9 +207,6 @@ export function Sidebar({
         {/* Info card — hanya saat expanded */}
         {!isCollapsed && (
           <div className="p-3.5 rounded-xl bg-black/25 border border-white/10 shadow-inner space-y-2">
-            <div className="w-7 h-7 rounded-lg bg-[#481418] text-[#FFC46B] flex items-center justify-center border border-[#FFC46B]/25">
-              <Award className="w-3.5 h-3.5" />
-            </div>
             <div>
               <div className="font-bold text-xs text-white">Butuh Bantuan &amp; SOP?</div>
               <div className="text-[11px] text-[#E8D7D8] mt-0.5 leading-snug">Panduan alur operasional &amp; audit trail</div>
