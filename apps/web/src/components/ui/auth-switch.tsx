@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, type FormEvent } from "react";
-import { Mail, Lock, User, Building, ArrowRight, X } from "lucide-react";
+import { Mail, Lock, User, Building, ArrowRight, X, Eye, EyeOff } from "lucide-react";
 
 interface AuthSwitchProps {
   onSuccess?: (email: string) => void;
@@ -15,6 +15,8 @@ export default function AuthSwitch({ onSuccess, onClose }: AuthSwitchProps) {
   const [name, setName] = useState("");
   const [orgName, setOrgName] = useState("");
   const [showDemoList, setShowDemoList] = useState(false);
+  const [showSignInPassword, setShowSignInPassword] = useState(false);
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
 
   const demoAccounts = [
     {
@@ -221,6 +223,25 @@ export default function AuthSwitch({ onSuccess, onClose }: AuthSwitchProps) {
         .input-field input::placeholder {
           color: #7A7066;
           font-weight: 400;
+        }
+
+        .toggle-password-btn {
+          background: none !important;
+          border: none !important;
+          color: #A89F91;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 6px;
+          transition: color 0.2s ease;
+          flex-shrink: 0;
+          outline: none !important;
+        }
+
+        .toggle-password-btn:hover {
+          color: #FFC46B;
         }
 
         .btn-primary {
@@ -565,12 +586,20 @@ export default function AuthSwitch({ onSuccess, onClose }: AuthSwitchProps) {
               <div className="input-field">
                 <Lock className="input-icon" size={18} />
                 <input
-                  type="password"
+                  type={showSignInPassword ? "text" : "password"}
                   required
                   placeholder="Kata Sandi (Password)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowSignInPassword(!showSignInPassword)}
+                  className="toggle-password-btn"
+                  aria-label={showSignInPassword ? "Sembunyikan password" : "Tampilkan password"}
+                >
+                  {showSignInPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
 
               <button type="submit" className="btn-primary">
@@ -655,12 +684,20 @@ export default function AuthSwitch({ onSuccess, onClose }: AuthSwitchProps) {
               <div className="input-field">
                 <Lock className="input-icon" size={18} />
                 <input
-                  type="password"
+                  type={showSignUpPassword ? "text" : "password"}
                   required
                   placeholder="Kata Sandi (Min. 8 Karakter)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowSignUpPassword(!showSignUpPassword)}
+                  className="toggle-password-btn"
+                  aria-label={showSignUpPassword ? "Sembunyikan password" : "Tampilkan password"}
+                >
+                  {showSignUpPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
 
               <button type="submit" className="btn-primary">
