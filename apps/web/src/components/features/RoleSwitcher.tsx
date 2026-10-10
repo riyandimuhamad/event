@@ -22,29 +22,29 @@ interface RoleOption {
 
 const ROLES: RoleOption[] = [
   {
-    email: 'budi.owner@nusantaracreative.id',
+    email: 'owner@eventops.local',
     name: 'Bambang Riyandi',
     roleTitle: 'EO Owner (All Access)',
     badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-300',
     description: 'Akses penuh seluruh organisasi, event portfolio & data keuangan.',
   },
   {
-    email: 'siti.manager@nusantaracreative.id',
+    email: 'eventmanager@eventops.local',
     name: 'Siti Rahmawati',
     roleTitle: 'Event Manager',
     badgeColor: 'bg-accent-subtle text-accent dark:text-[#FFC46B] border-accent/20',
     description: 'Akses operasional penuh event, approval relawan, manajemen slot.',
   },
   {
-    email: 'dewi.konsumsi@nusantaracreative.id',
+    email: 'head.logistik@eventops.local',
     name: 'Dewi Lestari',
-    roleTitle: 'Head Divisi Konsumsi',
+    roleTitle: 'Head Divisi Logistik',
     badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-300',
-    description: 'Mendistribusikan konsumsi Hari H dan verifikasi kuota makanan.',
+    description: 'Manajemen logistik, permohonan pengadaan & verifikasi inventaris.',
   },
   {
-    email: 'volunteer.0001@eventops.id',
-    name: 'Rian Pratama',
+    email: 'volunteer@eventops.local',
+    name: 'Anisa Putri',
     roleTitle: 'Relawan Operasional',
     badgeColor: 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border-blue-300',
     description: 'Akses terbatas: jadwal tugas, presensi check-in, dan jatah konsumsi.',

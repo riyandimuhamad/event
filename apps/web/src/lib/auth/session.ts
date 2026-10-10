@@ -127,7 +127,6 @@ export async function getCurrentActor(orgSlug: string, eventId?: string): Promis
     eventRole = orgRole === 'OWNER' ? 'OWNER' : 'EVENT_MANAGER';
   }
 
-  console.log('getCurrentActor - orgRole:', orgRole, 'eventRole:', eventRole, 'divisionId:', divisionId);
   return {
     userId: user.id,
     organizationId: org.id,

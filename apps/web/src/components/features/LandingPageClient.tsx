@@ -35,11 +35,20 @@ export function LandingPageClient({ dashboardUrl }: LandingPageProps) {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [selectedRoleEmail, setSelectedRoleEmail] = useState('owner@eventops.local');
   const [loginEmail, setLoginEmail] = useState('owner@eventops.local');
-  const [loginPassword, setLoginPassword] = useState('••••••••');
+  const [loginPassword, setLoginPassword] = useState('password123');
   const [showPassword, setShowPassword] = useState(false);
   const [showDemoAccounts, setShowDemoAccounts] = useState(false);
+
+  // Register form fields
+  const [regName, setRegName] = useState('');
+  const [regOrg, setRegOrg] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regConfirmPassword, setRegConfirmPassword] = useState('');
+
   const [statPeriod, setStatPeriod] = useState<0 | 1 | 2>(0);
   const [floatRotation, setFloatRotation] = useState(0);
   const [activeCell, setActiveCell] = useState<{ row: number; col: number } | null>(null);
@@ -817,151 +826,295 @@ export function LandingPageClient({ dashboardUrl }: LandingPageProps) {
         </footer>
       </div>
 
-      {/* Maroon & Linen Styled Modern SaaS Login Modal */}
+      {/* Ultra-Modern SaaS Authentication Modal */}
       {isLoginModalOpen && (
-        <div className="mfl-modal" onClick={() => setIsLoginModalOpen(false)}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+          onClick={() => setIsLoginModalOpen(false)}
+        >
           <div
-            className="mfl-dialog max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#ECE6DA] text-[#1C1412] shadow-2xl border border-[#DCD3C4] space-y-4"
+            className="relative w-full max-w-lg overflow-hidden rounded-3xl bg-[#1C1412] text-[#EFE9DF] border border-[#7A2E33]/70 shadow-2xl space-y-5 p-6 sm:p-8"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[#DCD3C4] pb-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-[#7A2A2E] text-white flex items-center justify-center font-black text-xs shadow-sm">
+            {/* Top Bar / Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#7A2E33] to-[#4A171B] text-[#FFC46B] flex items-center justify-center font-black text-sm shadow-md border border-[#FFC46B]/30">
                   EO
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#1C1412] tracking-tight leading-none">
-                    Masuk ke EventOps
+                  <h2 className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight">
+                    Portal Akses EventOps
                   </h2>
-                  <p className="text-[11px] text-[#7A7066] mt-0.5">
+                  <p className="text-xs text-zinc-400">
                     Platform Operasional Event Organizer Terpadu
                   </p>
                 </div>
               </div>
               <button
                 type="button"
-                className="p-1.5 text-[#7A7066] hover:text-[#1C1412] rounded-lg hover:bg-black/5"
-                aria-label="Tutup"
                 onClick={() => setIsLoginModalOpen(false)}
+                aria-label="Tutup Modal"
+                className="p-2 text-zinc-400 hover:text-white rounded-xl hover:bg-white/10 transition-colors"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            {/* SaaS Login Form */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                document.cookie = `eventops_user_email=${loginEmail}; path=/; max-age=2592000`;
-                if (typeof window !== 'undefined') {
-                  localStorage.setItem('eventops_active_role_email', loginEmail);
-                }
-                setIsLoginModalOpen(false);
-                window.location.href = dashboardUrl;
-              }}
-              className="space-y-4 pt-1"
-            >
-              <div>
-                <label className="block text-xs font-semibold text-[#1C1412] mb-1">
-                  Alamat Email Organisasi
-                </label>
-                <div className="relative">
+            {/* Mode Switcher Tabs (Masuk vs Buat Akun) */}
+            <div className="grid grid-cols-2 p-1 rounded-2xl bg-black/40 border border-white/10 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setAuthMode('login')}
+                className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 ${
+                  authMode === 'login'
+                    ? 'bg-[#7A2E33] text-white shadow-md font-bold border border-[#FFC46B]/30'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
+                </svg>
+                <span>Masuk (Login)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setAuthMode('register')}
+                className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 ${
+                  authMode === 'register'
+                    ? 'bg-[#7A2E33] text-white shadow-md font-bold border border-[#FFC46B]/30'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="8.5" cy="7" r="4" />
+                  <line x1="20" y1="8" x2="20" y2="14" />
+                  <line x1="23" y1="11" x2="17" y2="11" />
+                </svg>
+                <span>Buat Akun Baru</span>
+              </button>
+            </div>
+
+            {/* Tab Content: LOGIN */}
+            {authMode === 'login' && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  document.cookie = `eventops_user_email=${loginEmail}; path=/; max-age=2592000`;
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem('eventops_active_role_email', loginEmail);
+                  }
+                  setIsLoginModalOpen(false);
+                  window.location.href = dashboardUrl;
+                }}
+                className="space-y-4"
+              >
+                <div>
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    Alamat Email Organisasi / User
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      required
+                      placeholder="contoh: owner@eventops.local"
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#FFC46B] focus:ring-1 focus:ring-[#FFC46B] transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-zinc-300">
+                      Kata Sandi (Password)
+                    </label>
+                    <a href="#" onClick={(e) => e.preventDefault()} className="text-[11px] text-[#FFC46B] hover:underline font-medium">
+                      Lupa password?
+                    </a>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      placeholder="Masukkan kata sandi..."
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#FFC46B] focus:ring-1 focus:ring-[#FFC46B] transition-all pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2.5 text-zinc-400 hover:text-white text-xs"
+                    >
+                      {showPassword ? '🔒' : '👁️'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Custom Styled Clean Checkbox */}
+                <div className="flex items-center justify-between pt-1">
+                  <label className="flex items-center gap-2.5 cursor-pointer text-xs text-zinc-300 select-none">
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="w-4 h-4 rounded border-white/20 bg-black/40 text-[#7A2E33] focus:ring-[#FFC46B] focus:ring-offset-0 cursor-pointer accent-[#7A2E33]"
+                    />
+                    <span>Ingat saya di perangkat ini</span>
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#7A2E33] to-[#5D1F23] hover:from-[#8C343A] hover:to-[#6E252A] text-white font-bold text-xs shadow-lg shadow-[#7A2E33]/30 border border-[#FFC46B]/20 transition-all flex items-center justify-center gap-2 mt-2"
+                >
+                  <span>Masuk ke System Dashboard</span>
+                  <span>→</span>
+                </button>
+              </form>
+            )}
+
+            {/* Tab Content: REGISTER */}
+            {authMode === 'register' && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const targetEmail = regEmail || 'owner@eventops.local';
+                  document.cookie = `eventops_user_email=${targetEmail}; path=/; max-age=2592000`;
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem('eventops_active_role_email', targetEmail);
+                  }
+                  setIsLoginModalOpen(false);
+                  window.location.href = dashboardUrl;
+                }}
+                className="space-y-3.5"
+              >
+                <div>
+                  <label className="block text-xs font-medium text-zinc-300 mb-1">
+                    Nama Lengkap
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Bambang Riyandi"
+                    value={regName}
+                    onChange={(e) => setRegName(e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#FFC46B] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-zinc-300 mb-1">
+                    Nama Organisasi / Event Organizer
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Nusantara Creative EO"
+                    value={regOrg}
+                    onChange={(e) => setRegOrg(e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#FFC46B] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-zinc-300 mb-1">
+                    Email Organisasi
+                  </label>
                   <input
                     type="email"
                     required
                     placeholder="nama@organisasi.id"
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#DCD3C4] text-xs font-medium text-[#1C1412] focus:outline-none focus:ring-2 focus:ring-[#7A2A2E] shadow-xs"
+                    value={regEmail}
+                    onChange={(e) => setRegEmail(e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#FFC46B] transition-all"
                   />
                 </div>
-              </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-semibold text-[#1C1412]">
-                    Kata Sandi (Password)
-                  </label>
-                  <a href="#" onClick={(e) => e.preventDefault()} className="text-[11px] text-[#7A2A2E] hover:underline font-medium">
-                    Lupa kata sandi?
-                  </a>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-xs font-medium text-zinc-300 mb-1">
+                      Kata Sandi
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#FFC46B] transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-zinc-300 mb-1">
+                      Konfirmasi Sandi
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={regConfirmPassword}
+                      onChange={(e) => setRegConfirmPassword(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#FFC46B] transition-all"
+                    />
+                  </div>
                 </div>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#DCD3C4] text-xs font-medium text-[#1C1412] focus:outline-none focus:ring-2 focus:ring-[#7A2A2E] shadow-xs pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-[#7A7066] hover:text-[#1C1412] text-xs"
-                  >
-                    {showPassword ? '🔒' : '👁️'}
-                  </button>
-                </div>
-              </div>
 
-              <div className="flex items-center justify-between text-xs pt-1">
-                <label className="flex items-center gap-2 cursor-pointer text-[#7A7066]">
-                  <input
-                    type="checkbox"
-                    defaultChecked
-                    className="rounded border-[#DCD3C4] text-[#7A2A2E] focus:ring-[#7A2A2E]"
-                  />
-                  <span>Ingat saya di perangkat ini</span>
-                </label>
-              </div>
+                <button
+                  type="submit"
+                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#7A2E33] to-[#5D1F23] hover:from-[#8C343A] text-white font-bold text-xs shadow-lg border border-[#FFC46B]/20 transition-all flex items-center justify-center gap-2 mt-3"
+                >
+                  <span>Daftar Akun Baru &amp; Akses Dashboard</span>
+                  <span>→</span>
+                </button>
+              </form>
+            )}
 
-              <button
-                type="submit"
-                className="w-full py-3 px-4 rounded-xl bg-[#7A2A2E] hover:bg-[#5D1F23] text-white font-bold text-xs shadow-md shadow-[#7A2A2E]/20 transition-all flex items-center justify-center gap-2 mt-2"
-              >
-                <span>Masuk ke Dashboard</span>
-                <span>→</span>
-              </button>
-            </form>
-
-            {/* Quick Collapsible Demo Switcher for Testing */}
-            <div className="pt-3 border-t border-[#DCD3C4] space-y-2">
+            {/* Demo Credentials Manual Guide (Cheat-Sheet) */}
+            <div className="pt-3 border-t border-white/10 space-y-2">
               <button
                 type="button"
                 onClick={() => setShowDemoAccounts(!showDemoAccounts)}
-                className="w-full flex items-center justify-between text-[11px] font-semibold text-[#7A7066] hover:text-[#1C1412] transition-colors"
+                className="w-full flex items-center justify-between text-[11px] font-semibold text-zinc-400 hover:text-white transition-colors"
               >
-                <span>⚡ Uji Coba Akun Demo Peran (Quick Login)</span>
-                <span>{showDemoAccounts ? '▲ Tutup' : '▼ Lihat Akun'}</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="text-[#FFC46B]">🔑</span>
+                  <span>Panduan Akun Pengujian Demo (Kredensial Manual)</span>
+                </span>
+                <span>{showDemoAccounts ? '▲ Sembunyikan' : '▼ Lihat Kredensial'}</span>
               </button>
 
               {showDemoAccounts && (
-                <div className="space-y-1.5 pt-1 animate-fade-in">
+                <div className="space-y-1.5 pt-1 text-xs animate-fade-in">
+                  <p className="text-[10px] text-zinc-400 mb-2">
+                    Salin atau tempel email berikut ke formulir di atas untuk melakukan login manual sesuai peran:
+                  </p>
                   {demoAccounts.map((acc) => (
-                    <button
+                    <div
                       key={acc.email}
-                      type="button"
-                      onClick={() => {
-                        setLoginEmail(acc.email);
-                        setSelectedRoleEmail(acc.email);
-                        document.cookie = `eventops_user_email=${acc.email}; path=/; max-age=2592000`;
-                      }}
-                      className={`w-full text-left p-2 rounded-xl border text-xs flex items-center justify-between transition-all ${
-                        loginEmail === acc.email
-                          ? 'bg-[#7A2A2E] text-white border-[#7A2A2E] font-bold shadow-xs'
-                          : 'bg-white text-[#1C1412] border-[#DCD3C4] hover:bg-black/5'
-                      }`}
+                      className="p-2 rounded-xl bg-black/40 border border-white/10 flex items-center justify-between text-xs"
                     >
                       <div>
-                        <div className="font-semibold text-xs">{acc.name}</div>
-                        <div className="text-[10px] opacity-80">{acc.role}</div>
+                        <div className="font-bold text-white text-xs">{acc.name} <span className="text-[10px] text-[#FFC46B] font-normal">({acc.role})</span></div>
+                        <div className="text-[11px] font-mono text-zinc-400">Email: <span className="text-zinc-200">{acc.email}</span> | Pass: <span className="text-zinc-200">password123</span></div>
                       </div>
-                      <span className="font-mono text-[9px] px-2 py-0.5 rounded bg-black/10">
-                        {acc.badge}
-                      </span>
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLoginEmail(acc.email);
+                          setLoginPassword('password123');
+                          setAuthMode('login');
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-[#7A2E33] text-white text-[10px] font-semibold border border-white/15 transition-all flex-shrink-0"
+                      >
+                        Isi Formulir
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}

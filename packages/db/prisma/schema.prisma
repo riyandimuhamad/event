@@ -205,6 +205,8 @@ model CommitteeMember {
   user                  User?        @relation(fields: [userId], references: [id])
   division              Division     @relation(fields: [divisionId], references: [id])
 
+  @@index([eventId, divisionId])
+  @@index([userId])
   @@map("committee_members")
 }
 
@@ -360,6 +362,8 @@ model Requisition {
 
   @@unique([eventId, code])
   @@index([toDivisionId, status])
+  @@index([fromDivisionId, status])
+  @@index([organizationId, eventId])
   @@map("requisitions")
 }
 
