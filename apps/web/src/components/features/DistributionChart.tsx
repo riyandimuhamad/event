@@ -19,6 +19,59 @@ interface DistributionChartProps {
   reportUrl: string;
 }
 
+/**
+ * Monotone Cubic Spline (Fritsch-Carlson) smooth path generator.
+ * Prevents overshooting and squished/kinked control points on line charts.
+ */
+function getMonotoneSplinePath(pts: { x: number; y: number }[]): string {
+  const n = pts.length;
+  if (n === 0) return '';
+  if (n === 1) return `M ${pts[0].x},${pts[0].y}`;
+  if (n === 2) return `M ${pts[0].x},${pts[0].y} L ${pts[1].x},${pts[1].y}`;
+
+  // Slopes of secant lines between consecutive points
+  const dxs: number[] = [];
+  const dys: number[] = [];
+  const ms: number[] = [];
+  for (let i = 0; i < n - 1; i++) {
+    const dx = pts[i + 1].x - pts[i].x;
+    const dy = pts[i + 1].y - pts[i].y;
+    dxs.push(dx);
+    dys.push(dy);
+    ms.push(dy / dx);
+  }
+
+  // Tangents at data points
+  const c1s: number[] = [ms[0]];
+  for (let i = 0; i < n - 2; i++) {
+    const m0 = ms[i];
+    const m1 = ms[i + 1];
+    if (m0 * m1 <= 0) {
+      c1s.push(0);
+    } else {
+      const common = dxs[i] + dxs[i + 1];
+      c1s.push((3 * common) / ((common + dxs[i + 1]) / m0 + (common + dxs[i]) / m1));
+    }
+  }
+  c1s.push(ms[ms.length - 1]);
+
+  // Cubic Bezier control points
+  let path = `M ${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = pts[i];
+    const p1 = pts[i + 1];
+    const dx = dxs[i];
+    const cp1x = p0.x + dx / 3;
+    const cp1y = p0.y + (c1s[i] * dx) / 3;
+    const cp2x = p1.x - dx / 3;
+    const cp2y = p1.y - (c1s[i + 1] * dx) / 3;
+
+    path += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`;
+  }
+
+  return path;
+}
+
 export function DistributionChart({
   flowPoints,
   openRequisitionsCount,
@@ -29,11 +82,11 @@ export function DistributionChart({
 }: DistributionChartProps) {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
-  const width = 600;
-  const height = 200;
-  const paddingX = 24;
-  const paddingTop = 20;
-  const paddingBottom = 30;
+  const width = 640;
+  const height = 210;
+  const paddingX = 32;
+  const paddingTop = 24;
+  const paddingBottom = 36;
 
   const chartW = width - paddingX * 2;
   const chartH = height - paddingTop - paddingBottom;
@@ -48,30 +101,8 @@ export function DistributionChart({
     return { x, yReq, yFul, data: p };
   });
 
-  // Smooth Catmull-Rom spline generator
-  const getSplinePath = (coords: { x: number; y: number }[]) => {
-    if (coords.length === 0) return '';
-    if (coords.length === 1) return `M ${coords[0].x},${coords[0].y}`;
-
-    let path = `M ${coords[0].x.toFixed(1)},${coords[0].y.toFixed(1)}`;
-    for (let i = 0; i < coords.length - 1; i++) {
-      const p0 = coords[i === 0 ? 0 : i - 1];
-      const p1 = coords[i];
-      const p2 = coords[i + 1];
-      const p3 = coords[i + 2] || p2;
-
-      const cp1x = p1.x + (p2.x - p0.x) / 5;
-      const cp1y = p1.y + (p2.y - p0.y) / 5;
-      const cp2x = p2.x - (p3.x - p1.x) / 5;
-      const cp2y = p2.y - (p3.y - p1.y) / 5;
-
-      path += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
-    }
-    return path;
-  };
-
-  const reqLinePath = getSplinePath(points.map((p) => ({ x: p.x, y: p.yReq })));
-  const fulLinePath = getSplinePath(points.map((p) => ({ x: p.x, y: p.yFul })));
+  const reqLinePath = getMonotoneSplinePath(points.map((p) => ({ x: p.x, y: p.yReq })));
+  const fulLinePath = getMonotoneSplinePath(points.map((p) => ({ x: p.x, y: p.yFul })));
 
   const baselineY = paddingTop + chartH;
   const reqAreaPath = `${reqLinePath} L ${points[points.length - 1].x},${baselineY} L ${points[0].x},${baselineY} Z`;
@@ -86,7 +117,7 @@ export function DistributionChart({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
           <div>
             <h4 className="text-base font-bold text-[#1C1412] dark:text-[#F0F3F6]">
-              Arus Distribusi Logistik & Konsumsi
+              Arus Distribusi Logistik &amp; Konsumsi
             </h4>
             <p className="text-xs text-[#7A7066] dark:text-[#8B949E] mt-0.5">
               <span className="font-bold text-emerald-700 dark:text-emerald-400">
@@ -115,7 +146,7 @@ export function DistributionChart({
         {/* Chart Canvas Card */}
         <div className="relative pt-2">
           <div className="bg-[#F8F5EE] dark:bg-[#1C2128] rounded-2xl border border-[#DCD3C4] dark:border-[#30363D] p-3 shadow-inner">
-            <div className="relative w-full aspect-[600/210]">
+            <div className="relative w-full aspect-[640/210]">
               <svg
                 viewBox={`0 0 ${width} ${height}`}
                 className="w-full h-full select-none overflow-visible"
@@ -123,21 +154,21 @@ export function DistributionChart({
                 <defs>
                   {/* Subtle Maroon Gradient */}
                   <linearGradient id="distMaroonGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#7A2A2E" stopOpacity="0.28" />
-                    <stop offset="60%" stopColor="#7A2A2E" stopOpacity="0.08" />
+                    <stop offset="0%" stopColor="#7A2A2E" stopOpacity="0.25" />
+                    <stop offset="60%" stopColor="#7A2A2E" stopOpacity="0.06" />
                     <stop offset="100%" stopColor="#7A2A2E" stopOpacity="0" />
                   </linearGradient>
 
                   {/* Subtle Amber Gradient */}
                   <linearGradient id="distAmberGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#D9822B" stopOpacity="0.28" />
-                    <stop offset="60%" stopColor="#D9822B" stopOpacity="0.08" />
+                    <stop offset="0%" stopColor="#D9822B" stopOpacity="0.25" />
+                    <stop offset="60%" stopColor="#D9822B" stopOpacity="0.06" />
                     <stop offset="100%" stopColor="#D9822B" stopOpacity="0" />
                   </linearGradient>
 
                   {/* Line Glow Filter */}
                   <filter id="lineGlow" x="-10%" y="-10%" width="120%" height="120%">
-                    <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#7A2A2E" floodOpacity="0.15" />
+                    <feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#7A2A2E" floodOpacity="0.15" />
                   </filter>
                 </defs>
 
@@ -152,7 +183,7 @@ export function DistributionChart({
                       x2={width - paddingX}
                       y2={y}
                       stroke="currentColor"
-                      strokeOpacity="0.07"
+                      strokeOpacity="0.08"
                       strokeDasharray="4 4"
                     />
                   );
@@ -164,8 +195,9 @@ export function DistributionChart({
                   d={reqLinePath}
                   fill="none"
                   stroke="#7A2A2E"
-                  strokeWidth="2.5"
+                  strokeWidth="3"
                   strokeLinecap="round"
+                  strokeLinejoin="round"
                   filter="url(#lineGlow)"
                 />
 
@@ -175,8 +207,9 @@ export function DistributionChart({
                   d={fulLinePath}
                   fill="none"
                   stroke="#D9822B"
-                  strokeWidth="2.5"
+                  strokeWidth="3"
                   strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
 
                 {/* Interactive Vertical Tracking Line */}
@@ -202,20 +235,20 @@ export function DistributionChart({
                       <circle
                         cx={pt.x}
                         cy={pt.yFul}
-                        r={isHovered ? 5.5 : 3.5}
+                        r={isHovered ? 6 : 4}
                         fill="#FFFFFF"
                         stroke="#D9822B"
-                        strokeWidth={isHovered ? 2.5 : 2}
+                        strokeWidth={isHovered ? 3 : 2}
                         className="transition-all duration-150 cursor-pointer"
                       />
                       {/* Requested Maroon Dot */}
                       <circle
                         cx={pt.x}
                         cy={pt.yReq}
-                        r={isHovered ? 5.5 : 3.5}
+                        r={isHovered ? 6 : 4}
                         fill="#FFFFFF"
                         stroke="#7A2A2E"
-                        strokeWidth={isHovered ? 2.5 : 2}
+                        strokeWidth={isHovered ? 3 : 2}
                         className="transition-all duration-150 cursor-pointer"
                       />
 
@@ -241,7 +274,7 @@ export function DistributionChart({
                   className="absolute pointer-events-none transition-all duration-200 z-10"
                   style={{
                     left: `${(activePoint.x / width) * 100}%`,
-                    top: '12px',
+                    top: '10px',
                     transform: 'translateX(-50%)',
                   }}
                 >
@@ -280,7 +313,7 @@ export function DistributionChart({
       {/* Footer Link */}
       <div className="pt-4 mt-3 border-t border-[#DCD3C4] dark:border-[#2B3342] flex items-center justify-between text-xs">
         <span className="text-[#7A7066] dark:text-[#8B949E]">
-          Pembaruan live dari logistik posko & QR scanner konsumsi
+          Pembaruan live dari logistik posko &amp; QR scanner konsumsi
         </span>
         <Link
           href={reportUrl}

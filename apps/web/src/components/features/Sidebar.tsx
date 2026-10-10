@@ -20,6 +20,12 @@ import {
   PanelLeftOpen,
   Wifi,
   WifiOff,
+  BookOpen,
+  X,
+  CheckCircle2,
+  Crown,
+  Layers,
+  Sliders,
 } from 'lucide-react';
 import { Actor, RbacGuard } from '@eventops/shared';
 import { t } from '@/lib/i18n';
@@ -48,6 +54,7 @@ export function Sidebar({
   const pathname = usePathname();
   const basePath = `/${orgSlug}/events/${eventId}`;
   const [isOnline, setIsOnline] = useState(true);
+  const [isSopModalOpen, setIsSopModalOpen] = useState(false);
 
   useEffect(() => {
     setIsOnline(navigator.onLine);
@@ -180,7 +187,7 @@ export function Sidebar({
   const sidebarContent = (
     <div className="flex flex-col h-full bg-[#5D1F23] select-none rounded-2xl overflow-hidden border border-[#7A2E33]/60 shadow-xl">
 
-      {/* ── Brand Header (logo only, no toggle button here) ── */}
+      {/* ── Brand Header (logo only) ── */}
       <div className={`border-b border-white/10 p-3.5 bg-black/20 flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
         <div className="w-8 h-8 rounded-xl bg-[#481418] text-[#FFC46B] flex items-center justify-center font-black text-xs tracking-wider shadow-sm border border-[#FFC46B]/40 flex-shrink-0">
           EO
@@ -212,23 +219,28 @@ export function Sidebar({
         {phaseNavItems.filter((i) => i.show).map(navLink)}
       </nav>
 
-      {/* ── Bottom Section — Toggle + Online (selalu di dalam sidebar) ── */}
+      {/* ── Bottom Section — Toggle + Online ── */}
       <div className={`border-t border-white/10 ${isCollapsed ? 'p-3 flex flex-col items-center gap-3' : 'p-3 space-y-3'}`}>
 
-        {/* Info card — hanya saat expanded */}
+        {/* Info card — click triggers SOP Modal */}
         {!isCollapsed && (
           <div className="p-3.5 rounded-xl bg-black/25 border border-white/10 shadow-inner space-y-2">
             <div>
               <div className="font-bold text-xs text-white">Butuh Bantuan &amp; SOP?</div>
               <div className="text-[11px] text-[#E8D7D8] mt-0.5 leading-snug">Panduan alur operasional &amp; audit trail</div>
             </div>
-            <span className="w-full inline-block text-center py-1.5 px-3 rounded-lg bg-[#7A2E33] hover:bg-[#8D353C] text-white font-bold text-[10px] tracking-wider shadow-sm uppercase border border-[#FFC46B]/30 transition-colors">
-              PANDUAN OPERASIONAL
-            </span>
+            <button
+              type="button"
+              onClick={() => setIsSopModalOpen(true)}
+              className="w-full text-center py-2 px-3 rounded-lg bg-[#7A2E33] hover:bg-[#92373F] text-white font-bold text-[10px] tracking-wider shadow-sm uppercase border border-[#FFC46B]/30 transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-[#FFC46B]" />
+              <span>PANDUAN OPERASIONAL</span>
+            </button>
           </div>
         )}
 
-        {/* Role badge — hanya saat expanded */}
+        {/* Role badge */}
         {!isCollapsed && (
           <div className="px-1 flex items-center justify-between text-[11px] text-[#E8D7D8] font-medium">
             <span>Otorisasi:</span>
@@ -238,7 +250,7 @@ export function Sidebar({
           </div>
         )}
 
-        {/* Online Status — selalu tampil */}
+        {/* Online Status */}
         <div
           className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 border text-[11px] font-semibold transition-all ${
             isCollapsed ? 'justify-center w-full' : 'w-full'
@@ -253,7 +265,7 @@ export function Sidebar({
           {!isCollapsed && <span>{isOnline ? 'Online' : 'Offline'}</span>}
         </div>
 
-        {/* Toggle collapse button — selalu di bawah */}
+        {/* Toggle collapse button */}
         {onToggleCollapse && (
           <button
             onClick={onToggleCollapse}
@@ -298,6 +310,84 @@ export function Sidebar({
           <div className="relative w-[270px] max-w-[85vw] h-full shadow-2xl z-10 p-3 animate-fade-in">
             <div className="h-full rounded-2xl shadow-2xl overflow-hidden">
               {sidebarContent}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Modal Panduan & SOP Operasional */}
+      {isSopModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-surface rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl border border-border space-y-5 max-h-[85vh] overflow-y-auto text-text">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-accent text-white flex items-center justify-center font-bold">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-text">Panduan Operasional &amp; SOP EventOps</h3>
+                  <p className="text-xs text-text-muted">Alur kerja sistem komando operasional event organizer terpadu</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsSopModalOpen(false)}
+                className="p-1.5 text-text-muted hover:text-text rounded-lg hover:bg-surface-muted"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* SOP Content Steps */}
+            <div className="space-y-4 text-xs">
+              <div className="p-4 rounded-2xl bg-surface-muted border border-border space-y-2">
+                <div className="font-bold text-text text-sm flex items-center gap-2">
+                  <Crown className="w-4 h-4 text-amber-500" />
+                  <span>1. Alur Ketua EO (Owner &amp; All-Access)</span>
+                </div>
+                <p className="text-text-muted leading-relaxed">
+                  Ketua EO membeli akun lisensi master utama. Dari menu <strong>Daftar Event EO</strong>, Ketua EO dapat membuat event baru, mengundang anggota (Wakil Ketua, Head Divisi, Staf), serta mengatur <strong>Matriks Hak Akses Modul Menu</strong> per personil.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-surface-muted border border-border space-y-2">
+                <div className="font-bold text-text text-sm flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-blue-500" />
+                  <span>2. Alur Divisi &amp; Requisisi Barang</span>
+                </div>
+                <p className="text-text-muted leading-relaxed">
+                  Setiap divisi (Acara, Logistik, Konsumsi, Humas, dll) mengajukan kebutuhan barang &amp; anggaran lewat menu <strong>Requisisi</strong>. Divisi penerima (misal Logistik) memproses pengadaan hingga status <em>Fulfilled &amp; Closed</em>.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-surface-muted border border-border space-y-2">
+                <div className="font-bold text-text text-sm flex items-center gap-2">
+                  <HeartHandshake className="w-4 h-4 text-rose-500" />
+                  <span>3. Alur Volunteer, Presensi QR, &amp; Konsumsi Hari H</span>
+                </div>
+                <p className="text-text-muted leading-relaxed">
+                  Panitia menerima pendaftaran volunteer, menetapkan shift kerja custom, dan mencetak ID Pas QR. Pada Hari H, scanner QR mencatat presensi dan memvalidasi jatah konsumsi makanan per sesi secara otomatis.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-surface-muted border border-border space-y-2">
+                <div className="font-bold text-text text-sm flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-emerald-500" />
+                  <span>4. Pasca-Event &amp; Audit Trail Log</span>
+                </div>
+                <p className="text-text-muted leading-relaxed">
+                  Pasca-event digunakan untuk menerbitkan sertifikat/piagam relawan, pencairan honorarium (benefit disburse), serta melihat rekam jejak audit trail seluruh aktivitas anggota.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-border flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsSopModalOpen(false)}
+                className="px-5 py-2.5 bg-accent hover:bg-accent-hover text-white font-bold text-xs rounded-xl shadow-sm"
+              >
+                Tutup Panduan
+              </button>
             </div>
           </div>
         </div>

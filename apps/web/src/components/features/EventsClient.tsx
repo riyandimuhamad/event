@@ -234,7 +234,7 @@ export function EventsClient({
   const totalAttendees = events.reduce((acc, e) => acc + (e.expectedAttendees || 0), 0);
 
   return (
-    <div className="flex flex-col gap-6 p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
+    <div className="w-full flex flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface border border-border p-6 rounded-3xl shadow-sm">
         <div className="space-y-1">

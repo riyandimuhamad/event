@@ -35,34 +35,38 @@ export function LandingPageClient({ dashboardUrl }: LandingPageProps) {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [selectedRoleEmail, setSelectedRoleEmail] = useState('budi.owner@nusantaracreative.id');
+  const [selectedRoleEmail, setSelectedRoleEmail] = useState('owner@eventops.local');
+  const [loginEmail, setLoginEmail] = useState('owner@eventops.local');
+  const [loginPassword, setLoginPassword] = useState('••••••••');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showDemoAccounts, setShowDemoAccounts] = useState(false);
   const [statPeriod, setStatPeriod] = useState<0 | 1 | 2>(0);
   const [floatRotation, setFloatRotation] = useState(0);
   const [activeCell, setActiveCell] = useState<{ row: number; col: number } | null>(null);
 
   const demoAccounts = [
     {
-      name: 'Budi Santoso',
-      role: 'Owner Organisasi',
-      email: 'budi.owner@nusantaracreative.id',
+      name: 'Bambang Riyandi',
+      role: 'Owner Organisasi (Ketua EO)',
+      email: 'owner@eventops.local',
       badge: 'OWNER',
     },
     {
       name: 'Siti Rahmawati',
-      role: 'Event Manager',
-      email: 'siti.manager@nusantaracreative.id',
+      role: 'Event Manager (Wakil)',
+      email: 'eventmanager@eventops.local',
       badge: 'EVENT_MANAGER',
     },
     {
       name: 'Dewi Lestari',
-      role: 'Kepala Divisi Konsumsi',
-      email: 'dewi.konsumsi@nusantaracreative.id',
+      role: 'Head Divisi Logistik',
+      email: 'head.logistik@eventops.local',
       badge: 'DIVISION_HEAD',
     },
     {
-      name: 'Rian Pratama',
+      name: 'Anisa Putri',
       role: 'Relawan Operasional',
-      email: 'volunteer.0001@eventops.id',
+      email: 'volunteer@eventops.local',
       badge: 'VOLUNTEER',
     },
   ];
@@ -736,18 +740,18 @@ export function LandingPageClient({ dashboardUrl }: LandingPageProps) {
           </h2>
 
           <p className="mfl-feat-sub" style={{ marginTop: '12px' }}>
-            Masuk ke command center atau coba akun pengujian peran untuk merasakan alur kerja EventOps.
+            Masuk ke dashboard atau gunakan akun pengujian untuk merasakan alur kerja EventOps.
           </p>
 
           <div className="mfl-cta-row">
             <Link href={dashboardUrl} className="mfl-btn mfl-btn--cream">
-              Buka Command Center
+              Buka Dashboard Event
             </Link>
             <button
               onClick={() => setIsLoginModalOpen(true)}
               className="mfl-btn mfl-btn--ghost"
             >
-              Pilih Akun Demo & Masuk
+              Masuk Sistem (Login)
             </button>
           </div>
         </section>
@@ -813,80 +817,154 @@ export function LandingPageClient({ dashboardUrl }: LandingPageProps) {
         </footer>
       </div>
 
-      {/* Maroon & Linen Styled Login Modal */}
+      {/* Maroon & Linen Styled Modern SaaS Login Modal */}
       {isLoginModalOpen && (
         <div className="mfl-modal" onClick={() => setIsLoginModalOpen(false)}>
-          <div className="mfl-dialog" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className="mfl-x"
-              aria-label="Tutup"
-              onClick={() => setIsLoginModalOpen(false)}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            </button>
-
-            <h2>Masuk ke EventOps.</h2>
-            <p className="mfl-dialog-sub">
-              Pilih akun demonstrasi peran untuk langsung menguji sistem komando.
-            </p>
-
-            <div className="mt-4 space-y-2">
-              {demoAccounts.map((acc) => {
-                const isSelected = selectedRoleEmail === acc.email;
-                return (
-                  <button
-                    key={acc.email}
-                    type="button"
-                    onClick={() => setSelectedRoleEmail(acc.email)}
-                    className="w-full text-left p-3 rounded-lg border transition-all flex items-center justify-between"
-                    style={{
-                      background: isSelected ? 'var(--mfl-brand)' : '#fbfaf7',
-                      color: isSelected ? '#fff' : 'var(--mfl-ink)',
-                      borderColor: isSelected ? 'var(--mfl-brand)' : 'rgba(0,0,0,0.1)',
-                      boxShadow: isSelected ? '0 4px 14px rgba(122, 42, 46, 0.35)' : 'none',
-                    }}
-                  >
-                    <div>
-                      <div className="font-semibold text-xs">{acc.name}</div>
-                      <div className="text-[11px] opacity-75">{acc.role}</div>
-                    </div>
-                    <span
-                      className="font-mono text-[10px] px-2 py-0.5 rounded"
-                      style={{
-                        background: isSelected ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.06)',
-                      }}
-                    >
-                      {acc.badge}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-black/10 flex items-center justify-between">
+          <div
+            className="mfl-dialog max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#ECE6DA] text-[#1C1412] shadow-2xl border border-[#DCD3C4] space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-[#DCD3C4] pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-[#7A2A2E] text-white flex items-center justify-center font-black text-xs shadow-sm">
+                  EO
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-[#1C1412] tracking-tight leading-none">
+                    Masuk ke EventOps
+                  </h2>
+                  <p className="text-[11px] text-[#7A7066] mt-0.5">
+                    Platform Operasional Event Organizer Terpadu
+                  </p>
+                </div>
+              </div>
               <button
                 type="button"
+                className="p-1.5 text-[#7A7066] hover:text-[#1C1412] rounded-lg hover:bg-black/5"
+                aria-label="Tutup"
                 onClick={() => setIsLoginModalOpen(false)}
-                className="text-xs text-zinc-500 hover:text-zinc-800"
               >
-                Batal
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* SaaS Login Form */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                document.cookie = `eventops_user_email=${loginEmail}; path=/; max-age=2592000`;
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('eventops_active_role_email', loginEmail);
+                }
+                setIsLoginModalOpen(false);
+                window.location.href = dashboardUrl;
+              }}
+              className="space-y-4 pt-1"
+            >
+              <div>
+                <label className="block text-xs font-semibold text-[#1C1412] mb-1">
+                  Alamat Email Organisasi
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    required
+                    placeholder="nama@organisasi.id"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#DCD3C4] text-xs font-medium text-[#1C1412] focus:outline-none focus:ring-2 focus:ring-[#7A2A2E] shadow-xs"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-[#1C1412]">
+                    Kata Sandi (Password)
+                  </label>
+                  <a href="#" onClick={(e) => e.preventDefault()} className="text-[11px] text-[#7A2A2E] hover:underline font-medium">
+                    Lupa kata sandi?
+                  </a>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#DCD3C4] text-xs font-medium text-[#1C1412] focus:outline-none focus:ring-2 focus:ring-[#7A2A2E] shadow-xs pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-2.5 text-[#7A7066] hover:text-[#1C1412] text-xs"
+                  >
+                    {showPassword ? '🔒' : '👁️'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-xs pt-1">
+                <label className="flex items-center gap-2 cursor-pointer text-[#7A7066]">
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="rounded border-[#DCD3C4] text-[#7A2A2E] focus:ring-[#7A2A2E]"
+                  />
+                  <span>Ingat saya di perangkat ini</span>
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 px-4 rounded-xl bg-[#7A2A2E] hover:bg-[#5D1F23] text-white font-bold text-xs shadow-md shadow-[#7A2A2E]/20 transition-all flex items-center justify-center gap-2 mt-2"
+              >
+                <span>Masuk ke Dashboard</span>
+                <span>→</span>
+              </button>
+            </form>
+
+            {/* Quick Collapsible Demo Switcher for Testing */}
+            <div className="pt-3 border-t border-[#DCD3C4] space-y-2">
+              <button
+                type="button"
+                onClick={() => setShowDemoAccounts(!showDemoAccounts)}
+                className="w-full flex items-center justify-between text-[11px] font-semibold text-[#7A7066] hover:text-[#1C1412] transition-colors"
+              >
+                <span>⚡ Uji Coba Akun Demo Peran (Quick Login)</span>
+                <span>{showDemoAccounts ? '▲ Tutup' : '▼ Lihat Akun'}</span>
               </button>
 
-              <Link
-                href={dashboardUrl}
-                onClick={() => {
-                  if (typeof window !== 'undefined') {
-                    localStorage.setItem('eventops_active_role_email', selectedRoleEmail);
-                  }
-                  setIsLoginModalOpen(false);
-                }}
-                className="mfl-btn mfl-btn--brand mfl-btn--sm"
-              >
-                Masuk Sekarang →
-              </Link>
+              {showDemoAccounts && (
+                <div className="space-y-1.5 pt-1 animate-fade-in">
+                  {demoAccounts.map((acc) => (
+                    <button
+                      key={acc.email}
+                      type="button"
+                      onClick={() => {
+                        setLoginEmail(acc.email);
+                        setSelectedRoleEmail(acc.email);
+                        document.cookie = `eventops_user_email=${acc.email}; path=/; max-age=2592000`;
+                      }}
+                      className={`w-full text-left p-2 rounded-xl border text-xs flex items-center justify-between transition-all ${
+                        loginEmail === acc.email
+                          ? 'bg-[#7A2A2E] text-white border-[#7A2A2E] font-bold shadow-xs'
+                          : 'bg-white text-[#1C1412] border-[#DCD3C4] hover:bg-black/5'
+                      }`}
+                    >
+                      <div>
+                        <div className="font-semibold text-xs">{acc.name}</div>
+                        <div className="text-[10px] opacity-80">{acc.role}</div>
+                      </div>
+                      <span className="font-mono text-[9px] px-2 py-0.5 rounded bg-black/10">
+                        {acc.badge}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
