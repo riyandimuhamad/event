@@ -71,12 +71,15 @@ export function RoleSwitcher({ currentEmail }: { currentEmail?: string }) {
   }, []);
 
   const selectRole = (email: string) => {
-    document.cookie = `eventops_user_email=${email}; path=/; max-age=2592000`;
+    // Set cookie with SameSite attribute to ensure it's sent on subsequent requests
+    document.cookie = `eventops_user_email=${email}; path=/; max-age=2592000; SameSite=Lax`;
+    // Persist selected role in local storage
     if (typeof window !== 'undefined') {
       localStorage.setItem('eventops_active_role_email', email);
     }
     setIsOpen(false);
-    router.refresh();
+    // Force a full page reload so the server reads the updated cookie
+    window.location.reload();
   };
 
   const handleLogout = () => {
