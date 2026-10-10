@@ -65,6 +65,14 @@ export default function AuthSwitch({ onSuccess, onClose }: AuthSwitchProps) {
           box-sizing: border-box;
         }
 
+        .auth-switch input,
+        .auth-switch input:focus,
+        .auth-switch input:focus-visible {
+          outline: none !important;
+          box-shadow: none !important;
+          border: none !important;
+        }
+
         .auth-switch {
           font-family: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           min-height: 100vh;
@@ -196,10 +204,13 @@ export default function AuthSwitch({ onSuccess, onClose }: AuthSwitchProps) {
           flex-shrink: 0;
         }
 
-        .input-field input {
-          background: none;
-          outline: none;
-          border: none;
+        .input-field input,
+        .input-field input:focus,
+        .input-field input:focus-visible {
+          background: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+          border: none !important;
           line-height: 1;
           font-weight: 500;
           font-size: 0.9rem;
